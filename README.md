@@ -1,30 +1,46 @@
-# N4O VTuberHell Recorder Queue
+# N4O VTuberHell Tools
 **Created by**: N4O#8868
 
 **Version**: 1.3
 **Last Updated**: 07/04/2020
 
-#### What's changed?
-**Version 1.3** Change:
+**Table of contents**:
+- [Changelog](#user-content-what-s-changed)
+    - [Version 1.3](#version-1-3-change)
+- [Information](#user-content-info)
+- [Requirements](#user-content-requirements)
+- [Setup](#user-content-setup)
+- [Running](#user-content-running)
+    - [addjob.sh](#user-content-addjob-sh)
+    - [runjob.sh](#user-content-runjob-sh)
+    - [vtrip.sh](#user-content-vtrip-sh)
+    - [vtup.sh](#user-content-vtup-sh)
+- [Helper scripts](#user-content-helper-scripts)
+    - [schedule.py](#user-content-schedule-py)
+    - [vthell.py](#user-content-vthell-py)
+    - [vtrip_helper.py](#user-content-vtrip-helper-sh)
+
+### What's changed?
+#### Version 1.3 Change:
 - Reformatted python file with black.
 - Added vtup.sh and vtrip.sh (+ vtrip_helper.py)
 - Add more holovtuber support.
 
-#### Info
+### Info
 - All path are hardcoded, change accordingly
 - datetime.now() on `vthell.py` originally on UTC+0/GMT, change accordingly
 - No support for other Organization/Solo except Hololive (for now)
 - Provide your own API Key for YouTube Data API v3
   - Used in `vtrip_helper.py` and `schedule.py`
 
-#### Requirements
+### Requirements
 - Linux based machine (I made this for my server in mind)
 - Apps:
   - screen
   - mkvtoolnix
   - rclone (setup this for your cloud drive)
 
-#### Setup
+### Setup
 0. Install requirements
 1. Change all hardcoded path
 2. Get YouTube Data API Key v3 from Cloud Console
@@ -36,8 +52,8 @@
 - streamlink
 6. Change the python from venv path on `addjob.sh` and `runjob.sh`
 
-#### Running
-##### addjob.sh
+### Running
+#### [addjob.sh](https://git.ihateani.me/noaione/vthell/src/branch/master/addjob.sh)
 **./addjob.sh** [youtube_link]
 
 Supported youtube link format are:
@@ -52,7 +68,7 @@ Please provide your **`API_KEY`** to the file.
 **Output filename format**: `[YYYY.MM.DD] TITLE [RESOLUTIONp AAC].mkv`
 
 
-##### runjob.sh
+#### [runjob.sh](https://git.ihateani.me/noaione/vthell/src/branch/master/runjob.sh)
 **./runjob.sh**
 
 You can use **`cronjob`** to run every minute or whatever interval you want or run it manually.
@@ -71,10 +87,12 @@ If not continue, if yes start recording.
 After stream finished, file will be muxed into .mkv and will be uploaded, .ts file will be deleted and also the .json files.
 
 **Recommended cron schedule:**
-`*/1 * * * * /path/to/vthell/runjob.sh`
+```sh
+*/1 * * * * /path/to/vthell/runjob.sh
+```
 
 
-##### vtrip.sh
+#### [vtrip.sh](https://git.ihateani.me/noaione/vthell/src/branch/master/vtrip.sh)
 **./vtrip.sh** [url]
 
 Download your vtuber (mainly holo) video from youtube.
@@ -83,14 +101,14 @@ Output format are: [YYYY.MM.DD] TITLE [RESOLUTION AAC].mkv
 YYYY.MM.DD are Date uploaded or streamed.
 Combine with `vtup.sh` later
 
-vtrip_helper.py are helper to determine the output name using Youtube Data API v3.
+[vtrip_helper.py](https://git.ihateani.me/noaione/vthell/src/branch/master/vtrip_helper.py) are helper to determine the output name using Youtube Data API v3.
 Please provide your API_KEY to the file.
 
 **Don't use this if you're ripping currently live streamed video, use addjob.sh for that**
 
 
-##### vtup.sh
-**./vtup.sh** "[file]" [vtuber] [type]
+#### [vtup.sh](https://git.ihateani.me/noaione/vthell/src/branch/master/vtup.sh)
+**./vtup.sh** "\[file]" \[vtuber] \[type]
 
 Upload your **[file]** to the cloud drive.
 
@@ -140,8 +158,8 @@ if you put other stuff on **[vtuber]** or **[type]**
 it will default to `Unknown`.
 
 
-#### Helper scripts
-##### schedule.py
+### Helper scripts
+#### [schedule.py](https://git.ihateani.me/noaione/vthell/src/branch/master/schedule.py)
 Script that will fetch provided youtube url a metadata that will be put on `jobs` folder.
 
 Fetched stuff via API:
@@ -151,7 +169,7 @@ Fetched stuff via API:
 
 Everything will be saved into a json file containing information for `vthell.py` will use.
 
-##### vthell.py
+#### [vthell.py](https://git.ihateani.me/noaione/vthell/src/branch/master/vthell.py)
 Main python script that will download the scheduled jobs
 Download will start if the conditions are met:
 - Stream started
@@ -160,7 +178,7 @@ Download will start if the conditions are met:
 
 It will start checking 2 minutes before stream start.
 
-##### vtrip_helper.py
+#### [vtrip_helper.py](https://git.ihateani.me/noaione/vthell/src/branch/master/vtrip_helper.py)
 Literally a script to only find the video/stream title and make a output format for `youtube-dl`
 
 *Licensed with MIT License*
