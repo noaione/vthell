@@ -16,9 +16,9 @@
     - [vtrip.sh](#vtrip-sh-https-git-ihateani-me-noaione-vthell-src-branch-master-vtrip-sh)
     - [vtup.sh](#vtup-sh-https-git-ihateani-me-noaione-vthell-src-branch-master-vtup-sh)
 - [Helper scripts](#helper-scripts)
-    - [schedule.py](#schedule-py-https-git-ihateani-me-noaione-vthell-src-branch-master-schedule-py)
-    - [vthell.py](#vthell-py-https-git-ihateani-me-noaione-vthell-src-branch-master-vthell-py)
-    - [vtrip_helper.py](#vtrip-helper-py-https-git-ihateani-me-noaione-vthell-src-branch-master-vtrip-helper-py)
+    - [schedule.py](#schedule-py-https-git-ihateani-me-noaione-vthell-src-branch-master-scripts-schedule-py)
+    - [vthell.py](#vthell-py-https-git-ihateani-me-noaione-vthell-src-branch-master-scripts-vthell-py)
+    - [vtrip_helper.py](#vtrip-helper-py-https-git-ihateani-me-noaione-vthell-src-branch-master-scripts-vtrip-helper-py)
 
 ### What's changed?
 #### Version 1.3 Change:
@@ -159,7 +159,7 @@ it will default to `Unknown`.
 
 
 ### Helper scripts
-#### [schedule.py](https://git.ihateani.me/noaione/vthell/src/branch/master/schedule.py)
+#### [schedule.py](https://git.ihateani.me/noaione/vthell/src/branch/master/scripts/schedule.py)
 Script that will fetch provided youtube url a metadata that will be put on `jobs` folder.
 
 Fetched stuff via API:
@@ -169,7 +169,7 @@ Fetched stuff via API:
 
 Everything will be saved into a json file containing information for `vthell.py` will use.
 
-#### [vthell.py](https://git.ihateani.me/noaione/vthell/src/branch/master/vthell.py)
+#### [vthell.py](https://git.ihateani.me/noaione/vthell/src/branch/master/scripts/vthell.py)
 Main python script that will download the scheduled jobs
 Download will start if the conditions are met:
 - Stream started
@@ -178,7 +178,7 @@ Download will start if the conditions are met:
 
 It will start checking 2 minutes before stream start.
 
-#### [vtrip_helper.py](https://git.ihateani.me/noaione/vthell/src/branch/master/vtrip_helper.py)
+#### [vtrip_helper.py](https://git.ihateani.me/noaione/vthell/src/branch/master/scripts/vtrip_helper.py)
 Literally a script to only find the video/stream title and make a output format for `youtube-dl`
 
 *Licensed with MIT License*
