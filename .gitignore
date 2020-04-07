@@ -1,0 +1,12 @@
+*.mkv
+*.ts
+*.webm
+*.aac
+*.m4a
+*.opus
+*.mp4
+
+*.txt
+
+jobs/
+streamdump/
