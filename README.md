@@ -5,20 +5,20 @@
 **Last Updated**: 07/04/2020
 
 **Table of contents**:
-- [Changelog](#user-content-what-s-changed)
+- [Changelog](#what-s-changed)
     - [Version 1.3](#version-1-3-change)
-- [Information](#user-content-info)
-- [Requirements](#user-content-requirements)
-- [Setup](#user-content-setup)
-- [Running](#user-content-running)
-    - [addjob.sh](#user-content-addjob-sh)
-    - [runjob.sh](#user-content-runjob-sh)
-    - [vtrip.sh](#user-content-vtrip-sh)
-    - [vtup.sh](#user-content-vtup-sh)
-- [Helper scripts](#user-content-helper-scripts)
-    - [schedule.py](#user-content-schedule-py)
-    - [vthell.py](#user-content-vthell-py)
-    - [vtrip_helper.py](#user-content-vtrip-helper-sh)
+- [Information](#info)
+- [Requirements](#requirements)
+- [Setup](#setup)
+- [Running](#running)
+    - [addjob.sh](#addjob-sh)
+    - [runjob.sh](#runjob-sh)
+    - [vtrip.sh](#vtrip-sh)
+    - [vtup.sh](#vtup-sh)
+- [Helper scripts](#helper-scripts)
+    - [schedule.py](#schedule-py)
+    - [vthell.py](#vthell-py)
+    - [vtrip_helper.py](#vtrip-helper-sh)
 
 ### What's changed?
 #### Version 1.3 Change:
