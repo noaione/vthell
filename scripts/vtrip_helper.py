@@ -7,7 +7,7 @@ from datetime import datetime
 import pytz
 import requests
 
-API_KEY = "AIzaSyDRjKoHxz92Sappgcu4rv12aKnwb4jdKxY"
+API_KEY = ""
 BASE_API = "https://www.googleapis.com/youtube/v3/"
 BASE_YT_URL = BASE_API + "videos?id={}&key={}"
 BASE_YT_URL += "&part=snippet%2Cstatus%2CliveStreamingDetails%2CcontentDetails"
