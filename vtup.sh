@@ -1,5 +1,23 @@
 #!/bin/bash
 
+if [ -z "$1" ]
+then
+    echo "Please provide a file to upload"
+    exit 1
+fi
+
+if [ -z "$2" ]
+then
+    echo "Please provide a target folder"
+    exit 1
+fi
+
+if [ -z "$3" ]
+then
+    echo "Please provide a type upload"
+    exit 1
+fi
+
 FILE_TO_UP="$1"
 TARGET_FOLDER="$2"
 TYPE_UPLOAD="$3"
@@ -16,6 +34,15 @@ case $TYPE_UPLOAD in
         ;;
     archive)
         BASE_TARGET="${BASE_TARGET}/Stream Archive"
+        ;;
+    c)
+        BASE_TARGET="${BASE_TARGET}/Clips"
+        ;;
+    clips)
+        BASE_TARGET="${BASE_TARGET}/Clips"
+        ;;
+    translatedclips)
+        BASE_TARGET="${BASE_TARGET}/Clips"
         ;;
     cover)
         BASE_TARGET="${BASE_TARGET}/Cover Songs"
