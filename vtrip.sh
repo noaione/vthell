@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ -z "$1" ]
+then
+    echo "Please provide a youtube link"
+    exit 1
+fi
+
 URL="$1"
 # Explain!
 # 303+140: 1080p60 WEBM/VP9 + AAC 128kb/s
@@ -18,4 +24,4 @@ OUTPUT_FN=`${PY3_PATH} ./scripts/vtrip_helper.py ${URL}`
 
 echo $OUTPUT_FN
 
-$YTDL_PATH -f "$FORMAT" --merge-output-format mkv -o "$OUTPUT_FN" $URL
+$YTDL_PATH -f "$FORMAT" --merge-output-format mkv --all-subs --embed-subs --convert-subs ass -o "$OUTPUT_FN" $URL
