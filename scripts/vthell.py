@@ -5,6 +5,7 @@ import os
 import subprocess as sp
 import sys
 from datetime import datetime
+from discord_webhook import DiscordWebhook, DiscordEmbed
 
 BASE_VTHELL_PATH = (
     "/media/sdac/mizore/vthell/"  # Absoule path to vthell folder
@@ -16,6 +17,7 @@ RCLONE_TARGET_BASE = (
 BASE_VENV_BIN = (
     "/media/sdac/mizore/pip3/bin/"  # path to created python3 virtualenv bin
 )
+DISCORD_WEBHOOK_URL = os.getenv("VTHELL_DISCORD_WEBHOOK", "")
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -28,9 +30,38 @@ logging.basicConfig(
 vtlog = logging.getLogger("vthell")
 console = logging.StreamHandler(sys.stdout)
 console.setLevel(logging.INFO)
-formatter0 = logging.Formatter("%(message)s")
-console.setFormatter(formatter0)
-vtlog.addHandler(console)
+
+already_run = False
+
+
+def announce_shit(msg="Unknown"):
+    if not DISCORD_WEBHOOK_URL:
+        vtlog.debug("No Discord Webhook url, skipping announcement...")
+        return
+    webhook = DiscordWebhook(url=DISCORD_WEBHOOK_URL, username="VTHell")
+    embed = DiscordEmbed(title='VTHell', color=5574409)
+    embed.set_timestamp()
+
+    embed.add_embed_field(name="Message", value=msg)
+
+    webhook.add_embed(embed)
+    webhook.execute()
+
+
+def reset_handler(r=True):
+    if r:
+        vtlog.removeHandler(console)
+    formatter0 = logging.Formatter("%(message)s")
+    console.setFormatter(formatter0)
+    vtlog.addHandler(console)
+
+
+def print_end():
+    vtlog.info("====================== End of process! ======================")
+
+
+reset_handler(already_run)
+already_run = True
 
 upload_mapping = {
     # Other
@@ -71,6 +102,10 @@ upload_mapping = {
     "UCS9uQI-jC3DE0L4IpXyvr6w": "Kiryu Coco",
     "UC1uv2Oq6kNxgATlCiez59hw": "Tokoyami Towa",
     "UCqm3BQLlJfvkTsX_hvm0UmA": "Tsunomaki Watame",
+    # HoloID - Gen 1
+    "UCOyYb1c43VlX9rc_lT6NKQw": ".HoloID/Ayunda Risu",
+    "UCP0BspO_AMEe3aQqqpo89Dg": ".HoloID/Moona Hoshinova",
+    "UCAoy6rzhSf4ydcYjJw3WoVg": ".HoloID/Airani Iofifteen",
 }
 
 vtlog.info("====================== Start of process! ======================")
@@ -91,6 +126,8 @@ vthell_jobs = glob.glob(BASE_VTHELL_PATH + "jobs/*.json")
 
 if not vthell_jobs:
     vtlog.info("No jobs, exiting...")
+    reset_handler()
+    print_end()
     exit(0)
 
 vthell_stream = None
@@ -108,6 +145,11 @@ for vthjs in vthell_jobs:
             "Skipping {}, reason: Currently downloading.".format(vt["id"])
         )
         continue
+    if vt["isPaused"]:
+        vtlog.debug(
+            "Skipping {}, reason: Currently paused.".format(vt["id"])
+        )
+        continue
     if vt["startTime"] > dtnow:
         vtlog.debug(
             "Skipping {}, reason: Still far away from scheduled time.".format(
@@ -115,6 +157,20 @@ for vthjs in vthell_jobs:
             )
         )
         continue
+    if dtnow > (vt["startTime"] + 300) and not vt["firstRun"]:
+        vtlog.debug(
+            "Skipping {}, reason: Stream havent started since 3 minutes, pausing...".format(
+                vt["id"]
+            )
+        )
+        announce_shit("Stream ID: " + vt['id'] + ' are paused, please check it.')
+        vt["isPaused"] = True
+        vt["overridePaused"] = False
+        with open(vthjs, "w") as fp:
+            json.dump(vt, fp, indent=2)
+        continue
+    if vt["firstRun"]:
+        vt["firstRun"] = False
     vtlog.info("Undownloaded streams found, starting...")
     save_ts_name = (
         "'" + BASE_VTHELL_PATH + "streamdump/" + vt["filename"] + ".ts'"
@@ -138,6 +194,9 @@ for vthjs in vthell_jobs:
     vtlog.info("Executing streamlink command!")
     vtlog.debug(" ".join(STREAMLINK_CMD))
     override_err = False
+    req_limit_err = False
+    args_unk_err = False
+    discord_announced = False
 
     process = sp.Popen(
         " ".join(STREAMLINK_CMD),
@@ -153,6 +212,13 @@ for vthjs in vthell_jobs:
         if line.startswith("error"):
             if "read timeout" in line:
                 override_err = True
+            if "429 client error" in line:
+                req_limit_err = True
+            if "unrecognized arguments" in line:
+                args_unk_err = True
+        if "opening stream" in line:
+            discord_announced = True
+            announce_shit("Job " + vt['id'] + ' started recording!')
 
     process.stdout.close()
     process.wait()
@@ -164,6 +230,10 @@ for vthjs in vthell_jobs:
     if not override_err and rc != 0:
         # Assume error
         vtlog.error("Job failed, retrying another...")
+        if req_limit_err:
+            announce_shit("Job: " + vt['id'] + ' >> 429 Error, please enable proxy.')
+        if args_unk_err:
+            announce_shit("Job: " + vt['id'] + ' >> Please check output name.')
         vt["isDownloading"] = False
         with open(vthjs, "w") as fp:
             json.dump(vt, fp, indent=2)
@@ -174,6 +244,8 @@ for vthjs in vthell_jobs:
 
 if not vthell_stream:
     vtlog.info("No scheduled streams that met conditions, exiting...")
+    reset_handler()
+    print_end()
     exit(0)
 
 vtjsf = BASE_VTHELL_PATH + "jobs/" + vthell_stream["id"] + ".json"
@@ -185,6 +257,7 @@ save_ts_name1 = (
     BASE_VTHELL_PATH + "streamdump/" + vthell_stream["filename"] + ".ts"
 )
 
+announce_shit("Stream ID: " + vthell_stream['id'] + ' downloaded, will be muxed and uploaded.')
 vtlog.info(
     "Job {} download success, now muxing...".format(vthell_stream["id"])
 )
@@ -220,7 +293,5 @@ vtlog.info("Cleaning up...")
 os.remove(vtjsf)
 os.remove(save_ts_name1)
 
-vtlog.removeHandler(console)
-console.setFormatter(formatter0)
-vtlog.addHandler(console)
-vtlog.info("====================== End of process! ======================")
+reset_handler()
+print_end()
