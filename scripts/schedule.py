@@ -64,6 +64,7 @@ with open(BASE_VTHELL_PATH + "jobs/" + input_url + ".json", "w") as fp:
             "isDownloading": False,
             "isDownloaded": False,
             "isPaused": False,  # Pause if stream havent started after 3 mins.
+            "firstRun": True,
             "startTime": dts_ts - 120,  # T-2
             "streamer": snippets["channelId"],
             "streamUrl": "https://www.youtube.com/watch?v=" + input_url,
