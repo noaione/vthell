@@ -1,5 +1,6 @@
 #!/media/sdac/mizore/pip3/bin/python3
 
+import os
 import re
 import sys
 from datetime import datetime
@@ -7,7 +8,9 @@ from datetime import datetime
 import pytz
 import requests
 
-API_KEY = ""
+API_KEY = os.getenv("VTHELL_YT_API_KEY", "")
+if not API_KEY:
+    print("Please provide VTHELL_YT_API_KEY to the environment.")
 BASE_API = "https://www.googleapis.com/youtube/v3/"
 BASE_YT_URL = BASE_API + "videos?id={}&key={}"
 BASE_YT_URL += "&part=snippet%2Cstatus%2CliveStreamingDetails%2CcontentDetails"
