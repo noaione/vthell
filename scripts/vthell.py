@@ -39,7 +39,7 @@ def announce_shit(msg="Unknown"):
         vtlog.debug("No Discord Webhook url, skipping announcement...")
         return
     webhook = DiscordWebhook(url=DISCORD_WEBHOOK_URL, username="VTHell")
-    embed = DiscordEmbed(title='VTHell', color=5574409)
+    embed = DiscordEmbed(title="VTHell", color=5574409)
     embed.set_timestamp()
 
     embed.add_embed_field(name="Message", value=msg)
@@ -146,9 +146,7 @@ for vthjs in vthell_jobs:
         )
         continue
     if vt["isPaused"]:
-        vtlog.debug(
-            "Skipping {}, reason: Currently paused.".format(vt["id"])
-        )
+        vtlog.debug("Skipping {}, reason: Currently paused.".format(vt["id"]))
         continue
     if vt["startTime"] > dtnow:
         vtlog.debug(
@@ -159,11 +157,12 @@ for vthjs in vthell_jobs:
         continue
     if dtnow > (vt["startTime"] + 300) and not vt["firstRun"]:
         vtlog.debug(
-            "Skipping {}, reason: Stream havent started since 3 minutes, pausing...".format(
-                vt["id"]
-            )
+            "Skipping {}, reason: Stream haven't started "
+            "since 3 minutes, pausing...".format(vt["id"])
         )
-        announce_shit("Stream ID: " + vt['id'] + ' are paused, please check it.')
+        announce_shit(
+            "Stream ID: " + vt["id"] + " are paused, please check it."
+        )
         vt["isPaused"] = True
         vt["overridePaused"] = False
         with open(vthjs, "w") as fp:
@@ -218,7 +217,7 @@ for vthjs in vthell_jobs:
                 args_unk_err = True
         if "opening stream" in line:
             discord_announced = True
-            announce_shit("Job " + vt['id'] + ' started recording!')
+            announce_shit("Job " + vt["id"] + " started recording!")
 
     process.stdout.close()
     process.wait()
@@ -231,9 +230,11 @@ for vthjs in vthell_jobs:
         # Assume error
         vtlog.error("Job failed, retrying another...")
         if req_limit_err:
-            announce_shit("Job: " + vt['id'] + ' >> 429 Error, please enable proxy.')
+            announce_shit(
+                "Job: " + vt["id"] + " >> 429 Error, please enable proxy."
+            )
         if args_unk_err:
-            announce_shit("Job: " + vt['id'] + ' >> Please check output name.')
+            announce_shit("Job: " + vt["id"] + " >> Please check output name.")
         vt["isDownloading"] = False
         with open(vthjs, "w") as fp:
             json.dump(vt, fp, indent=2)
@@ -257,7 +258,11 @@ save_ts_name1 = (
     BASE_VTHELL_PATH + "streamdump/" + vthell_stream["filename"] + ".ts"
 )
 
-announce_shit("Stream ID: " + vthell_stream['id'] + ' downloaded, will be muxed and uploaded.')
+announce_shit(
+    "Stream ID: "
+    + vthell_stream["id"]
+    + " downloaded, will be muxed and uploaded."
+)
 vtlog.info(
     "Job {} download success, now muxing...".format(vthell_stream["id"])
 )
