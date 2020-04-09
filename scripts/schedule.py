@@ -1,4 +1,5 @@
 import json
+import os
 import re
 import sys
 from datetime import datetime
@@ -10,7 +11,9 @@ BASE_VTHELL_PATH = (
     "/media/sdac/mizore/vthell/"  # Absoule path to vthell folder
 )
 
-API_KEY = ""
+API_KEY = os.getenv("VTHELL_YT_API_KEY", "")
+if not API_KEY:
+    print("Please provide VTHELL_YT_API_KEY to the environment.")
 BASE_API = "https://www.googleapis.com/youtube/v3/"
 BASE_YT_URL = BASE_API + "videos?id={}&key={}"
 BASE_YT_URL += "&part=snippet%2Cstatus%2CliveStreamingDetails%2CcontentDetails"
@@ -60,6 +63,7 @@ with open(BASE_VTHELL_PATH + "jobs/" + input_url + ".json", "w") as fp:
             "filename": final_filename,
             "isDownloading": False,
             "isDownloaded": False,
+            "isPaused": False,  # Pause if stream havent started after 3 mins.
             "startTime": dts_ts - 120,  # T-2
             "streamer": snippets["channelId"],
             "streamUrl": "https://www.youtube.com/watch?v=" + input_url,
