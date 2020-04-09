@@ -41,6 +41,9 @@ case $TYPE_UPLOAD in
     clips)
         BASE_TARGET="${BASE_TARGET}/Clips"
         ;;
+    tlclips)
+        BASE_TARGET="${BASE_TARGET}/Clips"
+        ;;
     translatedclips)
         BASE_TARGET="${BASE_TARGET}/Clips"
         ;;
