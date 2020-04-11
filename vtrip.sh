@@ -19,8 +19,9 @@ URL="$1"
 FORMAT="303+140/299+140/248+140/137+140/302+140/298+140/247+140/136+140"
 YTDL_PATH="/media/sdac/mizore/pip3/bin/youtube-dl"
 PY3_PATH="/media/sdac/mizore/pip3/bin/python3"
+VTHELL_PATH="/media/sdac/mizore/vthell"
 
-OUTPUT_FN=`${PY3_PATH} ./scripts/vtrip_helper.py ${URL}`
+OUTPUT_FN=`${PY3_PATH} ${VTHELL_PATH}/scripts/vtrip_helper.py ${URL}`
 
 echo $OUTPUT_FN
 
