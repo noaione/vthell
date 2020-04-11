@@ -44,10 +44,13 @@ if s.status_code != 200:
     exit(1)
 res = s.json()
 snippets = res["items"][0]["snippet"]
-if snippets["liveBroadcastContent"] != "none":
-    stream_start = res["items"][0]["liveStreamingDetails"][
-        "scheduledStartTime"
-    ]
+if "liveStreamingDetails" in res["items"][0]:
+    if "actualStartTime" in res["items"][0]["liveStreamingDetails"]:
+        stream_start = res["items"][0]["liveStreamingDetails"]["actualStartTime"]
+    else:
+        stream_start = res["items"][0]["liveStreamingDetails"][
+            "scheduledStartTime"
+        ]
 else:
     stream_start = snippets["publishedAt"]
 dts = datetime.strptime(stream_start, "%Y-%m-%dT%H:%M:%S.%fZ")
