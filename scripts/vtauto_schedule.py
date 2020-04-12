@@ -17,6 +17,20 @@ BASE_VTHELL_PATH = "/media/sdac/mizore/vthell/"  # Absoule path to vthell folder
 
 DISCORD_WEBHOOK_URL = os.getenv("VTHELL_DISCORD_WEBHOOK", "")
 
+
+def secure_filename(fn: str):
+    fn = fn.replace("/", "／")
+    fn = fn.replace(":", "：")
+    fn = fn.replace("<", "＜")
+    fn = fn.replace(">", "＞")
+    fn = fn.replace('"', "”")
+    fn = fn.replace("\\", "＼")
+    fn = fn.replace("?", "？")
+    fn = fn.replace("*", "⋆")
+    fn = fn.replace("|", "｜")
+    return fn
+
+
 logging.basicConfig(
     level=logging.DEBUG,
     handlers=[
@@ -209,7 +223,7 @@ def format_filename(title, ctime):
         ctime = int(ctime)
     tsd = datetime.fromtimestamp(ctime, pytz.timezone("Asia/Tokyo"))
     ts_strf = tsd.strftime("[%Y.%m.%d]")
-    return "{} {} [1080p AAC]".format(ts_strf, title)
+    return secure_filename("{} {} [1080p AAC]".format(ts_strf, title))
 
 
 vtlog.info(
