@@ -28,6 +28,7 @@ def secure_filename(fn: str):
     fn = fn.replace("?", "？")
     fn = fn.replace("*", "⋆")
     fn = fn.replace("|", "｜")
+    fn = fn.replace("#", "")
     return fn
 
 
