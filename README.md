@@ -141,7 +141,7 @@ y/e/d>
 8. Click `+ Create Credentials` ~> `API key`
 9. Copy and save it somewhere save for now.
 10. Click `Close`
-11. From the API key you saved before, create a new ENV key on your linux machine, titled: `VTHELL_YT_API_KEY`
+11. From the API key you saved before, create a new ENV key on your linux machine, titled: `VTHELL_YT_API_KEY`<br>
     You can edit your `${HOME}/.profile` file and add this:
     ```
     VTHELL_YT_API_KEY="YOUR_API_KEY"; export VTHELL_YT_API_KEY
@@ -152,7 +152,7 @@ y/e/d>
 2. Click the gear icon (Edit channel) beside the channel name
 3. Click `Webhooks` then `Create Webhook`
 4. Name it whatever you want and copy the webhook URL
-5. With the same step as `step 5.xi`, you need to made a ENV key
+5. With the same step as `step 5.xi`, you need to made a ENV key<br>
     You can edit your `${HOME}/.profile` file and add this:
     ```
     VTHELL_DISCORD_WEBHOOK="DISCORD_WEBHOOK_URL"; export VTHELL_DISCORD_WEBHOOK
@@ -160,7 +160,7 @@ y/e/d>
 
 ### Setup VTHell
 1. Download or clone this repository
-2. Create `jobs` and `streamdump` folder inside vthell folder
+2. Create `jobs` and `streamdump` folder inside vthell folder<br>
     Example:
     ```
     $ ls -alh ~/vthell/
@@ -299,6 +299,7 @@ The default one for `IGNORED_MAP` are:
 There's only 2 supported `type` now:
 - `channel`
 - `word`
+
 `channel` will record/ignore any upcoming live from the `channel`<br>
 `word` will record/ignore any upcoming live when the title have the certain `word`
 
