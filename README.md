@@ -24,6 +24,7 @@ You can still use it but when it's uploaded it will use `Unknown/Unknown` as the
     - [runauto.sh](#runauto-sh-https-git-ihateani-me-noaione-vthell-src-branch-master-runauto-sh)
     - [vtrip.sh](#vtrip-sh-https-git-ihateani-me-noaione-vthell-src-branch-master-vtrip-sh)
     - [vtup.sh](#vtup-sh-https-git-ihateani-me-noaione-vthell-src-branch-master-vtup-sh)
+- [Troubleshooting](#troubleshooting)
 - [Helpful `alias`](#helpful-bashrc-or-alias)
 
 ## Requirements
@@ -436,6 +437,27 @@ allowed **[type]**:
 if you put other stuff on **[vtuber]** or **[type]**
 it will default to `Unknown`.
 
+
+## Troubleshooting
+> Stream xxxxxx are paused
+
+Enable it again when the VTuber start streaming by using `./addjob.sh [youtube_link]`
+
+> Error 429
+
+You're rate limited by YouTube there's nothing you can't do except using proxy temporarily
+
+> "Please add Niji ID VTuber or other VTuber"
+
+If someone want to actually compile a list containing every channel ID of the VTuber, I'll add it.<br>
+**You can contact me at Discord: N4O#8868**
+
+> "I added DISCORD_WEBHOOK to my ENV key but I'm not getting any announcement"
+
+Replace the `DISCORD_WEBHOOK_URL = os.getenv("VTHELL_DISCORD_WEBHOOK", "")` with<br>
+```py
+DISCORD_WEBHOOK_URL = "YOUR_WEBHOOK_URL"
+```
 
 ## Helpful `.bashrc` or `alias`
 > Shortcut for `addjob.sh`
