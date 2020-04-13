@@ -153,7 +153,7 @@ y/e/d>
 2. Click the gear icon (Edit channel) beside the channel name
 3. Click `Webhooks` then `Create Webhook`
 4. Name it whatever you want and copy the webhook URL
-5. With the same step as `step 5.xi`, you need to made a ENV key<br>
+5. With the same step as `Step 11` from [Get “YouTube Data API v3” API key.](#get-youtube-data-api-v3-api-key), you need to made a ENV key<br>
     You can edit your `${HOME}/.profile` file and add this:
     ```
     VTHELL_DISCORD_WEBHOOK="DISCORD_WEBHOOK_URL"; export VTHELL_DISCORD_WEBHOOK
