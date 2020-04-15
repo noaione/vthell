@@ -211,9 +211,9 @@ for vthjs in vthell_jobs:
                 override_err = True
             if "429 client error" in line:
                 req_limit_err = True
-            if "unrecognized arguments" in line:
+            if "unrecognized" in line:
                 args_unk_err = True
-        if "opening stream" in line:
+        if "opening stream" in line and not discord_announced:
             discord_announced = True
             announce_shit("Job " + vt["id"] + " started recording!")
 
