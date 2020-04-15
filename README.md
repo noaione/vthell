@@ -2,8 +2,8 @@
     <img src="https://cdn.discordapp.com/emojis/651022528785022976.png?v=1"><br>
     N4O VTuber Recording Tools
 </h1>
-<p align="center"><b>Version 1.6</b><br><i>A rabbit hole you shouldn't enter, once entered you can't get out.</i></p>
-<p align="center">Created by: <b>N4O</b><br/>Last Updated: <b>12/04/2020</b></p>
+<p align="center"><b>Version 1.7</b><br><i>A rabbit hole you shouldn't enter, once entered you can't get out.</i></p>
+<p align="center">Created by: <b>N4O</b><br/>Last Updated: <b>15/04/2020</b></p>
 
 **WARNING**<br>
 Doesn't support anyone outside HoloLive currently. :^)<br>
@@ -288,7 +288,6 @@ While `IGNORED_MAP` will remove anything that match the conditions.
 The default one for `ENABLED_MAP` are:
 - Towa ch.
 - Korone ch.
-- Suisei Channel
 - Any title containing: `歌う`
 - Any title containing: `歌枠`
 
@@ -321,7 +320,7 @@ You also can remove any predefined one if you want.
 
 ## Running
 #### [addjob.sh](https://git.ihateani.me/noaione/vthell/src/branch/master/addjob.sh)
-**./addjob.sh** [youtube_link]
+**./addjob.sh** [youtube_link1] [youtube_link2] [youtube_link_etc]
 
 Supported youtube link format are:
 - https://www.youtube.com/watch?v=VIDEOID
