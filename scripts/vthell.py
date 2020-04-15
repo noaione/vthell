@@ -5,7 +5,8 @@ import os
 import subprocess as sp
 import sys
 from datetime import datetime
-from discord_webhook import DiscordWebhook, DiscordEmbed
+
+from discord_webhook import DiscordEmbed, DiscordWebhook
 
 BASE_VTHELL_PATH = (
     "/media/sdac/mizore/vthell/"  # Absoule path to vthell folder
@@ -30,8 +31,6 @@ logging.basicConfig(
 vtlog = logging.getLogger("vthell")
 console = logging.StreamHandler(sys.stdout)
 console.setLevel(logging.INFO)
-
-already_run = False
 
 
 def announce_shit(msg="Unknown"):
@@ -60,8 +59,7 @@ def print_end():
     vtlog.info("====================== End of process! ======================")
 
 
-reset_handler(already_run)
-already_run = True
+reset_handler(False)
 
 upload_mapping = {
     # Other
