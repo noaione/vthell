@@ -119,7 +119,6 @@ MAPPING = {
 ENABLED_MAP = [
     {"type": "channel", "data": "UC1uv2Oq6kNxgATlCiez59hw"},
     {"type": "channel", "data": "UChAnqc_AY5_I3Px5dig3X1Q"},
-    {"type": "channel", "data": "UC5CwaMl1eIgY8h02uZw7u8A"},
     {"type": "word", "data": "歌う"},
     {"type": "word", "data": "歌枠"},
 ]
@@ -209,14 +208,14 @@ for ignore in IGNORED_MAP:
         scheduled_streams, ignore["data"]
     )
 
-collected = []
+collected_streams = []
 for enable in ENABLED_MAP:
     vtlog.debug("Collecting: {}\n{}".format(enable["type"], enable["data"]))
     m_ = {"word": _collect_word, "channel": _collect_channel}
     collect = m_.get(enable["type"], _blackhole2)(
         scheduled_streams, enable["data"]
     )
-    collected.extend(collect)
+    collected_streams.extend(collect)
 
 
 def format_filename(title, ctime):
@@ -227,11 +226,16 @@ def format_filename(title, ctime):
     return secure_filename("{} {} [1080p AAC]".format(ts_strf, title))
 
 
+if not collected_streams:
+    vtlog.info("No streams that match on current rule, exiting...")
+    exit(0)
+
+
 vtlog.info(
     "Live data collected and filtered, now trying to add to jobs list..."
 )
 
-for stream in collected:
+for stream in collected_streams:
     if stream["id"] in vthell_jobs:
         vtlog.warn("Skipping {}, jobs already made!".format(stream["id"]))
         continue
