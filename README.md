@@ -2,12 +2,8 @@
     <img src="https://cdn.discordapp.com/emojis/651022528785022976.png?v=1"><br>
     N4O VTuber Recording Tools
 </h1>
-<p align="center"><b>Version 1.7</b><br><i>A rabbit hole you shouldn't enter, once entered you can't get out.</i></p>
-<p align="center">Created by: <b>N4O</b><br/>Last Updated: <b>15/04/2020</b></p>
-
-**WARNING**<br>
-Doesn't support anyone outside HoloLive currently. :^)<br>
-You can still use it but when it's uploaded it will use `Unknown/Unknown` as the folder
+<p align="center"><b>Version 1.8</b><br><i>A rabbit hole you shouldn't enter, once entered you can't get out.</i></p>
+<p align="center">Created by: <b>N4O</b><br/>Last Updated: <b>16/04/2020</b></p>
 
 **Table of Contents**:
 - [Requirements](#requirements)
@@ -18,6 +14,7 @@ You can still use it but when it's uploaded it will use `Unknown/Unknown` as the
     - **Optional** [Setup Discord Announcer](#setup-discord-announcer-optional)
     - [Setup VTHell](#setup-vthell)
     - [Configuring auto-scheduler](#configuring-auto-scheduler)
+    - [Configuring twitcasting](#configuring-twitcasting)
 - [Running](#running)
     - [addjob.sh](#addjob-sh-https-git-ihateani-me-noaione-vthell-src-branch-master-addjob-sh)
     - [runjob.sh](#runjob-sh-https-git-ihateani-me-noaione-vthell-src-branch-master-runjob-sh)
@@ -26,6 +23,20 @@ You can still use it but when it's uploaded it will use `Unknown/Unknown` as the
     - [vtup.sh](#vtup-sh-https-git-ihateani-me-noaione-vthell-src-branch-master-vtup-sh)
 - [Troubleshooting](#troubleshooting)
 - [Helpful `alias`](#helpful-bashrc-or-alias)
+
+## Information
+This tools currently doesn't support anyone else beside HoloLive.<br>
+You are able to use it but it will not work 100% or the upload mapping will be kinda fucked.
+
+I only fully support Linux for now because Windows is annoying to make this fully automatic and I'm lazy to write up the tutorial.
+
+This tools also utilize [HoloLive Tools]() API and YouTube Data API v3 for YouTube streams.<br>
+And utilize twitcasting API for the twitcasting streams.
+
+If you want to see other VLiver to be added to this list, you can contact me at **Discord: N4O#8868**<br>
+I'll try to add it to this program.
+
+This tools is not modular yet, but once it setup you can just use it easily.
 
 ## Requirements
 - Linux Server
@@ -290,6 +301,7 @@ The default one for `ENABLED_MAP` are:
 - Korone ch.
 - Any title containing: `歌う`
 - Any title containing: `歌枠`
+- Any title containing: `歌雑談`
 
 The default one for `IGNORED_MAP` are:
 - All HoloStars Channel
@@ -317,6 +329,20 @@ Channel ID for other HoloLiver are provided in `MAPPING` variable
 
 You can add more by just creating a new line after the last one.<br>
 You also can remove any predefined one if you want.
+
+### Configuring Twitcasting
+**Main file: [scripts/twitcast.py](https://git.ihateani.me/noaione/vthell/src/branch/master/scripts/twitcast.py)**
+
+**NOTE**<br>
+I need help expanding the twitcast user ID, please contact me at Discord: N4O#8868
+
+There's only 1 part you need to edit: `ENABLED_USERS` variable<br>
+
+The default one enabled are:
+- natsuiromatsuri
+
+You only need to add the user ID to the `ENABLED_USERS` lists<br>
+You can check the User ID on `upload_mapping` variable.
 
 ## Running
 #### [addjob.sh](https://git.ihateani.me/noaione/vthell/src/branch/master/addjob.sh)
@@ -369,6 +395,22 @@ After that, it will check all `.json` in `jobs` folder and add the one that are 
 **Recommended cron schedule:**
 ```sh
 */3 * * * * /path/to/vthell/runauto.sh
+```
+
+#### [runtwit.sh](https://git.ihateani.me/noaione/vthell/src/branch/master/runtwit.sh)
+**./runtwit.sh**
+
+You can use **`cronjob`** to run every 2 minute or whatever interval you want or run it manually.
+
+It will fetch to Twitcasting frontend API endpoint to check if `ENABLED_USERS` are live or not.<br>
+If it's it will add a "LOCK" file to jobs folder to ensure that no duplicate will be added.<br>
+After it finish, it will unlock again the file and the final file will be uploaded.<br>
+
+**To customize refer to: [Configuring auto-scheduler](#configuring-twitcasting)**
+
+**Recommended cron schedule:**
+```sh
+*/2 * * * * /path/to/vthell/runtwit.sh
 ```
 
 #### [vtrip.sh](https://git.ihateani.me/noaione/vthell/src/branch/master/vtrip.sh)
