@@ -191,11 +191,12 @@ for ninp, input_url in enumerate(batched_urls, 1):
     if not Scheduler:
         vtlog.error("Unknown URL: {}, continuing.".format(input_url))
         continue
-    if Scheduler.streamweb == "BiliBili":
-        vtlog.warn("BiliBili support aren't finished yet, continuing...")
     vtlog.info("Scheduling: {}".format(input_url))
 
     Scheduler = Scheduler(input_url)
+    if Scheduler.streamweb == "BiliBili":
+        vtlog.warn("BiliBili support aren't finished yet, continuing...")
+        continue
     Scheduler.process()
 
     json_output = Scheduler.dumps()
