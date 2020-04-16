@@ -26,11 +26,12 @@
 
 ## Information
 This tools currently doesn't support anyone else beside HoloLive.<br>
-You are able to use it but it will not work 100% or the upload mapping will be kinda fucked.
+You are able to use it but it will not work 100% or the upload mapping will be kinda fucked.<br>
+To be honest, this tools works for every livestream in YouTube. It will only be broken when the stream is recorded and will be uploaded.
 
 I only fully support Linux for now because Windows is annoying to make this fully automatic and I'm lazy to write up the tutorial.
 
-This tools also utilize [HoloLive Tools]() API and YouTube Data API v3 for YouTube streams.<br>
+This tools also utilize [HoloLive Tools](https://hololive.jetri.co/) API and YouTube Data API v3 for YouTube streams.<br>
 And utilize twitcasting API for the twitcasting streams.
 
 If you want to see other VLiver to be added to this list, you can contact me at **Discord: N4O#8868**<br>
@@ -60,7 +61,7 @@ This tools is not modular yet, but once it setup you can just use it easily.
     ```bash
     $ virtualenv vthellenv
     $ source vthellenv/bin/activate
-    $ pip3 install -U requests pytz youtube-dl streamlink
+    $ pip3 install -U requests pytz youtube-dl streamlink discord_webhook
     $ deactivate
     ```
     
@@ -203,7 +204,7 @@ BASE_VTHELL_PATH = "/media/sdac/mizore/vthell/"  # Absoule path to vthell folder
 ```
 Change `BASE_VTHELL_PATH` to the absolute path of your vthell folder
 
-**In `scripts/vthell.py`**<br>
+**In `scripts/vthell.py` AND In `scripts/twitcast.py`**<br>
 ```py
 BASE_VTHELL_PATH = (
     "/media/sdac/mizore/vthell/"  # Absoule path to vthell folder
@@ -368,9 +369,9 @@ It will check all `.json` in `jobs` folder and process the one that are not proc
 The json file contains 3 keys that will be used to check:
 - **`startTime`** if the `startTime` not less than 2 minutes left, it will be skipped completely
 - **`isDownloaded`** stream `finished`, and file is being muxed and will be uploaded.
-- **`isDownloading`** will skip if True to `prevent double download`.
+- **`isDownloading`** will skip if True to `prevent double recording`.
 
-After **2 minutes left before stream**, it will use **streamlink** to check if stream online or not.<br>
+After **1 minutes left before stream**, it will use **streamlink** to check if stream online or not.<br>
 If not continue, if yes start recording.
 
 After stream finished, file will be muxed into .mkv and will be uploaded, .ts file will be deleted and also the .json files.
@@ -418,7 +419,7 @@ After it finish, it will unlock again the file and the final file will be upload
 
 Download your vtuber (mainly holo) video from youtube.<br>
 Doesn't support playlist.<br>
-Output format are: [YYYY.MM.DD] TITLE [RESOLUTION AAC].mkv<br>
+Output format are: `[YYYY.MM.DD] TITLE [RESOLUTION AAC].mkv`<br>
 YYYY.MM.DD are Date uploaded or streamed.<br>
 Combine with `vtup.sh` later
 
@@ -486,7 +487,7 @@ Enable it again when the VTuber start streaming by using `./addjob.sh [youtube_l
 
 > Error 429
 
-You're rate limited by YouTube there's nothing you can't do except using proxy temporarily
+You're being rate limited by YouTube there's nothing you can do except using proxy temporarily
 
 > "Please add Niji ID VTuber or other VTuber"
 
@@ -534,5 +535,5 @@ alias vtl="tail -f -n 80 /path/to/vthell/nvthell.log"
 > See all the jobs<br>
 **WARNING**: You need `jq` in your PATH
 ```bash
-alias vtj='for jobs in /path/to/vthell/jobs/*.json; do jname=`cat $jobs | jq -r '.filename'`; jsurl=`cat $jobs | jq -r '.streamUrl'`; jsdling=`cat $jobs | jq '.isDownloading'`; jsdled=`cat $jobs | jq '.isDownloaded'`; jdtime=`cat $jobs | jq '.startTime'`; jdtime="$(($jdtime + 32400))"; jdtime=`date -d @$jdtime`; printf "Title: ${jname}\nLink: ${jsurl}\nStart Time: ${jdtime/UTC/JST}\nDownloading? ${jsdling^}   Downloaded? ${jsdled^}\n\n"; done'
+alias vtj='for jobs in /path/to/vthell/jobs/*.json; do jname=`cat $jobs | jq -r '.filename'`; jsurl=`cat $jobs | jq -r '.streamUrl'`; jsdling=`cat $jobs | jq '.isDownloading'`; jsdled=`cat $jobs | jq '.isDownloaded'`; jdtime=`cat $jobs | jq '.startTime'`; jdtime="$(($jdtime + 32400))"; jdtime=`date -d @$jdtime`; printf "Title: ${jname}\nLink: ${jsurl}\nStart Time: ${jdtime/UTC/JST}\Recording? ${jsdling^}   Recorded? ${jsdled^}\n\n"; done'
 ```

@@ -134,27 +134,27 @@ for vthjs in vthell_jobs:
     with open(vthjs, "r") as fp:
         vt = json.load(fp)
     if vt["isDownloaded"]:
-        vtlog.debug(
-            "Skipping {}, reason: Already downloaded.".format(vt["id"])
+        vtlog.warn(
+            "Skipping {}, reason: Already recorded.".format(vt["id"])
         )
         continue
     if vt["isDownloading"]:
-        vtlog.debug(
-            "Skipping {}, reason: Currently downloading.".format(vt["id"])
+        vtlog.warn(
+            "Skipping {}, reason: Currently recording.".format(vt["id"])
         )
         continue
     if vt["isPaused"]:
-        vtlog.debug("Skipping {}, reason: Currently paused.".format(vt["id"]))
+        vtlog.warn("Skipping {}, reason: Currently paused.".format(vt["id"]))
         continue
     if vt["startTime"] > dtnow:
-        vtlog.debug(
+        vtlog.warn(
             "Skipping {}, reason: Still far away from scheduled time.".format(
                 vt["id"]
             )
         )
         continue
     if dtnow > (vt["startTime"] + 300) and not vt["firstRun"]:
-        vtlog.debug(
+        vtlog.warn(
             "Skipping {}, reason: Stream haven't started "
             "since 3 minutes, pausing...".format(vt["id"])
         )
@@ -168,7 +168,7 @@ for vthjs in vthell_jobs:
         continue
     if vt["firstRun"]:
         vt["firstRun"] = False
-    vtlog.info("Undownloaded streams found, starting...")
+    vtlog.info("Unrecorded stream found, starting...")
     save_ts_name = (
         "'" + BASE_VTHELL_PATH + "streamdump/" + vt["filename"] + ".ts'"
     )
@@ -259,10 +259,10 @@ save_ts_name1 = (
 announce_shit(
     "Stream ID: "
     + vthell_stream["id"]
-    + " downloaded, will be muxed and uploaded."
+    + " are finished recording, will be muxed and uploaded."
 )
 vtlog.info(
-    "Job {} download success, now muxing...".format(vthell_stream["id"])
+    "Job {} recording finished, now muxing...".format(vthell_stream["id"])
 )
 vthell_stream["isDownloading"] = False
 vthell_stream["isDownloaded"] = True
