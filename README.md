@@ -492,5 +492,5 @@ alias vtl="tail -f -n 80 /path/to/vthell/nvthell.log"
 > See all the jobs<br>
 **WARNING**: You need `jq` in your PATH
 ```bash
-alias vtj='for jobs in /path/to/vthell/jobs/*.json; do jname=`cat $jobs | jq -r '.filename'`; jsurl=`cat $jobs | jq -r '.streamUrl'`; jsdling=`cat $jobs | jq '.isDownloading'`; jsdled=`cat $jobs | jq '.isDownloaded'`; jdtime=`cat $jobs | jq '.startTime'`; jdtime="$(($jdtime + 28800))"; jdtime=`date -d @$jdtime`; printf "Title: ${jname}\nLink: ${jsurl}\nStart Time: ${jdtime/UTC/UTC+7}\nDownloading? ${jsdling^}   Downloaded? ${jsdled^}\n\n"; done'
+alias vtj='for jobs in /path/to/vthell/jobs/*.json; do jname=`cat $jobs | jq -r '.filename'`; jsurl=`cat $jobs | jq -r '.streamUrl'`; jsdling=`cat $jobs | jq '.isDownloading'`; jsdled=`cat $jobs | jq '.isDownloaded'`; jdtime=`cat $jobs | jq '.startTime'`; jdtime="$(($jdtime + 32400))"; jdtime=`date -d @$jdtime`; printf "Title: ${jname}\nLink: ${jsurl}\nStart Time: ${jdtime/UTC/JST}\nDownloading? ${jsdling^}   Downloaded? ${jsdled^}\n\n"; done'
 ```
