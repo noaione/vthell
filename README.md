@@ -4,8 +4,10 @@
 </h1>
 <p align="center"><b>Version 1.8</b><br><i>A rabbit hole you shouldn't enter, once entered you can't get out.</i></p>
 <p align="center">Created by: <b>N4O</b><br/>Last Updated: <b>16/04/2020</b></p>
+<p align="center"><a href="https://git.ihateani.me/noaione/vthell/releases"><strong>Download</strong></a></p>
 
 **Table of Contents**:
+- [Information](#information)
 - [Requirements](#requirements)
 - [Setup](#setup)
     - [Setup python virtualenv](#setup-virtualenv)
@@ -19,6 +21,7 @@
     - [addjob.sh](#addjob-sh-https-git-ihateani-me-noaione-vthell-src-branch-master-addjob-sh)
     - [runjob.sh](#runjob-sh-https-git-ihateani-me-noaione-vthell-src-branch-master-runjob-sh)
     - [runauto.sh](#runauto-sh-https-git-ihateani-me-noaione-vthell-src-branch-master-runauto-sh)
+    - [runtwit.sh](#runtwit-sh-https-git-ihateani-me-noaione-vthell-src-branch-master-runtwit-sh)
     - [vtrip.sh](#vtrip-sh-https-git-ihateani-me-noaione-vthell-src-branch-master-vtrip-sh)
     - [vtup.sh](#vtup-sh-https-git-ihateani-me-noaione-vthell-src-branch-master-vtup-sh)
 - [Troubleshooting](#troubleshooting)
@@ -172,7 +175,7 @@ y/e/d>
     ```
 
 ### Setup VTHell
-1. Download or clone this repository
+1. [Download](https://git.ihateani.me/noaione/vthell/releases) or [clone](https://git.ihateani.me/noaione/vthell/archive/master.zip) this repository
 2. Create `jobs` and `streamdump` folder inside vthell folder<br>
     Example:
     ```
