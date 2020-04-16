@@ -121,6 +121,7 @@ ENABLED_MAP = [
     {"type": "channel", "data": "UChAnqc_AY5_I3Px5dig3X1Q"},
     {"type": "word", "data": "歌う"},
     {"type": "word", "data": "歌枠"},
+    {"type": "word", "data": "歌雑談"},
 ]
 
 IGNORED_MAP = [
