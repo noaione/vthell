@@ -122,6 +122,8 @@ ENABLED_MAP = [
     {"type": "word", "data": "歌う"},
     {"type": "word", "data": "歌枠"},
     {"type": "word", "data": "歌雑談"},
+    {"type": "word", "data": "ASMR"},
+    {"type": "word", "data": "うたうよ"}
 ]
 
 IGNORED_MAP = [
@@ -146,7 +148,7 @@ if r.status_code >= 400:
 try:
     scheduled_streams = r.json()
 except json.JSONDecodeError:
-    vtlog.error("API returned weird shit")
+    vtlog.error("API returned weird stuff, aborting...")
     exit(1)
 
 
@@ -219,11 +221,12 @@ for enable in ENABLED_MAP:
     collected_streams.extend(collect)
 
 
-def format_filename(title, ctime):
+def format_filename(title, ctime, s_id):
     if isinstance(ctime, str):
         ctime = int(ctime)
     tsd = datetime.fromtimestamp(ctime, pytz.timezone("Asia/Tokyo"))
     ts_strf = tsd.strftime("[%Y.%m.%d]")
+    ts_strf = ts_strf[:-1] + ".{}]".format(s_id)
     return secure_filename("{} {} [1080p AAC]".format(ts_strf, title))
 
 
@@ -247,7 +250,7 @@ for stream in collected_streams:
             )
         )
         continue
-    final_filename = format_filename(stream["title"], stream["startTime"])
+    final_filename = format_filename(stream["title"], stream["startTime"], stream["id"])
     dts_ts = datetime.fromtimestamp(int(stream["startTime"])).timestamp()
     with open(BASE_VTHELL_PATH + "jobs/" + stream["id"] + ".json", "w") as fp:
         json.dump(
