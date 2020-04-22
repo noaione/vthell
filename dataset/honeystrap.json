@@ -1,0 +1,24 @@
+{
+    "id": "honeystrap",
+    "name": "HoneyStrap",
+    "main_key": "youtube",
+    "upload_base": "774 inc./HoneyStrap",
+    "vliver": [
+        {
+            "name": "Mico",
+            "youtube": "UCDh2bWI5EDu7PavqwICkVpA"
+        },
+        {
+            "name": "Patra",
+            "youtube": "UCeLzT-7b2PBcunJplmWtoDg"
+        },
+        {
+            "name": "Charlotte",
+            "youtube": "UCYTz3uIgwVY3ZU-IQJS8r3A"
+        },
+        {
+            "name": "Mary",
+            "youtube": "UCwePpiw1ocZRSNSkpKvVISw"
+        }
+    ]
+}
