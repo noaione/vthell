@@ -1,0 +1,24 @@
+{
+    "id": "sugarlyric",
+    "name": "SugarLyric",
+    "main_key": "youtube",
+    "upload_base": "774 inc./SugarLyric",
+    "vliver": [
+        {
+            "name": "SugarLyric Official",
+            "youtube": "UCoieZAlwgK3uLkIYiJARDQw"
+        },
+        {
+            "name": "Chris Shishio",
+            "youtube": "UC--A2dwZW7-M2kID0N6_lfA"
+        },
+        {
+            "name": "Rene Ryugasaki",
+            "youtube": "UC2hc-00y-MSR6eYA4eQ4tjQ"
+        },
+        {
+            "name": "Anna Kojo",
+            "youtube": "UCvPPBoTOor5gm8zSlE2tg4w"
+        }
+    ]
+}
