@@ -12,3 +12,5 @@
 jobs/
 streamdump/
 _oldstuff/
+dataset/_unused/
+dataset/*.py
