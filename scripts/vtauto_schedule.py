@@ -71,51 +71,6 @@ def announce_shit(msg="Unknown"):
     webhook.execute()
 
 
-MAPPING = {
-    # Other
-    "Hololive Official": "UCJFZiqLMntJufDCHc6bQixg",
-    # Gen 0
-    "AZKi": "UC0TXe_LYZ4scaW2XMyi5_kw",
-    "Hoshimachi Suisei": "UC5CwaMl1eIgY8h02uZw7u8A",
-    "Roboco-san": "UCDqI2jOz0weumE8s7paEk6g",
-    "Sakura Miko": "UC-hM6YJuNYVAmUWxeIr9FeA",
-    "Tokina Sora": "UCp6993wxpyDPHUpavwDFqgg",
-    # GAMERS
-    "Inugami Korone": "UChAnqc_AY5_I3Px5dig3X1Q",
-    "Nekomata Okayu": "UCvaTdHTWBGv3MKj3KVqJVCw",
-    "Shirakami Fubuki": "UCdn5BQ06XqgXoAxIhbqw5Rg",
-    "Okami Mio": "UCp-5t9SrOQwXMU7iIjQfARg",
-    # Gen 1
-    "Akai Haato": "UC1CfXB_kRs3C-zaeTG3oGyg",
-    "Akai Haato Sub ch": "UCHj_mh57PVMXhAUDphUQDFA",
-    "Aki Rosenthal": "UCFTLzh12_nrtzqBPsTCqenA",
-    "Natsuiro Matsuri": "UCQ0UDLQCjY0rmuxCDE38FGg",
-    "Yozora Mel": "UCD8HOxPs4Xvsm8H0ZxXGiBw",
-    # Gen 2
-    "Minato Aqua": "UC1opHUrw8rvnsadT-iGp7Cg",
-    "Murasaki Shion": "UCXTpFs_3PqI41qX2d9tL2Rw",
-    "Nakiri Ayame": "UC7fk0CB07ly8oSl0aqKkqFg",
-    "Oozora Subaru": "UCvzGlP9oQwU--Y0r9id_jnA",
-    "Yuzuki Choco": "UC1suqwovbL1kzsoaZgFZLKg",
-    "Yuzuki Choco Sub ch": "UCp3tgHXw_HI0QMk1K8qh3gQ",
-    # Gen 3
-    "Houshou Marine": "UCCzUftO8KOVkV4wQG1vkUvg",
-    "Shiranui Flare": "UCvInZx9h3jC2JzsIzoOebWg",
-    "Shirogane Noel": "UCdyqAaZDKHXg4Ahi7VENThQ",
-    "Uruha Rushia": "UCl_gCybOJRIgOXw6Qb4qJzQ",
-    "Usada Pekora": "UC1DCedRgGHBdm81E1llLhOQ",
-    # Gen 4
-    "Amane Kanata": "UCZlDXzGoo7d44bwdNObFacg",
-    "Himemori Luna": "UCa9Y57gfeY0Zro_noHRVrnw",
-    "Kiryu Coco": "UCS9uQI-jC3DE0L4IpXyvr6w",
-    "Tokoyami Towa": "UC1uv2Oq6kNxgATlCiez59hw",
-    "Tsunomaki Watame": "UCqm3BQLlJfvkTsX_hvm0UmA",
-    # HoloID - Gen 1
-    "Ayunda Risu": "UCOyYb1c43VlX9rc_lT6NKQw",
-    "Moona Hoshinova": "UCP0BspO_AMEe3aQqqpo89Dg",
-    "Airani Iofifteen": "UCAoy6rzhSf4ydcYjJw3WoVg",
-}
-
 ENABLED_MAP = [
     {"type": "channel", "data": "UC1uv2Oq6kNxgATlCiez59hw"},
     {"type": "channel", "data": "UChAnqc_AY5_I3Px5dig3X1Q"},
@@ -127,17 +82,11 @@ ENABLED_MAP = [
 ]
 
 IGNORED_MAP = [
-    {"type": "channel", "data": "UCGNI4MENvnsymYjKiZwv9eg"},
-    {"type": "channel", "data": "UC9mf_ZVpouoILRY9NUIaK-w"},
-    {"type": "channel", "data": "UCEzsociuFqVwgZuMaZqaCsg"},
-    {"type": "channel", "data": "UCANDOlYTJT7N5jlRC3zfzVA"},
-    {"type": "channel", "data": "UCNVEsYbiZjH5QLmGeSgTSzg"},
-    {"type": "channel", "data": "UC6t3-_N8A6ME1JShZHHqOMw"},
-    {"type": "channel", "data": "UCKeAhJvy8zgXWbh9duVjIaQ"},
-    {"type": "channel", "data": "UCJFZiqLMntJufDCHc6bQixg"},
-    {"type": "channel", "data": "UCZgOv3YDEs-ZnZWDYVwJdmA"},
     {"type": "word", "data": "(cover)"},
     {"type": "word", "data": "あさココ"},
+    {"type": "dataset", "data": "nijisanji"},
+    {"type": "dataset", "data": "holostars"},
+    {"type": "dataset", "data": "hololivecn"},
 ]
 
 vtlog.info("Fetching live data from API...")
