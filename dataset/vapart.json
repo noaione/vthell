@@ -1,0 +1,28 @@
+{
+    "id": "vapart",
+    "name": "VApArt",
+    "main_key": "youtube",
+    "upload_base": "774 inc./VApArt",
+    "vliver": [
+        {
+            "name": "VTuber Apart Official",
+            "youtube": "UCr83W-PdmmbstrvnCn9kdZQ"
+        },
+        {
+            "name": "Uge to Anzu",
+            "youtube": "UC3EhsuKdEkI99TWZwZgWutg"
+        },
+        {
+            "name": "Camomi Camomi",
+            "youtube": "UCL-2thbJ7grC9fmGF4OLuTg"
+        },
+        {
+            "name": "Anko Kisaki",
+            "youtube": "UChXm-xAYPfygrbyLo2yCASQ"
+        },
+        {
+            "name": "Kanon Kanade",
+            "youtube": "UCmqrvfLMws-GLGHQcB5dasg"
+        }
+    ]
+}
