@@ -1,0 +1,712 @@
+{
+    "UCJFZiqLMntJufDCHc6bQixg": {
+        "id": "hololive",
+        "name": "Hololive Official",
+        "upload_path": "Hololive/Hololive Official"
+    },
+    "UC0TXe_LYZ4scaW2XMyi5_kw": {
+        "id": "hololive",
+        "name": "AZKi",
+        "upload_path": "Hololive/AZKi"
+    },
+    "UCp6993wxpyDPHUpavwDFqgg": {
+        "id": "hololive",
+        "name": "Tokina Sora",
+        "upload_path": "Hololive/Tokina Sora"
+    },
+    "UCDqI2jOz0weumE8s7paEk6g": {
+        "id": "hololive",
+        "name": "Roboco-san",
+        "upload_path": "Hololive/Roboco-san"
+    },
+    "UC-hM6YJuNYVAmUWxeIr9FeA": {
+        "id": "hololive",
+        "name": "Sakura Miko",
+        "upload_path": "Hololive/Sakura Miko"
+    },
+    "UC5CwaMl1eIgY8h02uZw7u8A": {
+        "id": "hololive",
+        "name": "Hoshimachi Suisei",
+        "upload_path": "Hololive/Hoshimachi Suisei"
+    },
+    "UCD8HOxPs4Xvsm8H0ZxXGiBw": {
+        "id": "hololive",
+        "name": "Yozora Mel",
+        "upload_path": "Hololive/Yozora Mel"
+    },
+    "UCQ0UDLQCjY0rmuxCDE38FGg": {
+        "id": "hololive",
+        "name": "Natsuiro Matsuri",
+        "upload_path": "Hololive/Natsuiro Matsuri"
+    },
+    "UC1CfXB_kRs3C-zaeTG3oGyg": {
+        "id": "hololive",
+        "name": "Akai Haato",
+        "upload_path": "Hololive/Akai Haato"
+    },
+    "UCHj_mh57PVMXhAUDphUQDFA": {
+        "id": "hololive",
+        "name": "Akai Haato Sub ch",
+        "upload_path": "Hololive/Akai Haato Sub ch"
+    },
+    "UCFTLzh12_nrtzqBPsTCqenA": {
+        "id": "hololive",
+        "name": "Aki Rosenthal",
+        "upload_path": "Hololive/Aki Rosenthal"
+    },
+    "UC1opHUrw8rvnsadT-iGp7Cg": {
+        "id": "hololive",
+        "name": "Minato Aqua",
+        "upload_path": "Hololive/Minato Aqua"
+    },
+    "UC7fk0CB07ly8oSl0aqKkqFg": {
+        "id": "hololive",
+        "name": "Nakiri Ayame",
+        "upload_path": "Hololive/Nakiri Ayame"
+    },
+    "UC1suqwovbL1kzsoaZgFZLKg": {
+        "id": "hololive",
+        "name": "Yuzuki Choco",
+        "upload_path": "Hololive/Yuzuki Choco"
+    },
+    "UCp3tgHXw_HI0QMk1K8qh3gQ": {
+        "id": "hololive",
+        "name": "Yuzuki Choco Sub ch",
+        "upload_path": "Hololive/Yuzuki Choco Sub ch"
+    },
+    "UCXTpFs_3PqI41qX2d9tL2Rw": {
+        "id": "hololive",
+        "name": "Murasaki Shion",
+        "upload_path": "Hololive/Murasaki Shion"
+    },
+    "UCvzGlP9oQwU--Y0r9id_jnA": {
+        "id": "hololive",
+        "name": "Oozora Subaru",
+        "upload_path": "Hololive/Oozora Subaru"
+    },
+    "UCdn5BQ06XqgXoAxIhbqw5Rg": {
+        "id": "hololive",
+        "name": "Shirakami Fubuki",
+        "upload_path": "Hololive/Shirakami Fubuki"
+    },
+    "UCp-5t9SrOQwXMU7iIjQfARg": {
+        "id": "hololive",
+        "name": "Okami Mio",
+        "upload_path": "Hololive/Okami Mio"
+    },
+    "UCvaTdHTWBGv3MKj3KVqJVCw": {
+        "id": "hololive",
+        "name": "Nekomata Okayu",
+        "upload_path": "Hololive/Nekomata Okayu"
+    },
+    "UChAnqc_AY5_I3Px5dig3X1Q": {
+        "id": "hololive",
+        "name": "Inugami Korone",
+        "upload_path": "Hololive/Inugami Korone"
+    },
+    "UCvInZx9h3jC2JzsIzoOebWg": {
+        "id": "hololive",
+        "name": "Shiranui Flare",
+        "upload_path": "Hololive/Shiranui Flare"
+    },
+    "UCdyqAaZDKHXg4Ahi7VENThQ": {
+        "id": "hololive",
+        "name": "Shirogane Noel",
+        "upload_path": "Hololive/Shirogane Noel"
+    },
+    "UCCzUftO8KOVkV4wQG1vkUvg": {
+        "id": "hololive",
+        "name": "Houshou Marine",
+        "upload_path": "Hololive/Houshou Marine"
+    },
+    "UC1DCedRgGHBdm81E1llLhOQ": {
+        "id": "hololive",
+        "name": "Usada Pekora",
+        "upload_path": "Hololive/Usada Pekora"
+    },
+    "UCl_gCybOJRIgOXw6Qb4qJzQ": {
+        "id": "hololive",
+        "name": "Uruha Rushia",
+        "upload_path": "Hololive/Uruha Rushia"
+    },
+    "UCZlDXzGoo7d44bwdNObFacg": {
+        "id": "hololive",
+        "name": "Amane Kanata",
+        "upload_path": "Hololive/Amane Kanata"
+    },
+    "UCS9uQI-jC3DE0L4IpXyvr6w": {
+        "id": "hololive",
+        "name": "Kiryu Coco",
+        "upload_path": "Hololive/Kiryu Coco"
+    },
+    "UCqm3BQLlJfvkTsX_hvm0UmA": {
+        "id": "hololive",
+        "name": "Tsunomaki Watame",
+        "upload_path": "Hololive/Tsunomaki Watame"
+    },
+    "UC1uv2Oq6kNxgATlCiez59hw": {
+        "id": "hololive",
+        "name": "Tokoyami Towa",
+        "upload_path": "Hololive/Tokoyami Towa"
+    },
+    "UCa9Y57gfeY0Zro_noHRVrnw": {
+        "id": "hololive",
+        "name": "Himemori Luna",
+        "upload_path": "Hololive/Himemori Luna"
+    },
+    "UCOyYb1c43VlX9rc_lT6NKQw": {
+        "id": "hololiveid",
+        "name": "Ayunda Risu",
+        "upload_path": "Hololive/.Hololive ID/Ayunda Risu"
+    },
+    "UCP0BspO_AMEe3aQqqpo89Dg": {
+        "id": "hololiveid",
+        "name": "Moona Hoshinova",
+        "upload_path": "Hololive/.Hololive ID/Moona Hoshinova"
+    },
+    "UCAoy6rzhSf4ydcYjJw3WoVg": {
+        "id": "hololiveid",
+        "name": "Airani Iofifteen",
+        "upload_path": "Hololive/.Hololive ID/Airani Iofifteen"
+    },
+    "UC6t3-_N8A6ME1JShZHHqOMw?sub_confirmation=1": {
+        "id": "holostars",
+        "name": "Miyabi",
+        "upload_path": "Hololive/.Holostars/Miyabi"
+    },
+    "UCZgOv3YDEs-ZnZWDYVwJdmA?sub_confirmation=1": {
+        "id": "holostars",
+        "name": "Izuru",
+        "upload_path": "Hololive/.Holostars/Izuru"
+    },
+    "UCEzsociuFqVwgZuMaZqaCsg?sub_confirmation=1": {
+        "id": "holostars",
+        "name": "Kira",
+        "upload_path": "Hololive/.Holostars/Kira"
+    },
+    "UCKeAhJvy8zgXWbh9duVjIaQ": {
+        "id": "holostars",
+        "name": "Aruran",
+        "upload_path": "Hololive/.Holostars/Aruran"
+    },
+    "UC9mf_ZVpouoILRY9NUIaK-w?sub_confirmation=1": {
+        "id": "holostars",
+        "name": "Rikka",
+        "upload_path": "Hololive/.Holostars/Rikka"
+    },
+    "UCNVEsYbiZjH5QLmGeSgTSzg": {
+        "id": "holostars",
+        "name": "Astel",
+        "upload_path": "Hololive/.Holostars/Astel"
+    },
+    "UCGNI4MENvnsymYjKiZwv9eg": {
+        "id": "holostars",
+        "name": "Temma",
+        "upload_path": "Hololive/.Holostars/Temma"
+    },
+    "UCANDOlYTJT7N5jlRC3zfzVA": {
+        "id": "holostars",
+        "name": "Roberu",
+        "upload_path": "Hololive/.Holostars/Roberu"
+    },
+    "UCX7YkU9nEeaoZbkVLVajcMg": {
+        "id": "nijisanji",
+        "name": "Nijisanji Official Channel",
+        "upload_path": "Nijisanji/Nijisanji Official Channel"
+    },
+    "UCLpYMk5h1bq8_GAFVBgXhPQ": {
+        "id": "nijisanji",
+        "name": "Kasumi Izumo",
+        "upload_path": "Nijisanji/Kasumi Izumo"
+    },
+    "UCvmppcdYf4HOv-tFQhHHJMA": {
+        "id": "nijisanji",
+        "name": "Moira",
+        "upload_path": "Nijisanji/Moira"
+    },
+    "UCt0clH12Xk1-Ej5PXKGfdPA": {
+        "id": "nijisanji",
+        "name": "Alice Mononobe",
+        "upload_path": "Nijisanji/Alice Mononobe"
+    },
+    "UCBi8YaVyZpiKWN3_Z0dCTfQ": {
+        "id": "nijisanji",
+        "name": "Youko Akabane",
+        "upload_path": "Nijisanji/Youko Akabane"
+    },
+    "UCryOPk2GZ1meIDt53tL30Tw": {
+        "id": "nijisanji",
+        "name": "Masaru Suzuki",
+        "upload_path": "Nijisanji/Masaru Suzuki"
+    },
+    "UCUzJ90o1EjqUbk2pBAy0_aw": {
+        "id": "nijisanji",
+        "name": "Gilzaren III",
+        "upload_path": "Nijisanji/Gilzaren III"
+    },
+    "UCspv01oxUFf_MTSipURRhkA": {
+        "id": "nijisanji",
+        "name": "Kanae",
+        "upload_path": "Nijisanji/Kanae"
+    },
+    "UCSFCh5NL4qXrAy9u-u2lX3g": {
+        "id": "nijisanji",
+        "name": "Kuzuha",
+        "upload_path": "Nijisanji/Kuzuha"
+    },
+    "UC_GCs6GARLxEHxy1w40d6VQ": {
+        "id": "nijisanji",
+        "name": "Mugi Ienaga",
+        "upload_path": "Nijisanji/Mugi Ienaga"
+    },
+    "UCoztvTULBYd3WmStqYeoHcA": {
+        "id": "nijisanji",
+        "name": "Saku Sasaki",
+        "upload_path": "Nijisanji/Saku Sasaki"
+    },
+    "UC6oDys1BGgBsIC3WhG1BovQ": {
+        "id": "nijisanji",
+        "name": "Rin Shizuka",
+        "upload_path": "Nijisanji/Rin Shizuka"
+    },
+    "UC48jH1ul-6HOrcSSfoR02fQ": {
+        "id": "nijisanji",
+        "name": "Riri Yuhi",
+        "upload_path": "Nijisanji/Riri Yuhi"
+    },
+    "UCpnvhOIJ6BN-vPkYU9ls-Eg": {
+        "id": "nijisanji",
+        "name": "Aki Suzuya",
+        "upload_path": "Nijisanji/Aki Suzuya"
+    },
+    "UCYKP16oMX9KKPbrNgo_Kgag": {
+        "id": "nijisanji",
+        "name": "Elu",
+        "upload_path": "Nijisanji/Elu"
+    },
+    "UC1zFJrfEKvCixhsjNSb1toQ": {
+        "id": "nijisanji",
+        "name": "Sister Claire",
+        "upload_path": "Nijisanji/Sister Claire"
+    },
+    "UChUJbHiTVeGrSkTdBzVfNCQ": {
+        "id": "nijisanji",
+        "name": "Joe Rikiichi",
+        "upload_path": "Nijisanji/Joe Rikiichi"
+    },
+    "UCLO9QDxVL4bnvRRsz6K4bsQ": {
+        "id": "nijisanji",
+        "name": "Chihiro Yuki",
+        "upload_path": "Nijisanji/Chihiro Yuki"
+    },
+    "UCjlmCrq4TP1I4xguOtJ-31w": {
+        "id": "nijisanji",
+        "name": "Debidebi Debiru",
+        "upload_path": "Nijisanji/Debidebi Debiru"
+    },
+    "UC53UDnhAAYwvNO7j_2Ju1cQ": {
+        "id": "nijisanji",
+        "name": "Dola",
+        "upload_path": "Nijisanji/Dola"
+    },
+    "UCbc8fwhdUNlqi-J99ISYu4A": {
+        "id": "nijisanji",
+        "name": "Belmond Banderas",
+        "upload_path": "Nijisanji/Belmond Banderas"
+    },
+    "UCXU7YYxy_iQd3ulXyO-zC2w": {
+        "id": "nijisanji",
+        "name": "Gaku Fushimi",
+        "upload_path": "Nijisanji/Gaku Fushimi"
+    },
+    "UCv1fFr156jc65EMiLbaLImw": {
+        "id": "nijisanji",
+        "name": "Toya Kenmochi",
+        "upload_path": "Nijisanji/Toya Kenmochi"
+    },
+    "UC3lNFeJiTq6L3UWoz4g1e-A": {
+        "id": "nijisanji",
+        "name": "Kou Uzuki",
+        "upload_path": "Nijisanji/Kou Uzuki"
+    },
+    "UCTIE7LM5X15NVugV7Krp9Hw": {
+        "id": "nijisanji",
+        "name": "Kakeru Yumeoi",
+        "upload_path": "Nijisanji/Kakeru Yumeoi"
+    },
+    "UCmUjjW5zF1MMOhYUwwwQv9Q": {
+        "id": "nijisanji",
+        "name": "Ichigo Ushimi",
+        "upload_path": "Nijisanji/Ichigo Ushimi"
+    },
+    "UC6TfqY40Xt1Y0J-N18c85qQ": {
+        "id": "nijisanji",
+        "name": "Momo Azuchi",
+        "upload_path": "Nijisanji/Momo Azuchi"
+    },
+    "UCoM_XmK45j504hfUWvN06Qg": {
+        "id": "nijisanji",
+        "name": "Naru Naruse",
+        "upload_path": "Nijisanji/Naru Naruse"
+    },
+    "UCBiqkFJljoxAj10SoP2w2Cg": {
+        "id": "nijisanji",
+        "name": "Tamaki Fumino",
+        "upload_path": "Nijisanji/Tamaki Fumino"
+    },
+    "UCtAvQ5U0aXyKwm2i4GqFgJg": {
+        "id": "nijisanji",
+        "name": "Air Harusaki",
+        "upload_path": "Nijisanji/Air Harusaki"
+    },
+    "UCD-miitqNY3nyukJ4Fnf4_A": {
+        "id": "nijisanji",
+        "name": "Mito Tsukino",
+        "upload_path": "Nijisanji/Mito Tsukino"
+    },
+    "UC0g1AE0DOjBYnLhkgoRWN1w": {
+        "id": "nijisanji",
+        "name": "Himawari Honma",
+        "upload_path": "Nijisanji/Himawari Honma"
+    },
+    "UCfQVs_KuXeNAlGa3fb8rlnQ": {
+        "id": "nijisanji",
+        "name": "Ritsuki Sakura",
+        "upload_path": "Nijisanji/Ritsuki Sakura"
+    },
+    "UCtpB6Bvhs1Um93ziEDACQ8g": {
+        "id": "nijisanji",
+        "name": "Kazaki Morinaka",
+        "upload_path": "Nijisanji/Kazaki Morinaka"
+    },
+    "UC_4tXjqecqox5Uc05ncxpxg": {
+        "id": "nijisanji",
+        "name": "Yuika Shiina",
+        "upload_path": "Nijisanji/Yuika Shiina"
+    },
+    "UCsg-YqdqQ-KFF0LNk23BY4A": {
+        "id": "nijisanji",
+        "name": "Kaede Higuchi",
+        "upload_path": "Nijisanji/Kaede Higuchi"
+    },
+    "UCeK9HFcRZoTrvqcUCtccMoQ": {
+        "id": "nijisanji",
+        "name": "Hajime Shibuya",
+        "upload_path": "Nijisanji/Hajime Shibuya"
+    },
+    "UCo7TRj3cS-f_1D9ZDmuTsjw": {
+        "id": "nijisanji",
+        "name": "Chima Machita",
+        "upload_path": "Nijisanji/Chima Machita"
+    },
+    "UCvzVB-EYuHFXHZrObB8a_Og": {
+        "id": "nijisanji",
+        "name": "Rine Yaguruma",
+        "upload_path": "Nijisanji/Rine Yaguruma"
+    },
+    "UCKMYISTJAQ8xTplUPHiABlA": {
+        "id": "nijisanji",
+        "name": "Kizuku Yashiro",
+        "upload_path": "Nijisanji/Kizuku Yashiro"
+    },
+    "UCWz0CSYCxf4MhRKPDm220AQ": {
+        "id": "nijisanji",
+        "name": "Shoichi Kanda",
+        "upload_path": "Nijisanji/Shoichi Kanda"
+    },
+    "UCPvGypSgfDkVe7JG2KygK7A": {
+        "id": "nijisanji",
+        "name": "Mikoto Rindou",
+        "upload_path": "Nijisanji/Mikoto Rindou"
+    },
+    "UCt5-0i4AVHXaWJrL8Wql3mw": {
+        "id": "nijisanji",
+        "name": "Ryushen",
+        "upload_path": "Nijisanji/Ryushen"
+    },
+    "UCJubINhCcFXlsBwnHp0wl_g": {
+        "id": "nijisanji",
+        "name": "Keisuke Maimoto",
+        "upload_path": "Nijisanji/Keisuke Maimoto"
+    },
+    "UCsFn_ueskBkMCEyzCEqAOvg": {
+        "id": "nijisanji",
+        "name": "Chaika Hanabatake",
+        "upload_path": "Nijisanji/Chaika Hanabatake"
+    },
+    "UCRV9d6YCYIMUszK-83TwxVA": {
+        "id": "nijisanji",
+        "name": "Kyoko Todoroki",
+        "upload_path": "Nijisanji/Kyoko Todoroki"
+    },
+    "UCwokZsOK_uEre70XayaFnzA": {
+        "id": "nijisanji",
+        "name": "Utako Suzuka",
+        "upload_path": "Nijisanji/Utako Suzuka"
+    },
+    "UCRWOdwLRsenx2jLaiCAIU4A": {
+        "id": "nijisanji",
+        "name": "Sayo Amemori",
+        "upload_path": "Nijisanji/Sayo Amemori"
+    },
+    "UCiSRx1a2k-0tOg-fs6gAolQ": {
+        "id": "nijisanji",
+        "name": "Hina Asuka",
+        "upload_path": "Nijisanji/Hina Asuka"
+    },
+    "UC9EjSJ8pvxtvPdxLOElv73w": {
+        "id": "nijisanji",
+        "name": "Makaino Ririmu",
+        "upload_path": "Nijisanji/Makaino Ririmu"
+    },
+    "UCV5ZZlLjk5MKGg3L0n0vbzw": {
+        "id": "nijisanji",
+        "name": "Rion Takamiya",
+        "upload_path": "Nijisanji/Rion Takamiya"
+    },
+    "UCmeyo5pRj_6PXG-CsGUuWWg": {
+        "id": "nijisanji",
+        "name": "Shiba Kuroi",
+        "upload_path": "Nijisanji/Shiba Kuroi"
+    },
+    "UCveZ9Ic1VtcXbsyaBgxPMvg": {
+        "id": "nijisanji",
+        "name": "Meiji Warabeda",
+        "upload_path": "Nijisanji/Meiji Warabeda"
+    },
+    "UCeShTCVgZyq2lsBW9QwIJcw": {
+        "id": "nijisanji",
+        "name": "Mirei Gundo",
+        "upload_path": "Nijisanji/Mirei Gundo"
+    },
+    "UCCVwhI5trmaSxfcze_Ovzfw": {
+        "id": "nijisanji",
+        "name": "Roa Yuzuki",
+        "upload_path": "Nijisanji/Roa Yuzuki"
+    },
+    "UCg63a3lk6PNeWhVvMRM_mrQ": {
+        "id": "nijisanji",
+        "name": "Haruka Onomachi",
+        "upload_path": "Nijisanji/Haruka Onomachi"
+    },
+    "UCufQu4q65z63IgE4cfKs1BQ": {
+        "id": "nijisanji",
+        "name": "Tsumugu Kataribe",
+        "upload_path": "Nijisanji/Tsumugu Kataribe"
+    },
+    "UCHK5wkevfaGrPr7j3g56Jmw": {
+        "id": "nijisanji",
+        "name": "Miyako Seto",
+        "upload_path": "Nijisanji/Miyako Seto"
+    },
+    "UCwQ9Uv-m8xkE5PzRc7Bqx3Q": {
+        "id": "nijisanji",
+        "name": "Era Otogibara",
+        "upload_path": "Nijisanji/Era Otogibara"
+    },
+    "UCHVXbQzkl3rDfsXWo8xi2qw": {
+        "id": "nijisanji",
+        "name": "Ange Katrina",
+        "upload_path": "Nijisanji/Ange Katrina"
+    },
+    "UCXRlIK3Cw_TJIQC5kSJJQMg": {
+        "id": "nijisanji",
+        "name": "Toko Inui",
+        "upload_path": "Nijisanji/Toko Inui"
+    },
+    "UCZ1xuCK1kNmn5RzPYIZop3w": {
+        "id": "nijisanji",
+        "name": "Lize Helesta",
+        "upload_path": "Nijisanji/Lize Helesta"
+    },
+    "UC_a1ZYZ8ZTXpjg9xUY9sj8w": {
+        "id": "nijisanji",
+        "name": "Lulu Suzuhara",
+        "upload_path": "Nijisanji/Lulu Suzuhara"
+    },
+    "UCNW1Ex0r6HsWRD4LCtPwvoQ": {
+        "id": "nijisanji",
+        "name": "Akina Saegusa",
+        "upload_path": "Nijisanji/Akina Saegusa"
+    },
+    "UC0WwEfE-jOM2rzjpdfhTzZA": {
+        "id": "nijisanji",
+        "name": "Manami Aizono",
+        "upload_path": "Nijisanji/Manami Aizono"
+    },
+    "UCHX7YpFG8rVwhsHCx34xt7w": {
+        "id": "nijisanji",
+        "name": "Mahiro Yukishiro",
+        "upload_path": "Nijisanji/Mahiro Yukishiro"
+    },
+    "UCtnO2N4kPTXmyvedjGWdx3Q": {
+        "id": "nijisanji",
+        "name": "Levi Elipha",
+        "upload_path": "Nijisanji/Levi Elipha"
+    },
+    "UCIytNcoz4pWzXfLda0DoULQ": {
+        "id": "nijisanji",
+        "name": "Ex Albio",
+        "upload_path": "Nijisanji/Ex Albio"
+    },
+    "UCfipDDn7wY-C-SoUChgxCQQ": {
+        "id": "nijisanji",
+        "name": "Marin Hayama",
+        "upload_path": "Nijisanji/Marin Hayama"
+    },
+    "UCUc8GZfFxtmk7ZwSO7ccQ0g": {
+        "id": "nijisanji",
+        "name": "Nui Sociere",
+        "upload_path": "Nijisanji/Nui Sociere"
+    },
+    "UCmovZ2th3Sqpd00F5RdeigQ": {
+        "id": "nijisanji",
+        "name": "Hayato Kagami",
+        "upload_path": "Nijisanji/Hayato Kagami"
+    },
+    "UCGYAYLDE7TZiiC8U6teciDQ": {
+        "id": "nijisanji",
+        "name": "Fuyuki Hakase",
+        "upload_path": "Nijisanji/Fuyuki Hakase"
+    },
+    "UCL34fAoFim9oHLbVzMKFavQ": {
+        "id": "nijisanji",
+        "name": "Rena Yorumi",
+        "upload_path": "Nijisanji/Rena Yorumi"
+    },
+    "UCdpUojq0KWZCN9bxXnZwz5w": {
+        "id": "nijisanji",
+        "name": "Ars Almal",
+        "upload_path": "Nijisanji/Ars Almal"
+    },
+    "UCnRQYHTnRLSF0cLJwMnedCg": {
+        "id": "nijisanji",
+        "name": "Uiha Aiba",
+        "upload_path": "Nijisanji/Uiha Aiba"
+    },
+    "UCb5JxV6vKlYVknoJB8TnyYg": {
+        "id": "nijisanji",
+        "name": "Kai Mayuzumi",
+        "upload_path": "Nijisanji/Kai Mayuzumi"
+    },
+    "UCIG9rDtgR45VCZmYnd-4DUw": {
+        "id": "nijisanji",
+        "name": "Ratna Petit",
+        "upload_path": "Nijisanji/Ratna Petit"
+    },
+    "UCkIimWZ9gBJRamKF0rmPU8w": {
+        "id": "nijisanji",
+        "name": "Kokoro Amamiya",
+        "upload_path": "Nijisanji/Kokoro Amamiya"
+    },
+    "UCpNH2Zk2gw3JBjWAKSyZcQQ": {
+        "id": "nijisanji",
+        "name": "Eli Conifer",
+        "upload_path": "Nijisanji/Eli Conifer"
+    },
+    "UC2OacIzd2UxGHRGhdHl1Rhw": {
+        "id": "nijisanji",
+        "name": "Sou Hayase",
+        "upload_path": "Nijisanji/Sou Hayase"
+    },
+    "UC8C1LLhBhf_E2IBPLSDJXlQ": {
+        "id": "nijisanji",
+        "name": "Kana Sukoya",
+        "upload_path": "Nijisanji/Kana Sukoya"
+    },
+    "UCHBhnG2G-qN0JrrWmMO2FTA": {
+        "id": "nijisanji",
+        "name": "Shellin Burgundy",
+        "upload_path": "Nijisanji/Shellin Burgundy"
+    },
+    "UCwrjITPwG4q71HzihV2C7Nw": {
+        "id": "nijisanji",
+        "name": "Fumi",
+        "upload_path": "Nijisanji/Fumi"
+    },
+    "UC9V3Y3_uzU5e-usObb6IE1w": {
+        "id": "nijisanji",
+        "name": "Sara Hoshikawa",
+        "upload_path": "Nijisanji/Sara Hoshikawa"
+    },
+    "UCllKI7VjyANuS1RXatizfLQ": {
+        "id": "nijisanji",
+        "name": "Karuta Yamagami",
+        "upload_path": "Nijisanji/Karuta Yamagami"
+    },
+    "UCl1oLKcAq93p-pwKfDGhiYQ": {
+        "id": "nijisanji",
+        "name": "Emma August",
+        "upload_path": "Nijisanji/Emma August"
+    },
+    "UCb6ObE-XGCctO3WrjRZC-cw": {
+        "id": "nijisanji",
+        "name": "Luis Cammy",
+        "upload_path": "Nijisanji/Luis Cammy"
+    },
+    "UCerkculBD7YLc_vOGrF7tKg": {
+        "id": "nijisanji",
+        "name": "Mao Matsukai",
+        "upload_path": "Nijisanji/Mao Matsukai"
+    },
+    "UC6wvdADTJ88OfIbJYIpAaDA": {
+        "id": "nijisanji",
+        "name": "Minato Fuwa",
+        "upload_path": "Nijisanji/Minato Fuwa"
+    },
+    "UCuvk5PilcvDECU7dDZhQiEw": {
+        "id": "nijisanji",
+        "name": "Tomoe Shirayuki",
+        "upload_path": "Nijisanji/Tomoe Shirayuki"
+    },
+    "UC1QgXt46-GEvtNjEC1paHnw": {
+        "id": "nijisanji",
+        "name": "Gwelu Os Gar",
+        "upload_path": "Nijisanji/Gwelu Os Gar"
+    },
+    "UCfki3lMEF6SGBFiFfo9kvUA": {
+        "id": "nijisanji",
+        "name": "Mashiro",
+        "upload_path": "Nijisanji/Mashiro"
+    },
+    "UC-o-E6I3IC2q8sAoAuM6Umg": {
+        "id": "nijisanji",
+        "name": "Naraka",
+        "upload_path": "Nijisanji/Naraka"
+    },
+    "UCRcLAVTbmx2-iNcXSsupdNA": {
+        "id": "nijisanji",
+        "name": "Natsume Kurusu",
+        "upload_path": "Nijisanji/Natsume Kurusu"
+    },
+    "UCuep1JCrMvSxOGgGhBfJuYw": {
+        "id": "nijisanji",
+        "name": "Furen E Lustario",
+        "upload_path": "Nijisanji/Furen E Lustario"
+    },
+    "UCmZ1Rbthn-6Jm_qOGjYsh5A": {
+        "id": "nijisanji",
+        "name": "Ibrahim",
+        "upload_path": "Nijisanji/Ibrahim"
+    },
+    "UCwcyyxn6h9ex4sMXGtpQE_g": {
+        "id": "nijisanji",
+        "name": "Melissa Kinrenka",
+        "upload_path": "Nijisanji/Melissa Kinrenka"
+    },
+    "UCGw7lrT-rVZCWHfdG9Frcgg": {
+        "id": "nijisanji",
+        "name": "Tojiro Genzuki",
+        "upload_path": "Nijisanji/Tojiro Genzuki"
+    },
+    "UCo2N7C-Z91waaR6lF3LL_jw": {
+        "id": "nijisanji",
+        "name": "Haru Kaida",
+        "upload_path": "Nijisanji/Haru Kaida"
+    },
+    "UCXW4MqCQn-jCaxlX-nn-BYg": {
+        "id": "nijisanji",
+        "name": "Kei Nagao",
+        "upload_path": "Nijisanji/Kei Nagao"
+    }
+}
