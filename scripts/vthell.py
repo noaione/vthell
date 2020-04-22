@@ -82,7 +82,11 @@ def find_and_parse_cookies() -> list:
                 "please provide a valid netscape format"
             )
             return []
-        if "youtube.com" not in uri or "youtu.be" not in uri:
+        if (
+            "youtube.com" not in uri
+            or "youtu.be" not in uri
+            or "bilibili.com" not in uri
+        ):
             continue
         parsed_cookies.append("--http-cookie")
         parsed_cookies.append('"{k}={v}"'.format(k=name, v=value))
@@ -105,50 +109,13 @@ def print_end():
 
 reset_handler(False)
 
-upload_mapping = {
-    # Other
-    "UCJFZiqLMntJufDCHc6bQixg": "Hololive Official",
-    # Non-Gen
-    "UC0TXe_LYZ4scaW2XMyi5_kw": "AZKi",
-    "UC5CwaMl1eIgY8h02uZw7u8A": "Hoshimachi Suisei",
-    "UCDqI2jOz0weumE8s7paEk6g": "Roboco-san",
-    "UC-hM6YJuNYVAmUWxeIr9FeA": "Sakura Miko",
-    "UCp6993wxpyDPHUpavwDFqgg": "Tokina Sora",
-    # Gamers
-    "UChAnqc_AY5_I3Px5dig3X1Q": "Inugami Korone",
-    "UCvaTdHTWBGv3MKj3KVqJVCw": "Nekomata Okayu",
-    "UCdn5BQ06XqgXoAxIhbqw5Rg": "Shirakami Fubuki",
-    "UCp-5t9SrOQwXMU7iIjQfARg": "Okami Mio",
-    # Gen 1
-    "UC1CfXB_kRs3C-zaeTG3oGyg": "Akai Haato",
-    "UCHj_mh57PVMXhAUDphUQDFA": "Akai Haato",  # Sub ch.
-    "UCFTLzh12_nrtzqBPsTCqenA": "Aki Rosenthal",
-    "UCQ0UDLQCjY0rmuxCDE38FGg": "Natsuiro Matsuri",
-    "UCD8HOxPs4Xvsm8H0ZxXGiBw": "Yozora Mel",
-    # Gen 2
-    "UC1opHUrw8rvnsadT-iGp7Cg": "Minato Aqua",
-    "UCXTpFs_3PqI41qX2d9tL2Rw": "Murasaki Shion",
-    "UC7fk0CB07ly8oSl0aqKkqFg": "Nakiri Ayame",
-    "UCvzGlP9oQwU--Y0r9id_jnA": "Oozora Subaru",
-    "UC1suqwovbL1kzsoaZgFZLKg": "Yuzuki Choco",
-    "UCp3tgHXw_HI0QMk1K8qh3gQ": "Yuzuki Choco",  # Sub ch.
-    # Gen 3
-    "UCCzUftO8KOVkV4wQG1vkUvg": "Houshou Marine",
-    "UCvInZx9h3jC2JzsIzoOebWg": "Shiranui Flare",
-    "UCdyqAaZDKHXg4Ahi7VENThQ": "Shirogane Noel",
-    "UCl_gCybOJRIgOXw6Qb4qJzQ": "Uruha Rushia",
-    "UC1DCedRgGHBdm81E1llLhOQ": "Usada Pekora",
-    # Gen 4
-    "UCZlDXzGoo7d44bwdNObFacg": "Amane Kanata",
-    "UCa9Y57gfeY0Zro_noHRVrnw": "Himemori Luna",
-    "UCS9uQI-jC3DE0L4IpXyvr6w": "Kiryu Coco",
-    "UC1uv2Oq6kNxgATlCiez59hw": "Tokoyami Towa",
-    "UCqm3BQLlJfvkTsX_hvm0UmA": "Tsunomaki Watame",
-    # HoloID - Gen 1
-    "UCOyYb1c43VlX9rc_lT6NKQw": ".HoloID/Ayunda Risu",
-    "UCP0BspO_AMEe3aQqqpo89Dg": ".HoloID/Moona Hoshinova",
-    "UCAoy6rzhSf4ydcYjJw3WoVg": ".HoloID/Airani Iofifteen",
-}
+with open(BASE_VTHELL_PATH + "/dataset/_youtube_mapping.json") as fp:
+    upload_mapping = json.load(fp)
+
+with open(BASE_VTHELL_PATH + "/dataset/_bilibili_mapping.json") as fp:
+    bilibili_temp = json.load(fp)
+    for k, v in bilibili_temp.items():
+        upload_mapping[k] = v
 
 vtlog.info("====================== Start of process! ======================")
 
@@ -326,7 +293,9 @@ if os.path.isfile(save_mux_name) and os.path.getsize(save_mux_name) > 0:
         [
             save_mux_name,
             UPLOAD_BASE_PATH.format(
-                upload_mapping.get(vthell_stream["streamer"], "Unknown")
+                upload_mapping.get(vthell_stream["streamer"], {}).get(
+                    "upload_path", "Unknown"
+                )
             ),
         ]
     )
