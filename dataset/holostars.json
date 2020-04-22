@@ -1,0 +1,41 @@
+{
+    "id": "holostars",
+    "name": "Holostars",
+    "upload_base": "Hololive/.Holostars",
+    "main_key": "youtube",
+    "schedule_api": "https://storage.googleapis.com/vthell-data/live.json",
+    "vliver": [
+        {
+            "name": "Miyabi",
+            "youtube": "UC6t3-_N8A6ME1JShZHHqOMw?sub_confirmation=1"
+        },
+        {
+            "name": "Izuru",
+            "youtube": "UCZgOv3YDEs-ZnZWDYVwJdmA?sub_confirmation=1"
+        },
+        {
+            "name": "Kira",
+            "youtube": "UCEzsociuFqVwgZuMaZqaCsg?sub_confirmation=1"
+        },
+        {
+            "name": "Aruran",
+            "youtube": "UCKeAhJvy8zgXWbh9duVjIaQ"
+        },
+        {
+            "name": "Rikka",
+            "youtube": "UC9mf_ZVpouoILRY9NUIaK-w?sub_confirmation=1"
+        },
+        {
+            "name": "Astel",
+            "youtube": "UCNVEsYbiZjH5QLmGeSgTSzg"
+        },
+        {
+            "name": "Temma",
+            "youtube": "UCGNI4MENvnsymYjKiZwv9eg"
+        },
+        {
+            "name": "Roberu",
+            "youtube": "UCANDOlYTJT7N5jlRC3zfzVA"
+        }
+    ]
+}

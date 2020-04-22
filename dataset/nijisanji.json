@@ -1,0 +1,409 @@
+{
+    "id": "nijisanji",
+    "name": "Hololive Main",
+    "main_key": "youtube",
+    "upload_base": "Nijisanji",
+    "schedule_api": "https://api.itsukaralink.jp/v1.2/events.json",
+    "vliver": [
+        {
+            "name": "Nijisanji Official Channel",
+            "youtube": "UCX7YkU9nEeaoZbkVLVajcMg"
+        },
+        {
+            "name": "Kasumi Izumo",
+            "youtube": "UCLpYMk5h1bq8_GAFVBgXhPQ"
+        },
+        {
+            "name": "Moira",
+            "youtube": "UCvmppcdYf4HOv-tFQhHHJMA"
+        },
+        {
+            "name": "Alice Mononobe",
+            "youtube": "UCt0clH12Xk1-Ej5PXKGfdPA"
+        },
+        {
+            "name": "Youko Akabane",
+            "youtube": "UCBi8YaVyZpiKWN3_Z0dCTfQ"
+        },
+        {
+            "name": "Masaru Suzuki",
+            "youtube": "UCryOPk2GZ1meIDt53tL30Tw"
+        },
+        {
+            "name": "Gilzaren III",
+            "youtube": "UCUzJ90o1EjqUbk2pBAy0_aw"
+        },
+        {
+            "name": "Kanae",
+            "youtube": "UCspv01oxUFf_MTSipURRhkA"
+        },
+        {
+            "name": "Kuzuha",
+            "youtube": "UCSFCh5NL4qXrAy9u-u2lX3g"
+        },
+        {
+            "name": "Mugi Ienaga",
+            "youtube": "UC_GCs6GARLxEHxy1w40d6VQ"
+        },
+        {
+            "name": "Saku Sasaki",
+            "youtube": "UCoztvTULBYd3WmStqYeoHcA"
+        },
+        {
+            "name": "Rin Shizuka",
+            "youtube": "UC6oDys1BGgBsIC3WhG1BovQ"
+        },
+        {
+            "name": "Riri Yuhi",
+            "youtube": "UC48jH1ul-6HOrcSSfoR02fQ"
+        },
+        {
+            "name": "Aki Suzuya",
+            "youtube": "UCpnvhOIJ6BN-vPkYU9ls-Eg"
+        },
+        {
+            "name": "Elu",
+            "youtube": "UCYKP16oMX9KKPbrNgo_Kgag"
+        },
+        {
+            "name": "Sister Claire",
+            "youtube": "UC1zFJrfEKvCixhsjNSb1toQ"
+        },
+        {
+            "name": "Joe Rikiichi",
+            "youtube": "UChUJbHiTVeGrSkTdBzVfNCQ"
+        },
+        {
+            "name": "Chihiro Yuki",
+            "youtube": "UCLO9QDxVL4bnvRRsz6K4bsQ"
+        },
+        {
+            "name": "Debidebi Debiru",
+            "youtube": "UCjlmCrq4TP1I4xguOtJ-31w"
+        },
+        {
+            "name": "Dola",
+            "youtube": "UC53UDnhAAYwvNO7j_2Ju1cQ"
+        },
+        {
+            "name": "Belmond Banderas",
+            "youtube": "UCbc8fwhdUNlqi-J99ISYu4A"
+        },
+        {
+            "name": "Gaku Fushimi",
+            "youtube": "UCXU7YYxy_iQd3ulXyO-zC2w"
+        },
+        {
+            "name": "Toya Kenmochi",
+            "youtube": "UCv1fFr156jc65EMiLbaLImw"
+        },
+        {
+            "name": "Kou Uzuki",
+            "youtube": "UC3lNFeJiTq6L3UWoz4g1e-A"
+        },
+        {
+            "name": "Kakeru Yumeoi",
+            "youtube": "UCTIE7LM5X15NVugV7Krp9Hw"
+        },
+        {
+            "name": "Ichigo Ushimi",
+            "youtube": "UCmUjjW5zF1MMOhYUwwwQv9Q"
+        },
+        {
+            "name": "Momo Azuchi",
+            "youtube": "UC6TfqY40Xt1Y0J-N18c85qQ"
+        },
+        {
+            "name": "Naru Naruse",
+            "youtube": "UCoM_XmK45j504hfUWvN06Qg"
+        },
+        {
+            "name": "Tamaki Fumino",
+            "youtube": "UCBiqkFJljoxAj10SoP2w2Cg"
+        },
+        {
+            "name": "Air Harusaki",
+            "youtube": "UCtAvQ5U0aXyKwm2i4GqFgJg"
+        },
+        {
+            "name": "Mito Tsukino",
+            "youtube": "UCD-miitqNY3nyukJ4Fnf4_A"
+        },
+        {
+            "name": "Himawari Honma",
+            "youtube": "UC0g1AE0DOjBYnLhkgoRWN1w"
+        },
+        {
+            "name": "Ritsuki Sakura",
+            "youtube": "UCfQVs_KuXeNAlGa3fb8rlnQ"
+        },
+        {
+            "name": "Kazaki Morinaka",
+            "youtube": "UCtpB6Bvhs1Um93ziEDACQ8g"
+        },
+        {
+            "name": "Yuika Shiina",
+            "youtube": "UC_4tXjqecqox5Uc05ncxpxg"
+        },
+        {
+            "name": "Kaede Higuchi",
+            "youtube": "UCsg-YqdqQ-KFF0LNk23BY4A"
+        },
+        {
+            "name": "Hajime Shibuya",
+            "youtube": "UCeK9HFcRZoTrvqcUCtccMoQ"
+        },
+        {
+            "name": "Chima Machita",
+            "youtube": "UCo7TRj3cS-f_1D9ZDmuTsjw"
+        },
+        {
+            "name": "Rine Yaguruma",
+            "youtube": "UCvzVB-EYuHFXHZrObB8a_Og"
+        },
+        {
+            "name": "Kizuku Yashiro",
+            "youtube": "UCKMYISTJAQ8xTplUPHiABlA"
+        },
+        {
+            "name": "Shoichi Kanda",
+            "youtube": "UCWz0CSYCxf4MhRKPDm220AQ"
+        },
+        {
+            "name": "Mikoto Rindou",
+            "youtube": "UCPvGypSgfDkVe7JG2KygK7A"
+        },
+        {
+            "name": "Ryushen",
+            "youtube": "UCt5-0i4AVHXaWJrL8Wql3mw"
+        },
+        {
+            "name": "Keisuke Maimoto",
+            "youtube": "UCJubINhCcFXlsBwnHp0wl_g"
+        },
+        {
+            "name": "Chaika Hanabatake",
+            "youtube": "UCsFn_ueskBkMCEyzCEqAOvg"
+        },
+        {
+            "name": "Kyoko Todoroki",
+            "youtube": "UCRV9d6YCYIMUszK-83TwxVA"
+        },
+        {
+            "name": "Utako Suzuka",
+            "youtube": "UCwokZsOK_uEre70XayaFnzA"
+        },
+        {
+            "name": "Sayo Amemori",
+            "youtube": "UCRWOdwLRsenx2jLaiCAIU4A"
+        },
+        {
+            "name": "Hina Asuka",
+            "youtube": "UCiSRx1a2k-0tOg-fs6gAolQ"
+        },
+        {
+            "name": "Makaino Ririmu",
+            "youtube": "UC9EjSJ8pvxtvPdxLOElv73w"
+        },
+        {
+            "name": "Rion Takamiya",
+            "youtube": "UCV5ZZlLjk5MKGg3L0n0vbzw"
+        },
+        {
+            "name": "Shiba Kuroi",
+            "youtube": "UCmeyo5pRj_6PXG-CsGUuWWg"
+        },
+        {
+            "name": "Meiji Warabeda",
+            "youtube": "UCveZ9Ic1VtcXbsyaBgxPMvg"
+        },
+        {
+            "name": "Mirei Gundo",
+            "youtube": "UCeShTCVgZyq2lsBW9QwIJcw"
+        },
+        {
+            "name": "Roa Yuzuki",
+            "youtube": "UCCVwhI5trmaSxfcze_Ovzfw"
+        },
+        {
+            "name": "Haruka Onomachi",
+            "youtube": "UCg63a3lk6PNeWhVvMRM_mrQ"
+        },
+        {
+            "name": "Tsumugu Kataribe",
+            "youtube": "UCufQu4q65z63IgE4cfKs1BQ"
+        },
+        {
+            "name": "Miyako Seto",
+            "youtube": "UCHK5wkevfaGrPr7j3g56Jmw"
+        },
+        {
+            "name": "Era Otogibara",
+            "youtube": "UCwQ9Uv-m8xkE5PzRc7Bqx3Q"
+        },
+        {
+            "name": "Ange Katrina",
+            "youtube": "UCHVXbQzkl3rDfsXWo8xi2qw"
+        },
+        {
+            "name": "Toko Inui",
+            "youtube": "UCXRlIK3Cw_TJIQC5kSJJQMg"
+        },
+        {
+            "name": "Lize Helesta",
+            "youtube": "UCZ1xuCK1kNmn5RzPYIZop3w"
+        },
+        {
+            "name": "Lulu Suzuhara",
+            "youtube": "UC_a1ZYZ8ZTXpjg9xUY9sj8w"
+        },
+        {
+            "name": "Akina Saegusa",
+            "youtube": "UCNW1Ex0r6HsWRD4LCtPwvoQ"
+        },
+        {
+            "name": "Manami Aizono",
+            "youtube": "UC0WwEfE-jOM2rzjpdfhTzZA"
+        },
+        {
+            "name": "Mahiro Yukishiro",
+            "youtube": "UCHX7YpFG8rVwhsHCx34xt7w"
+        },
+        {
+            "name": "Levi Elipha",
+            "youtube": "UCtnO2N4kPTXmyvedjGWdx3Q"
+        },
+        {
+            "name": "Ex Albio",
+            "youtube": "UCIytNcoz4pWzXfLda0DoULQ"
+        },
+        {
+            "name": "Marin Hayama",
+            "youtube": "UCfipDDn7wY-C-SoUChgxCQQ"
+        },
+        {
+            "name": "Nui Sociere",
+            "youtube": "UCUc8GZfFxtmk7ZwSO7ccQ0g"
+        },
+        {
+            "name": "Hayato Kagami",
+            "youtube": "UCmovZ2th3Sqpd00F5RdeigQ"
+        },
+        {
+            "name": "Fuyuki Hakase",
+            "youtube": "UCGYAYLDE7TZiiC8U6teciDQ"
+        },
+        {
+            "name": "Rena Yorumi",
+            "youtube": "UCL34fAoFim9oHLbVzMKFavQ"
+        },
+        {
+            "name": "Ars Almal",
+            "youtube": "UCdpUojq0KWZCN9bxXnZwz5w"
+        },
+        {
+            "name": "Uiha Aiba",
+            "youtube": "UCnRQYHTnRLSF0cLJwMnedCg"
+        },
+        {
+            "name": "Kai Mayuzumi",
+            "youtube": "UCb5JxV6vKlYVknoJB8TnyYg"
+        },
+        {
+            "name": "Ratna Petit",
+            "youtube": "UCIG9rDtgR45VCZmYnd-4DUw"
+        },
+        {
+            "name": "Kokoro Amamiya",
+            "youtube": "UCkIimWZ9gBJRamKF0rmPU8w"
+        },
+        {
+            "name": "Eli Conifer",
+            "youtube": "UCpNH2Zk2gw3JBjWAKSyZcQQ"
+        },
+        {
+            "name": "Sou Hayase",
+            "youtube": "UC2OacIzd2UxGHRGhdHl1Rhw"
+        },
+        {
+            "name": "Kana Sukoya",
+            "youtube": "UC8C1LLhBhf_E2IBPLSDJXlQ"
+        },
+        {
+            "name": "Shellin Burgundy",
+            "youtube": "UCHBhnG2G-qN0JrrWmMO2FTA"
+        },
+        {
+            "name": "Fumi",
+            "youtube": "UCwrjITPwG4q71HzihV2C7Nw"
+        },
+        {
+            "name": "Sara Hoshikawa",
+            "youtube": "UC9V3Y3_uzU5e-usObb6IE1w"
+        },
+        {
+            "name": "Karuta Yamagami",
+            "youtube": "UCllKI7VjyANuS1RXatizfLQ"
+        },
+        {
+            "name": "Emma August",
+            "youtube": "UCl1oLKcAq93p-pwKfDGhiYQ"
+        },
+        {
+            "name": "Luis Cammy",
+            "youtube": "UCb6ObE-XGCctO3WrjRZC-cw"
+        },
+        {
+            "name": "Mao Matsukai",
+            "youtube": "UCerkculBD7YLc_vOGrF7tKg"
+        },
+        {
+            "name": "Minato Fuwa",
+            "youtube": "UC6wvdADTJ88OfIbJYIpAaDA"
+        },
+        {
+            "name": "Tomoe Shirayuki",
+            "youtube": "UCuvk5PilcvDECU7dDZhQiEw"
+        },
+        {
+            "name": "Gwelu Os Gar",
+            "youtube": "UC1QgXt46-GEvtNjEC1paHnw"
+        },
+        {
+            "name": "Mashiro",
+            "youtube": "UCfki3lMEF6SGBFiFfo9kvUA"
+        },
+        {
+            "name": "Naraka",
+            "youtube": "UC-o-E6I3IC2q8sAoAuM6Umg"
+        },
+        {
+            "name": "Natsume Kurusu",
+            "youtube": "UCRcLAVTbmx2-iNcXSsupdNA"
+        },
+        {
+            "name": "Furen E Lustario",
+            "youtube": "UCuep1JCrMvSxOGgGhBfJuYw"
+        },
+        {
+            "name": "Ibrahim",
+            "youtube": "UCmZ1Rbthn-6Jm_qOGjYsh5A"
+        },
+        {
+            "name": "Melissa Kinrenka",
+            "youtube": "UCwcyyxn6h9ex4sMXGtpQE_g"
+        },
+        {
+            "name": "Tojiro Genzuki",
+            "youtube": "UCGw7lrT-rVZCWHfdG9Frcgg"
+        },
+        {
+            "name": "Haru Kaida",
+            "youtube": "UCo2N7C-Z91waaR6lF3LL_jw"
+        },
+        {
+            "name": "Kei Nagao",
+            "youtube": "UCXW4MqCQn-jCaxlX-nn-BYg"
+        }
+    ]
+}

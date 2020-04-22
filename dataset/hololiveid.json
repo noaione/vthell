@@ -1,0 +1,21 @@
+{
+    "id": "hololiveid",
+    "name": "Hololive Indonesia",
+    "upload_base": "Hololive/.Hololive ID",
+    "main_key": "youtube",
+    "schedule_api": "https://storage.googleapis.com/vthell-data/live.json",
+    "vliver": [
+        {
+            "name": "Ayunda Risu",
+            "youtube": "UCOyYb1c43VlX9rc_lT6NKQw"
+        },
+        {
+            "name": "Moona Hoshinova",
+            "youtube": "UCP0BspO_AMEe3aQqqpo89Dg"
+        },
+        {
+            "name": "Airani Iofifteen",
+            "youtube": "UCAoy6rzhSf4ydcYjJw3WoVg"
+        }
+    ]
+}

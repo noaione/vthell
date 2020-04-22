@@ -1,0 +1,33 @@
+{
+    "id": "hololivecn",
+    "name": "Hololive China",
+    "upload_base": "Hololive/.Hololive CN",
+    "main_key": "bilibili",
+    "schedule_api": null,
+    "vliver": [
+        {
+            "name": "Yogiri",
+            "bilibili": "427061218"
+        },
+        {
+            "name": "Civia",
+            "bilibili": "354411419"
+        },
+        {
+            "name": "Spade Echo",
+            "bilibili": "456368455"
+        },
+        {
+            "name": "Doris",
+            "bilibili": ""
+        },
+        {
+            "name": "Artia",
+            "bilibili": ""
+        },
+        {
+            "name": "Rosalyn",
+            "bilibili": ""
+        }
+    ]
+}
