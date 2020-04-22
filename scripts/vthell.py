@@ -20,6 +20,15 @@ BASE_VENV_BIN = (
 )
 DISCORD_WEBHOOK_URL = os.getenv("VTHELL_DISCORD_WEBHOOK", "")
 
+"""
+Cookies must be Netscape format or the one that can be opened with CURL.
+
+Netscape format:
+URL  INCLUDE_SUBDOMAINS  PATH  HTTPS_ONLY  EXPIRES  COOKIES_NAME  COOKIES_VALUE
+.youtube.com  TRUE  /  TRUE  0  SAMPLES  SAMPLEVALUES
+"""
+COOKIES_NAME = "cookies.txt"  # Your cookies file name
+
 logging.basicConfig(
     level=logging.DEBUG,
     handlers=[
@@ -45,6 +54,41 @@ def announce_shit(msg="Unknown"):
 
     webhook.add_embed(embed)
     webhook.execute()
+
+
+def find_and_parse_cookies() -> list:
+    """Find provided cookies and parse them"""
+    if not os.path.isfile(BASE_VTHELL_PATH + COOKIES_NAME):
+        return []
+    vtlog.info("Opening cookies files...")
+    cookies_data = open(COOKIES_NAME, "r", encoding="utf-8").readlines()
+    cookies_data = [c.rstrip() for c in cookies_data if not c.startswith("#")]
+
+    parsed_cookies = []
+    for kuki in cookies_data:
+        try:
+            (
+                uri,
+                inc_subdomain,
+                path,
+                https_only,
+                expires,
+                name,
+                value,
+            ) = kuki.split("\t")
+        except ValueError:
+            vtlog.error(
+                "Failed to unpack cookies, "
+                "please provide a valid netscape format"
+            )
+            return []
+        if "youtube.com" not in uri or "youtu.be" not in uri:
+            continue
+        parsed_cookies.append("--http-cookie")
+        parsed_cookies.append('"{k}={v}"'.format(k=name, v=value))
+    vtlog.debug("Total cookies keys: {}".format(len(parsed_cookies) // 2))
+    vtlog.info("Cookeis parsed.")
+    return parsed_cookies
 
 
 def reset_handler(r=True):
@@ -134,9 +178,7 @@ for vthjs in vthell_jobs:
     with open(vthjs, "r") as fp:
         vt = json.load(fp)
     if vt["isDownloaded"]:
-        vtlog.warn(
-            "Skipping {}, reason: Already recorded.".format(vt["id"])
-        )
+        vtlog.warn("Skipping {}, reason: Already recorded.".format(vt["id"]))
         continue
     if vt["isDownloading"]:
         vtlog.warn(
@@ -175,6 +217,7 @@ for vthjs in vthell_jobs:
 
     vtlog.info("Starting job for: {}".format(vt["id"]))
     vtlog.debug("Output: {}".format(save_ts_name))
+    STREAMLINK_CMD.extend(find_and_parse_cookies())
     STREAMLINK_CMD.extend([save_ts_name, vt["streamUrl"], "best"])
     vt["isDownloading"] = True
 
@@ -206,7 +249,7 @@ for vthjs in vthell_jobs:
         line = line.decode("utf-8")
         vtlog.info(line)
         line = line.lower()
-        if line.startswith("error"):
+        if line.startswith("error") or line.startswith("streamlink: error"):
             if "read timeout" in line:
                 override_err = True
             if "429 client error" in line:
