@@ -1,4 +1,54 @@
 {
+    "UC8BS2IrE9NmxKLX7ObRVyxQ": {
+        "id": "animare",
+        "name": "Animare Cafe",
+        "upload_path": "774 inc./Animare/Animare Cafe"
+    },
+    "UCRvpMpzAXBRKJQuk-8-Sdvg": {
+        "id": "animare",
+        "name": "Hinokuma Ran",
+        "upload_path": "774 inc./Animare/Hinokuma Ran"
+    },
+    "UC0Owc36U9lOyi9Gx9Ic-4qg": {
+        "id": "animare",
+        "name": "Haneru Inaba",
+        "upload_path": "774 inc./Animare/Haneru Inaba"
+    },
+    "UC2kyQhzGOB-JPgcQX9OMgEw": {
+        "id": "animare",
+        "name": "Souya Ichika",
+        "upload_path": "774 inc./Animare/Souya Ichika"
+    },
+    "UCXp7sNC0F_qkjickvlYkg-Q": {
+        "id": "animare",
+        "name": "Kazami Kuku",
+        "upload_path": "774 inc./Animare/Kazami Kuku"
+    },
+    "UCW8WKciBixmaqaGqrlTITRQ": {
+        "id": "animare",
+        "name": "Yunohara Izumi",
+        "upload_path": "774 inc./Animare/Yunohara Izumi"
+    },
+    "UCOgONfZgrG2g0jntQKa6cDw": {
+        "id": "animare",
+        "name": "Haibara Akane",
+        "upload_path": "774 inc./Animare/Haibara Akane"
+    },
+    "UCTsEofJvQymp0Dcd4wYBmVQ": {
+        "id": "animare",
+        "name": "Momono Yurari",
+        "upload_path": "774 inc./Animare/Momono Yurari"
+    },
+    "UCtzCQnCT9E4o6U3mHHSHbQQ": {
+        "id": "animare",
+        "name": "Mimi Shiromiya",
+        "upload_path": "774 inc./Animare/Mimi Shiromiya"
+    },
+    "UC_BlXOQe5OcRC7o0GX8kp8A": {
+        "id": "animare",
+        "name": "Hashiba Natsumi",
+        "upload_path": "774 inc./Animare/Hashiba Natsumi"
+    },
     "UCJFZiqLMntJufDCHc6bQixg": {
         "id": "hololive",
         "name": "Hololive Official",
@@ -44,11 +94,6 @@
         "name": "Akai Haato",
         "upload_path": "Hololive/Akai Haato"
     },
-    "UCHj_mh57PVMXhAUDphUQDFA": {
-        "id": "hololive",
-        "name": "Akai Haato Sub ch",
-        "upload_path": "Hololive/Akai Haato Sub ch"
-    },
     "UCFTLzh12_nrtzqBPsTCqenA": {
         "id": "hololive",
         "name": "Aki Rosenthal",
@@ -68,11 +113,6 @@
         "id": "hololive",
         "name": "Yuzuki Choco",
         "upload_path": "Hololive/Yuzuki Choco"
-    },
-    "UCp3tgHXw_HI0QMk1K8qh3gQ": {
-        "id": "hololive",
-        "name": "Yuzuki Choco Sub ch",
-        "upload_path": "Hololive/Yuzuki Choco Sub ch"
     },
     "UCXTpFs_3PqI41qX2d9tL2Rw": {
         "id": "hololive",
@@ -129,30 +169,10 @@
         "name": "Uruha Rushia",
         "upload_path": "Hololive/Uruha Rushia"
     },
-    "UCZlDXzGoo7d44bwdNObFacg": {
-        "id": "hololive",
-        "name": "Amane Kanata",
-        "upload_path": "Hololive/Amane Kanata"
-    },
-    "UCS9uQI-jC3DE0L4IpXyvr6w": {
-        "id": "hololive",
-        "name": "Kiryu Coco",
-        "upload_path": "Hololive/Kiryu Coco"
-    },
-    "UCqm3BQLlJfvkTsX_hvm0UmA": {
-        "id": "hololive",
-        "name": "Tsunomaki Watame",
-        "upload_path": "Hololive/Tsunomaki Watame"
-    },
     "UC1uv2Oq6kNxgATlCiez59hw": {
         "id": "hololive",
         "name": "Tokoyami Towa",
         "upload_path": "Hololive/Tokoyami Towa"
-    },
-    "UCa9Y57gfeY0Zro_noHRVrnw": {
-        "id": "hololive",
-        "name": "Himemori Luna",
-        "upload_path": "Hololive/Himemori Luna"
     },
     "UCOyYb1c43VlX9rc_lT6NKQw": {
         "id": "hololiveid",

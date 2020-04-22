@@ -1,0 +1,48 @@
+{
+    "id": "animare",
+    "name": "Animare",
+    "main_key": "youtube",
+    "upload_base": "774 inc./Animare",
+    "vliver": [
+        {
+            "name": "Animare Cafe",
+            "youtube": "UC8BS2IrE9NmxKLX7ObRVyxQ"
+        },
+        {
+            "name": "Hinokuma Ran",
+            "youtube": "UCRvpMpzAXBRKJQuk-8-Sdvg"
+        },
+        {
+            "name": "Haneru Inaba",
+            "youtube": "UC0Owc36U9lOyi9Gx9Ic-4qg"
+        },
+        {
+            "name": "Souya Ichika",
+            "youtube": "UC2kyQhzGOB-JPgcQX9OMgEw"
+        },
+        {
+            "name": "Kazami Kuku",
+            "youtube": "UCXp7sNC0F_qkjickvlYkg-Q"
+        },
+        {
+            "name": "Yunohara Izumi",
+            "youtube": "UCW8WKciBixmaqaGqrlTITRQ"
+        },
+        {
+            "name": "Haibara Akane",
+            "youtube": "UCOgONfZgrG2g0jntQKa6cDw"
+        },
+        {
+            "name": "Momono Yurari",
+            "youtube": "UCTsEofJvQymp0Dcd4wYBmVQ"
+        },
+        {
+            "name": "Mimi Shiromiya",
+            "youtube": "UCtzCQnCT9E4o6U3mHHSHbQQ"
+        },
+        {
+            "name": "Hashiba Natsumi",
+            "youtube": "UC_BlXOQe5OcRC7o0GX8kp8A"
+        }
+    ]
+}
