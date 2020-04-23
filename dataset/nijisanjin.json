@@ -1,0 +1,20 @@
+{
+    "id": "nijisanjiin",
+    "name": "Nijisanji India",
+    "main_key": "youtube",
+    "upload_base": "Nijisanji/.Nijisanji IN",
+    "vliver": [
+        {
+            "name": "Aadya",
+            "youtube": "UC_aB_-PHLFHiP61djM0oOiQ"
+        },
+        {
+            "name": "Noor",
+            "youtube": "UC6oW4FXETgEGOFTxWmI2h5Q"
+        },
+        {
+            "name": "Vihaan",
+            "youtube": "UC0lik9pHju6ONgkBh7N5wHw"
+        }
+    ]
+}
