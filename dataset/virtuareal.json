@@ -1,0 +1,88 @@
+{
+    "id": "virtuareal",
+    "name": "VirtuaReal (Nijisanji China)",
+    "main_key": "youtube",
+    "upload_base": "Nijisanji/.VirtuaReal",
+    "vliver": [
+        {
+            "name": "Eine",
+            "bilibili": "421267475"
+        },
+        {
+            "name": "Ruki",
+            "bilibili": "420249427"
+        },
+        {
+            "name": "Nanami",
+            "bilibili": "434334701"
+        },
+        {
+            "name": "Ichigo",
+            "bilibili": "434341786"
+        },
+        {
+            "name": "Kouichi",
+            "bilibili": "434401868"
+        },
+        {
+            "name": "Muri",
+            "bilibili": "455916618"
+        },
+        {
+            "name": "Hanon",
+            "bilibili": "455965041"
+        },
+        {
+            "name": "Plus",
+            "bilibili": "472845978"
+        },
+        {
+            "name": "Nyatsuki",
+            "bilibili": "472821519"
+        },
+        {
+            "name": "Waku",
+            "bilibili": "472877684"
+        },
+        {
+            "name": "Miki",
+            "bilibili": "477317922"
+        },
+        {
+            "name": "Hoshimi",
+            "bilibili": "477342747"
+        },
+        {
+            "name": "Mahiru",
+            "bilibili": "477306079"
+        },
+        {
+            "name": "Yagi",
+            "bilibili": "480675481"
+        },
+        {
+            "name": "Aza",
+            "bilibili": "480680646"
+        },
+        {
+            "name": "Roi",
+            "bilibili": "480745939"
+        },
+        {
+            "name": "Tabibito",
+            "bilibili": "474369808"
+        },
+        {
+            "name": "Seiya",
+            "bilibili": "319810877"
+        },
+        {
+            "name": "Saya",
+            "bilibili": "490331391"
+        },
+        {
+            "name": "Yukie",
+            "bilibili": "56748733"
+        }
+    ]
+}

@@ -129,6 +129,106 @@
         "name": "Spade Echo",
         "upload_path": "Hololive/.Hololive CN/Spade Echo"
     },
+    "421267475": {
+        "id": "virtuareal",
+        "name": "Eine",
+        "upload_path": "Nijisanji/.VirtuaReal/Eine"
+    },
+    "420249427": {
+        "id": "virtuareal",
+        "name": "Ruki",
+        "upload_path": "Nijisanji/.VirtuaReal/Ruki"
+    },
+    "434334701": {
+        "id": "virtuareal",
+        "name": "Nanami",
+        "upload_path": "Nijisanji/.VirtuaReal/Nanami"
+    },
+    "434341786": {
+        "id": "virtuareal",
+        "name": "Ichigo",
+        "upload_path": "Nijisanji/.VirtuaReal/Ichigo"
+    },
+    "434401868": {
+        "id": "virtuareal",
+        "name": "Kouichi",
+        "upload_path": "Nijisanji/.VirtuaReal/Kouichi"
+    },
+    "455916618": {
+        "id": "virtuareal",
+        "name": "Muri",
+        "upload_path": "Nijisanji/.VirtuaReal/Muri"
+    },
+    "455965041": {
+        "id": "virtuareal",
+        "name": "Hanon",
+        "upload_path": "Nijisanji/.VirtuaReal/Hanon"
+    },
+    "472845978": {
+        "id": "virtuareal",
+        "name": "Plus",
+        "upload_path": "Nijisanji/.VirtuaReal/Plus"
+    },
+    "472821519": {
+        "id": "virtuareal",
+        "name": "Nyatsuki",
+        "upload_path": "Nijisanji/.VirtuaReal/Nyatsuki"
+    },
+    "472877684": {
+        "id": "virtuareal",
+        "name": "Waku",
+        "upload_path": "Nijisanji/.VirtuaReal/Waku"
+    },
+    "477317922": {
+        "id": "virtuareal",
+        "name": "Miki",
+        "upload_path": "Nijisanji/.VirtuaReal/Miki"
+    },
+    "477342747": {
+        "id": "virtuareal",
+        "name": "Hoshimi",
+        "upload_path": "Nijisanji/.VirtuaReal/Hoshimi"
+    },
+    "477306079": {
+        "id": "virtuareal",
+        "name": "Mahiru",
+        "upload_path": "Nijisanji/.VirtuaReal/Mahiru"
+    },
+    "480675481": {
+        "id": "virtuareal",
+        "name": "Yagi",
+        "upload_path": "Nijisanji/.VirtuaReal/Yagi"
+    },
+    "480680646": {
+        "id": "virtuareal",
+        "name": "Aza",
+        "upload_path": "Nijisanji/.VirtuaReal/Aza"
+    },
+    "480745939": {
+        "id": "virtuareal",
+        "name": "Roi",
+        "upload_path": "Nijisanji/.VirtuaReal/Roi"
+    },
+    "474369808": {
+        "id": "virtuareal",
+        "name": "Tabibito",
+        "upload_path": "Nijisanji/.VirtuaReal/Tabibito"
+    },
+    "319810877": {
+        "id": "virtuareal",
+        "name": "Seiya",
+        "upload_path": "Nijisanji/.VirtuaReal/Seiya"
+    },
+    "490331391": {
+        "id": "virtuareal",
+        "name": "Saya",
+        "upload_path": "Nijisanji/.VirtuaReal/Saya"
+    },
+    "56748733": {
+        "id": "virtuareal",
+        "name": "Yukie",
+        "upload_path": "Nijisanji/.VirtuaReal/Yukie"
+    },
     "391876799": {
         "id": "vrlive",
         "name": "Siro",
