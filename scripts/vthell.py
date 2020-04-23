@@ -60,8 +60,9 @@ def find_and_parse_cookies() -> list:
     """Find provided cookies and parse them"""
     if not os.path.isfile(BASE_VTHELL_PATH + COOKIES_NAME):
         return []
-    vtlog.info("Opening cookies files...")
-    cookies_data = open(COOKIES_NAME, "r", encoding="utf-8").readlines()
+    vtlog.info("Opening cookies file...")
+    cookies_data = open(BASE_VTHELL_PATH + COOKIES_NAME, "r", encoding="utf-8").readlines()
+    vtlog.info("Parsing cookies file...")
     cookies_data = [c.rstrip() for c in cookies_data if not c.startswith("#")]
 
     parsed_cookies = []
@@ -82,16 +83,12 @@ def find_and_parse_cookies() -> list:
                 "please provide a valid netscape format"
             )
             return []
-        if (
-            "youtube.com" not in uri
-            or "youtu.be" not in uri
-            or "bilibili.com" not in uri
-        ):
+        if ("youtube.com" or "youtu.be" or "bilibili.com") not in uri:
             continue
         parsed_cookies.append("--http-cookie")
         parsed_cookies.append('"{k}={v}"'.format(k=name, v=value))
     vtlog.debug("Total cookies keys: {}".format(len(parsed_cookies) // 2))
-    vtlog.info("Cookeis parsed.")
+    vtlog.info("Cookies parsed!")
     return parsed_cookies
 
 
@@ -184,8 +181,9 @@ for vthjs in vthell_jobs:
 
     vtlog.info("Starting job for: {}".format(vt["id"]))
     vtlog.debug("Output: {}".format(save_ts_name))
+    STREAMLINK_CMD.append(save_ts_name)
     STREAMLINK_CMD.extend(find_and_parse_cookies())
-    STREAMLINK_CMD.extend([save_ts_name, vt["streamUrl"], "best"])
+    STREAMLINK_CMD.extend([vt["streamUrl"], "best"])
     vt["isDownloading"] = True
 
     with open(vthjs, "w") as fp:
