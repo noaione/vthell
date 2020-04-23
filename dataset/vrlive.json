@@ -1,0 +1,92 @@
+{
+    "id": "vrlive",
+    "name": "VR LIVE",
+    "main_key": "youtube",
+    "upload_base": "VR Live",
+    "vliver": [
+        {
+            "name": "Siro",
+            "youtube": "UCLhUvJ_wO9hOvv_yYENu4fQ",
+            "bilibili": "391876799"
+        },
+        {
+            "name": "Siro Games",
+            "youtube": "UCkD-wlU06zeiGSk31y2qIOw"
+        },
+        {
+            "name": "Iroha Kongo",
+            "youtube": "UCiGcHHHT3kBB1IGOrv7f3qQ",
+            "bilibili": "441666962"
+        },
+        {
+            "name": "Riko Ushimaki",
+            "youtube": "UCKUcnaLsG2DeQqza8zRXHiA",
+            "bilibili": "455868076"
+        },
+        {
+            "name": "Tama Yozakura",
+            "youtube": "UCOefINa2_BmpuX4BbHjdk9A",
+            "bilibili": "441666957"
+        },
+        {
+            "name": "Suzu Kagura",
+            "youtube": "UCUZ5AlC3rTlM-rA2cj5RP6w",
+            "bilibili": "455868077"
+        },
+        {
+            "name": "Mememe Mokota",
+            "youtube": "UCz6Gi81kE6p5cdW1rT0ixqw",
+            "bilibili": "441666965"
+        },
+        {
+            "name": "Pino Carro",
+            "youtube": "UCMzxQ58QL4NNbWghGymtHvw",
+            "bilibili": "441666956"
+        },
+        {
+            "name": "Natori Yaezawa",
+            "youtube": "UC1519-d1jzGiL1MPTxEdtSA",
+            "bilibili": "441666963"
+        },
+        {
+            "name": "Futaba Kitakami",
+            "youtube": "UC5nfcGkOAm3JwfPvJvzplHg",
+            "bilibili": "441666959"
+        },
+        {
+            "name": "Azuki Kiso",
+            "youtube": "UCmM5LprTu6-mSlIiRNkiXYg",
+            "bilibili": "441666958"
+        },
+        {
+            "name": "Kakyoin Chieri",
+            "youtube": "UCP9ZgeIJ3Ri9En69R0kJc9Q",
+            "bilibili": "441666964"
+        },
+        {
+            "name": "Iori Yamato",
+            "youtube": "UCyb-cllCkMREr9de-hoiDrg",
+            "bilibili": "441666961"
+        },
+        {
+            "name": "Iori Yamato",
+            "youtube": "UCyb-cllCkMREr9de-hoiDrg",
+            "bilibili": "441666961"
+        },
+        {
+            "name": "Mochi Nekonoki",
+            "youtube": "UC02LBsjt_Ehe7k0CuiNC6RQ",
+            "bilibili": "441666960"
+        },
+        {
+            "name": "Milk Merry",
+            "youtube": "UCju7v8SkoWUQ5ITCQwmYpYg",
+            "bilibili": "441666966"
+        },
+        {
+            "name": "Baacharu",
+            "youtube": "UC6TyfKcsrPwBsBnx2QobVLQ",
+            "bilibili": "455868075"
+        }
+    ]
+}
