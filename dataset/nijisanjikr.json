@@ -1,0 +1,44 @@
+{
+    "id": "nijisanjikr",
+    "name": "Nijisanji Korea",
+    "main_key": "youtube",
+    "upload_base": "Nijisanji/.Nijisanji KR",
+    "vliver": [    
+        {
+            "name": "Ruri Yu",
+            "youtube": "UCIJ9zP6gIkT8BB4Lz4UYPhA"
+        },
+        {
+            "name": "Wiffy",
+            "youtube": "UCzMAP-oh5-pC8j6RlCPf26w"
+        },
+        {
+            "name": "Yuya Shin",
+            "youtube": "UCjGE11ZnF0JSR8egVAwh-3A"
+        },
+        {
+            "name": "Suha Min",
+            "youtube": "UCUtKkGKef8BYMs3h-3zQm9A"
+        },
+        {
+            "name": "Mogaon",
+            "youtube": "UCpRXCTyNNa-MnjhK6gisnRw"
+        },
+        {
+            "name": "Kaen",
+            "youtube": "UCZgRRTDMYwHpQ7sCl0aCp2Q"
+        },
+        {
+            "name": "LOROU",
+            "youtube": "UCLSzgV37Dt24T8p3-TNiSLg"
+        },
+        {
+            "name": "Chiho Han",
+            "youtube": "UCJ6LH4jMNy0JN9RSThz1mMQ"
+        },
+        {
+            "name": "Hakuren",
+            "youtube": "UC6WU2SrnG019ucm_bdY6qxQ"
+        }
+    ]
+}
