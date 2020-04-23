@@ -1,0 +1,53 @@
+{
+    "id": "entum",
+    "name": "ENTUM",
+    "main_key": "youtube",
+    "upload_base": "ENTUM",
+    "vliver": [
+        {
+            "name": "Mirai Akari",
+            "youtube": "UCMYtONm441rBogWK_xPH9HA"
+        },
+        {
+            "name": "Nekomiya Hinata",
+            "youtube": "UCevD0wKzJFpfIkvHOiQsfLQ",
+            "bilibili": "291296062"
+        },
+        {
+            "name": "Todoki Uka",
+            "youtube": "UCk0dNVAdlgn4ynURwAq_z2A"
+        },
+        {
+            "name": "Minamori Hero",
+            "youtube": "UCuGMkxJA_icuiF01u8f3Y2Q"
+        },
+        {
+            "name": "Mochi Hiyoko",
+            "youtube": "UCZ1WJDkMNiZ_QwHnNrVf7Pw"
+        },
+        {
+            "name": "Tsukiyo Sora",
+            "youtube": "UCPwSREC85pZ3_ZW1MbEWf9Q"
+        },
+        {
+            "name": "VT-212",
+            "youtube": "UCCsZjHDiCgvlZ8VyCQMEYuQ"
+        },
+        {
+            "name": "Mikuriya Kuon",
+            "youtube": "UCCRZH38F6BkexM6edXkwG8g"
+        },
+        {
+            "name": "Midy",
+            "youtube": "UCs4zWdCrlnXmpVkjOgAHs0w"
+        },
+        {
+            "name": "Moemi & Yomemi",
+            "youtube": "UCy5lOmEQoivK5XK7QCaRKug"
+        },
+        {
+            "name": "Midy",
+            "youtube": "UCs4zWdCrlnXmpVkjOgAHs0w"
+        }
+    ]
+}
