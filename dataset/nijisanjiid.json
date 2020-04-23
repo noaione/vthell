@@ -1,0 +1,48 @@
+{
+    "id": "nijisanjiid",
+    "name": "Nijisanji Indonesia",
+    "main_key": "youtube",
+    "upload_base": "Nijisanji/.Nijisanji ID",
+    "vliver": [
+        {
+            "name": "Hana Macchia",
+            "youtube": "UCpJtk0myFr5WnyfsmnInP-w"
+        },
+        {
+            "name": "Zea Cornelia",
+            "youtube": "UCA3WE2WRSpoIvtnoVGq4VAw"
+        },
+        {
+            "name": "Taka Radjiman",
+            "youtube": "UCZ5dNZsqBjBzbBl0l_IdmXg"
+        },
+        {
+            "name": "Amicia Michella",
+            "youtube": "UCrR7JxkbeLY82e8gsj_I0pQ"
+        },
+        {
+            "name": "Miyu Ottavia",
+            "youtube": "UCOmjciHZ8Au3iKMElKXCF_g"
+        },
+        {
+            "name": "Rai Galilei",
+            "youtube": "UC8Snw5i4eOJXEQqURAK17hQ"
+        },
+        {
+            "name": "Riksa Dhirendra",
+            "youtube": "UCkL9OLKjIQbKk2CztbpOCFg"
+        },
+        {
+            "name": "Azura Cecillia",
+            "youtube": "UCk5r533QVMgJUdWwqegH2TA"
+        },
+        {
+            "name": "Nara Haramaung",
+            "youtube": "UCoWH3sDpeXG1aXmOxveX4KA"
+        },
+        {
+            "name": "Layla Alstroemeria",
+            "youtube": "UCyRkQSuhJILuGOuXk10voPg"
+        }
+    ]
+}
