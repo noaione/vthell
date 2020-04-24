@@ -116,7 +116,6 @@ with open(BASE_VTHELL_PATH + "/dataset/_bilibili_mapping.json") as fp:
 
 vtlog.info("====================== Start of process! ======================")
 
-STREAMLINK_CMD = [BASE_VENV_BIN + "streamlink", "-o"]
 UPLOAD_CMD = [RCLONE_PATH, "-v", "-P", "copy"]
 MKVMERGE_CMD = ["mkvmerge", "-o"]
 MKVMERGE_LANG = ["--language", "0:jpn", "--language", "1:jpn"]
@@ -138,6 +137,7 @@ if not vthell_jobs:
 
 vthell_stream = None
 for vthjs in vthell_jobs:
+    STREAMLINK_CMD = [BASE_VENV_BIN + "streamlink", "-o"]
     dtnow = datetime.now().timestamp()
     with open(vthjs, "r") as fp:
         vt = json.load(fp)
