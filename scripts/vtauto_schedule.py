@@ -313,6 +313,15 @@ ENABLED_MAP = [
 
 IGNORED_MAP = [
     {"type": "channel", "data": "UCjlmCrq4TP1I4xguOtJ-31w"},
+    {"type": "channel", "data": "UCGNI4MENvnsymYjKiZwv9eg"},
+    {"type": "channel", "data": "UC9mf_ZVpouoILRY9NUIaK-w"},
+    {"type": "channel", "data": "UCEzsociuFqVwgZuMaZqaCsg"},
+    {"type": "channel", "data": "UCANDOlYTJT7N5jlRC3zfzVA"},
+    {"type": "channel", "data": "UCNVEsYbiZjH5QLmGeSgTSzg"},
+    {"type": "channel", "data": "UC6t3-_N8A6ME1JShZHHqOMw"},
+    {"type": "channel", "data": "UCKeAhJvy8zgXWbh9duVjIaQ"},
+    {"type": "channel", "data": "UCJFZiqLMntJufDCHc6bQixg"},
+    {"type": "channel", "data": "UCZgOv3YDEs-ZnZWDYVwJdmA"},
     {"type": "word", "data": "(cover)"},
     {"type": "word", "data": "あさココ"},
 ]
