@@ -9,8 +9,8 @@
 *.txt
 *.log
 
-jobs/
-streamdump/
+jobs/*.json
+streamdump/*
 _oldstuff/
 dataset/_unused/
 dataset/*.py

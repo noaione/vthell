@@ -1,7 +1,7 @@
 {
     "id": "holostars",
     "name": "Holostars",
-    "upload_base": "Hololive/.Holostars",
+    "upload_base": "Holostars",
     "main_key": "youtube",
     "schedule_api": "https://storage.googleapis.com/vthell-data/live.json",
     "vliver": [

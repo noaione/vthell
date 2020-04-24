@@ -242,42 +242,42 @@
     "UC6t3-_N8A6ME1JShZHHqOMw?sub_confirmation=1": {
         "id": "holostars",
         "name": "Miyabi",
-        "upload_path": "Hololive/.Holostars/Miyabi"
+        "upload_path": "Holostars/Miyabi"
     },
     "UCZgOv3YDEs-ZnZWDYVwJdmA?sub_confirmation=1": {
         "id": "holostars",
         "name": "Izuru",
-        "upload_path": "Hololive/.Holostars/Izuru"
+        "upload_path": "Holostars/Izuru"
     },
     "UCEzsociuFqVwgZuMaZqaCsg?sub_confirmation=1": {
         "id": "holostars",
         "name": "Kira",
-        "upload_path": "Hololive/.Holostars/Kira"
+        "upload_path": "Holostars/Kira"
     },
     "UCKeAhJvy8zgXWbh9duVjIaQ": {
         "id": "holostars",
         "name": "Aruran",
-        "upload_path": "Hololive/.Holostars/Aruran"
+        "upload_path": "Holostars/Aruran"
     },
     "UC9mf_ZVpouoILRY9NUIaK-w?sub_confirmation=1": {
         "id": "holostars",
         "name": "Rikka",
-        "upload_path": "Hololive/.Holostars/Rikka"
+        "upload_path": "Holostars/Rikka"
     },
     "UCNVEsYbiZjH5QLmGeSgTSzg": {
         "id": "holostars",
         "name": "Astel",
-        "upload_path": "Hololive/.Holostars/Astel"
+        "upload_path": "Holostars/Astel"
     },
     "UCGNI4MENvnsymYjKiZwv9eg": {
         "id": "holostars",
         "name": "Temma",
-        "upload_path": "Hololive/.Holostars/Temma"
+        "upload_path": "Holostars/Temma"
     },
     "UCANDOlYTJT7N5jlRC3zfzVA": {
         "id": "holostars",
         "name": "Roberu",
-        "upload_path": "Hololive/.Holostars/Roberu"
+        "upload_path": "Holostars/Roberu"
     },
     "UCDh2bWI5EDu7PavqwICkVpA": {
         "id": "honeystrap",
@@ -298,11 +298,6 @@
         "id": "honeystrap",
         "name": "Mary",
         "upload_path": "774 inc./HoneyStrap/Mary"
-    },
-    "UCX7YkU9nEeaoZbkVLVajcMg": {
-        "id": "nijisanji",
-        "name": "Nijisanji Official Channel",
-        "upload_path": "Nijisanji/Nijisanji Official Channel"
     },
     "UCLpYMk5h1bq8_GAFVBgXhPQ": {
         "id": "nijisanji",
@@ -331,8 +326,8 @@
     },
     "UCUzJ90o1EjqUbk2pBAy0_aw": {
         "id": "nijisanji",
-        "name": "Gilzaren III",
-        "upload_path": "Nijisanji/Gilzaren III"
+        "name": "Gilzaren \u2162",
+        "upload_path": "Nijisanji/Gilzaren \u2162"
     },
     "UCspv01oxUFf_MTSipURRhkA": {
         "id": "nijisanji",
@@ -588,6 +583,11 @@
         "id": "nijisanji",
         "name": "Miyako Seto",
         "upload_path": "Nijisanji/Miyako Seto"
+    },
+    "UCX7YkU9nEeaoZbkVLVajcMg": {
+        "id": "nijisanji",
+        "name": "Nijisanji",
+        "upload_path": "Nijisanji/Nijisanji"
     },
     "UCwQ9Uv-m8xkE5PzRc7Bqx3Q": {
         "id": "nijisanji",
