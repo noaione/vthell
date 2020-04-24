@@ -61,7 +61,9 @@ def find_and_parse_cookies() -> list:
     if not os.path.isfile(BASE_VTHELL_PATH + COOKIES_NAME):
         return []
     vtlog.info("Opening cookies file...")
-    cookies_data = open(BASE_VTHELL_PATH + COOKIES_NAME, "r", encoding="utf-8").readlines()
+    cookies_data = open(
+        BASE_VTHELL_PATH + COOKIES_NAME, "r", encoding="utf-8"
+    ).readlines()
     vtlog.info("Parsing cookies file...")
     cookies_data = [c.rstrip() for c in cookies_data if not c.startswith("#")]
 

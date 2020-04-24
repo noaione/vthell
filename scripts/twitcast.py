@@ -41,6 +41,7 @@ twitcast_jobs = [
     os.path.splitext(os.path.basename(job))[0] for job in twitcast_jobs
 ]
 
+
 def announce_shit(msg="Unknown"):
     if not DISCORD_WEBHOOK_URL:
         vtlog.debug("No Discord Webhook url, skipping announcement...")
@@ -63,6 +64,7 @@ def reset_handler(r=True):
     formatter0 = logging.Formatter("%(message)s")
     console.setFormatter(formatter0)
     vtlog.addHandler(console)
+
 
 reset_handler(False)
 
@@ -131,15 +133,9 @@ for user in ENABLED_USERS:
 
     vtlog.info("Executing streamlink command!")
 
-    save_ts_name = (
-        "'" + BASE_VTHELL_PATH + "streamdump/" + filename + ".ts'"
-    )
-    save_mux_name = (
-        BASE_VTHELL_PATH + "streamdump/" + filename + ".mkv"
-    )
-    save_ts_name1 = (
-        BASE_VTHELL_PATH + "streamdump/" + filename + ".ts"
-    )
+    save_ts_name = "'" + BASE_VTHELL_PATH + "streamdump/" + filename + ".ts'"
+    save_mux_name = BASE_VTHELL_PATH + "streamdump/" + filename + ".mkv"
+    save_ts_name1 = BASE_VTHELL_PATH + "streamdump/" + filename + ".ts"
 
     STREAMLINK_CMD.extend([save_ts_name, stream_url, "best"])
     MKVMERGE_CMD.append(save_mux_name)
@@ -198,15 +194,16 @@ for user in ENABLED_USERS:
         continue
     else:
         announce_shit(
-            "Twitcast ID: "
-            + user
-            + " recorded, will be muxed and uploaded."
+            "Twitcast ID: " + user + " recorded, will be muxed and uploaded."
         )
         vtlog.info("Executing mkvmerge command!")
         vtlog.debug(" ".join(MKVMERGE_CMD))
         sp.call(MKVMERGE_CMD)
 
-        if os.path.isfile(save_mux_name) and os.path.getsize(save_mux_name) > 0:
+        if (
+            os.path.isfile(save_mux_name)
+            and os.path.getsize(save_mux_name) > 0
+        ):
             UPLOAD_CMD.extend(
                 [
                     save_mux_name,

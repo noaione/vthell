@@ -46,7 +46,9 @@ res = s.json()
 snippets = res["items"][0]["snippet"]
 if "liveStreamingDetails" in res["items"][0]:
     if "actualStartTime" in res["items"][0]["liveStreamingDetails"]:
-        stream_start = res["items"][0]["liveStreamingDetails"]["actualStartTime"]
+        stream_start = res["items"][0]["liveStreamingDetails"][
+            "actualStartTime"
+        ]
     else:
         stream_start = res["items"][0]["liveStreamingDetails"][
             "scheduledStartTime"
