@@ -1,7 +1,0 @@
-{
-    "nijisanji": "https://api.itsukaralink.jp/v1.2/events.json",
-    "hololive": "https://storage.googleapis.com/vthell-data/live.json",
-    "hololiveid": "https://storage.googleapis.com/vthell-data/live.json",
-    "holostars": "https://storage.googleapis.com/vthell-data/live.json",
-    "hololivecn": null
-}
