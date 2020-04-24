@@ -1,9 +1,9 @@
 <h1 align="center">
-    <img src="https://cdn.discordapp.com/emojis/651022528785022976.png?v=1"><br>
+    <img src="https://media.discordapp.net/attachments/558322816995426305/687238504190574598/CocoOkite.gif"><br>
     N4O VTuber Recording Tools
 </h1>
-<p align="center"><b>Version 1.8</b><br><i>A rabbit hole you shouldn't enter, once entered you can't get out.</i></p>
-<p align="center">Created by: <b>N4O</b><br/>Last Updated: <b>16/04/2020</b></p>
+<p align="center"><b>Version 1.9</b><br><i>A rabbit hole you shouldn't enter, once entered you can't get out.</i></p>
+<p align="center">Created by: <b>N4O</b><br/>Last Updated: <b>24/04/2020</b></p>
 <p align="center"><a href="https://git.ihateani.me/noaione/vthell/releases"><strong>Download</strong></a></p>
 
 **Table of Contents**:
@@ -23,14 +23,18 @@
     - [runauto.sh](#runauto-sh-https-git-ihateani-me-noaione-vthell-src-branch-master-runauto-sh)
     - [runtwit.sh](#runtwit-sh-https-git-ihateani-me-noaione-vthell-src-branch-master-runtwit-sh)
     - [vtrip.sh](#vtrip-sh-https-git-ihateani-me-noaione-vthell-src-branch-master-vtrip-sh)
-    - [vtup.sh](#vtup-sh-https-git-ihateani-me-noaione-vthell-src-branch-master-vtup-sh)
+    - [vtup.sh](#vtup-sh)
 - [Troubleshooting](#troubleshooting)
 - [Helpful `alias`](#helpful-bashrc-or-alias)
 
 ## Information
-This tools currently doesn't support anyone else beside HoloLive.<br>
-You are able to use it but it will not work 100% or the upload mapping will be kinda fucked.<br>
-To be honest, this tools works for every livestream in YouTube. It will only be broken when the stream is recorded and will be uploaded.
+~~This tools currently doesn't support anyone else beside HoloLive.~~
+<br>
+~~You are able to use it but it will not work 100% or the upload mapping will be kinda fucked.~~
+<br>
+~~To be honest, this tools works for every livestream in YouTube. It will only be broken when the stream is recorded and will be uploaded.~~
+
+**This program now support Agency outside Hololive, you can check it on [dataset](https://git.ihateani.me/noaione/vthell/src/branch/master/dataset) folder.**
 
 I only fully support Linux for now because Windows is annoying to make this fully automatic and I'm lazy to write up the tutorial.
 
@@ -296,6 +300,22 @@ So if you want to change it to drive `foo` and folder `VTuberBackup`: `foo:VTube
 ### Configuring auto-scheduler
 **Main file: [scripts/vtauto_schedule.py](https://git.ihateani.me/noaione/vthell/src/branch/master/scripts/vtauto_schedule.py)**
 
+**Update 1.9**
+<br>
+This update introduce Nijisanji to the auto uploader, you can enable/disable it on the main file.
+```py
+"""
+Set to True or False if you want it to be processed/scheduled automatically
+
+Default:
+- Enable Hololive
+- Disable Nijisanji
+So, it will process Hololive but skip Nijisanji completely.
+"""
+PROCESS_HOLOLIVE = True
+PROCESS_NIJISANJI = False
+```
+
 There's 2 main part to edit, `ENABLED_MAP` and `IGNORED_MAP`<br>
 `ENABLED_MAP` are streams that will be scheduled if it match one of the defined conditions.<br>
 While `IGNORED_MAP` will remove anything that match the conditions.
@@ -306,6 +326,8 @@ The default one for `ENABLED_MAP` are:
 - Any title containing: `歌う`
 - Any title containing: `歌枠`
 - Any title containing: `歌雑談`
+- Any title containing: `ASMR`
+- Any title containing: `うたうよ`
 
 The default one for `IGNORED_MAP` are:
 - All HoloStars Channel
@@ -430,57 +452,10 @@ Combine with `vtup.sh` later
 
 **Don't use this if you're ripping currently live streamed video, use addjob.sh for that**
 
-#### [vtup.sh](https://git.ihateani.me/noaione/vthell/src/branch/master/vtup.sh)
-**./vtup.sh** "\[file]" \[vtuber] \[type]
+#### vtup.sh
+**REMOVED**
 
-Upload your **[file]** to the cloud drive.
-
-allowed **[vtuber]**:
-- holo
-- azki
-- suisei
-- roboco
-- miko
-- sora
-- korone
-- okayu
-- fubuki
-- mio
-- haato
-- aki
-- matsuri
-- mel
-- aqua
-- shion
-- ayame
-- subaru
-- choco
-- marine
-- flare
-- noel
-- rushia
-- pekora
-- kanata
-- luna
-- coco
-- towa
-- watame
-
-allowed **[type]**:
-- s: `for stream archive`
-- stream: `for stream archive`
-- archive: `for stream archive`
-- c: `for stream clips`
-- clips: `for stream clips`
-- cover: `for song cover`
-- utaite: `for song cover`
-- ani: `for animation`
-- anime: `for animation`
-- ori: `original songs`
-- uta: `original songs`
-
-if you put other stuff on **[vtuber]** or **[type]**
-it will default to `Unknown`.
+`vtup.sh` are now removed since version 1.9 since it's support more Agency.
 
 
 ## Troubleshooting
@@ -492,9 +467,9 @@ Enable it again when the VTuber start streaming by using `./addjob.sh [youtube_l
 
 You're being rate limited by YouTube there's nothing you can do except using proxy temporarily
 
-> "Please add Niji ID VTuber or other VTuber"
+> "Please add VTuber from xxx."
 
-If someone want to actually compile a list containing every channel ID of the VTuber, I'll add it.<br>
+If you want me to add that VTuber into the list, please help me compile them with the same format as most `dataset` list.<br>
 **You can contact me at Discord: N4O#8868**
 
 > "I added DISCORD_WEBHOOK to my ENV key but I'm not getting any announcement"
@@ -523,11 +498,6 @@ alias vtar="/path/to/vthell/runauto.sh"
 > Shortcut for `vtrip.sh`
 ```bash
 alias vtd="/path/to/vthell/vtrip.sh"
-```
-
-> Shortcut for `vtup.sh`
-```bash
-alias vtu="/path/to/vthell/vtup.sh"
 ```
 
 > Follow logfile
