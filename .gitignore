@@ -14,3 +14,4 @@ streamdump/
 _oldstuff/
 dataset/_unused/
 dataset/*.py
+!requirements.txt
