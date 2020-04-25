@@ -298,7 +298,7 @@ def format_filename(title, ctime, s_id):
     tsd = datetime.fromtimestamp(ctime, pytz.timezone("Asia/Tokyo"))
     ts_strf = tsd.strftime("[%Y.%m.%d]")
     ts_strf = ts_strf[:-1] + ".{}]".format(s_id)
-    return secure_filename("{} {} [1080p AAC]".format(ts_strf, title))
+    return secure_filename("{} {}".format(ts_strf, title))
 
 
 ENABLED_MAP = [

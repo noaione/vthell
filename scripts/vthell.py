@@ -106,6 +106,22 @@ def print_end():
     vtlog.info("====================== End of process! ======================")
 
 
+def find_res(line: str):
+    """Find video resolution"""
+    lines = [
+        l.rstrip()
+        for l in line.split()
+        if not l.startswith("(") and not l.endswith(")")
+    ]
+    lines = [l for l in lines if not l.startswith("[") and not l.endswith("]")]
+    res = None
+    for l in lines:
+        if l.endswith("p"):
+            res = l
+            break
+    return res
+
+
 reset_handler(False)
 
 with open(BASE_VTHELL_PATH + "/dataset/_youtube_mapping.json") as fp:
@@ -225,6 +241,9 @@ for vthjs in vthell_jobs:
                 args_unk_err = True
         if "opening stream" in line and not discord_announced:
             discord_announced = True
+            vtlog.debug("Finding resolution from output line...")
+            vt["resolution"] = find_res(line)
+            vtlog.debug("Resolution: {}".format(vt["resolution"]))
             announce_shit("Job " + vt["id"] + " started recording!")
 
     process.stdout.close()
@@ -259,9 +278,11 @@ if not vthell_stream:
 
 vtjsf = BASE_VTHELL_PATH + "jobs/" + vthell_stream["id"] + ".json"
 
-save_mux_name = (
-    BASE_VTHELL_PATH + "streamdump/" + vthell_stream["filename"] + ".mkv"
-)
+save_mux_name = BASE_VTHELL_PATH + "streamdump/" + vthell_stream["filename"]
+if "resolution" in vthell_stream:
+    if vthell_stream["resolution"]:
+        save_mux_name += " [{} AAC]".format(vthell_stream["resolution"])
+save_mux_name += ".mkv"
 save_ts_name1 = (
     BASE_VTHELL_PATH + "streamdump/" + vthell_stream["filename"] + ".ts"
 )

@@ -148,7 +148,7 @@ class YoutubeScheduler:
         self.start_time = dts.timestamp()
         dtymd = to_utc9(dts).strftime("[%Y.%m.%d]")
         dtymd = dtymd[:-1] + ".{}]".format(self.id)
-        self.filename = "{} {} [1080p AAC]".format(dtymd, title)
+        self.filename = "{} {}".format(dtymd, title)
         self.filename = secure_filename(self.filename)
 
     def dumps(self) -> dict:
