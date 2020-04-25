@@ -144,6 +144,11 @@
         "name": "Akai Haato",
         "upload_path": "Hololive/Akai Haato"
     },
+    "UCHj_mh57PVMXhAUDphUQDFA": {
+        "id": "hololive",
+        "name": "Akai Haato Sub ch",
+        "upload_path": "Hololive/Akai Haato Sub ch"
+    },
     "UCFTLzh12_nrtzqBPsTCqenA": {
         "id": "hololive",
         "name": "Aki Rosenthal",
@@ -163,6 +168,11 @@
         "id": "hololive",
         "name": "Yuzuki Choco",
         "upload_path": "Hololive/Yuzuki Choco"
+    },
+    "UCp3tgHXw_HI0QMk1K8qh3gQ": {
+        "id": "hololive",
+        "name": "Yuzuki Choco Sub ch",
+        "upload_path": "Hololive/Yuzuki Choco Sub ch"
     },
     "UCXTpFs_3PqI41qX2d9tL2Rw": {
         "id": "hololive",
@@ -219,10 +229,30 @@
         "name": "Uruha Rushia",
         "upload_path": "Hololive/Uruha Rushia"
     },
+    "UCZlDXzGoo7d44bwdNObFacg": {
+        "id": "hololive",
+        "name": "Amane Kanata",
+        "upload_path": "Hololive/Amane Kanata"
+    },
+    "UCS9uQI-jC3DE0L4IpXyvr6w": {
+        "id": "hololive",
+        "name": "Kiryu Coco",
+        "upload_path": "Hololive/Kiryu Coco"
+    },
+    "UCqm3BQLlJfvkTsX_hvm0UmA": {
+        "id": "hololive",
+        "name": "Tsunomaki Watame",
+        "upload_path": "Hololive/Tsunomaki Watame"
+    },
     "UC1uv2Oq6kNxgATlCiez59hw": {
         "id": "hololive",
         "name": "Tokoyami Towa",
         "upload_path": "Hololive/Tokoyami Towa"
+    },
+    "UCa9Y57gfeY0Zro_noHRVrnw": {
+        "id": "hololive",
+        "name": "Himemori Luna",
+        "upload_path": "Hololive/Himemori Luna"
     },
     "UCOyYb1c43VlX9rc_lT6NKQw": {
         "id": "hololiveid",
@@ -239,17 +269,17 @@
         "name": "Airani Iofifteen",
         "upload_path": "Hololive/.Hololive ID/Airani Iofifteen"
     },
-    "UC6t3-_N8A6ME1JShZHHqOMw?sub_confirmation=1": {
+    "UC6t3-_N8A6ME1JShZHHqOMw": {
         "id": "holostars",
         "name": "Miyabi",
         "upload_path": "Holostars/Miyabi"
     },
-    "UCZgOv3YDEs-ZnZWDYVwJdmA?sub_confirmation=1": {
+    "UCZgOv3YDEs-ZnZWDYVwJdmA": {
         "id": "holostars",
         "name": "Izuru",
         "upload_path": "Holostars/Izuru"
     },
-    "UCEzsociuFqVwgZuMaZqaCsg?sub_confirmation=1": {
+    "UCEzsociuFqVwgZuMaZqaCsg": {
         "id": "holostars",
         "name": "Kira",
         "upload_path": "Holostars/Kira"
@@ -259,7 +289,7 @@
         "name": "Aruran",
         "upload_path": "Holostars/Aruran"
     },
-    "UC9mf_ZVpouoILRY9NUIaK-w?sub_confirmation=1": {
+    "UC9mf_ZVpouoILRY9NUIaK-w": {
         "id": "holostars",
         "name": "Rikka",
         "upload_path": "Holostars/Rikka"
