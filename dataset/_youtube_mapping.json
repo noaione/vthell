@@ -271,23 +271,23 @@
     },
     "UC6t3-_N8A6ME1JShZHHqOMw": {
         "id": "holostars",
-        "name": "Miyabi",
-        "upload_path": "Holostars/Miyabi"
+        "name": "Hanasaki Miyabi",
+        "upload_path": "Holostars/Hanasaki Miyabi"
     },
     "UCZgOv3YDEs-ZnZWDYVwJdmA": {
         "id": "holostars",
-        "name": "Izuru",
-        "upload_path": "Holostars/Izuru"
+        "name": "Kanade Izuru",
+        "upload_path": "Holostars/Kanade Izuru"
     },
     "UCEzsociuFqVwgZuMaZqaCsg": {
         "id": "holostars",
-        "name": "Kira",
-        "upload_path": "Holostars/Kira"
+        "name": "Kagami Kira",
+        "upload_path": "Holostars/Kagami Kira"
     },
     "UCKeAhJvy8zgXWbh9duVjIaQ": {
         "id": "holostars",
-        "name": "Aruran",
-        "upload_path": "Holostars/Aruran"
+        "name": "Arurandeisu",
+        "upload_path": "Holostars/Arurandeisu"
     },
     "UC9mf_ZVpouoILRY9NUIaK-w": {
         "id": "holostars",
@@ -296,18 +296,33 @@
     },
     "UCNVEsYbiZjH5QLmGeSgTSzg": {
         "id": "holostars",
-        "name": "Astel",
-        "upload_path": "Holostars/Astel"
+        "name": "Astel Leda",
+        "upload_path": "Holostars/Astel Leda"
     },
     "UCGNI4MENvnsymYjKiZwv9eg": {
         "id": "holostars",
-        "name": "Temma",
-        "upload_path": "Holostars/Temma"
+        "name": "Kishido Temma",
+        "upload_path": "Holostars/Kishido Temma"
     },
     "UCANDOlYTJT7N5jlRC3zfzVA": {
         "id": "holostars",
-        "name": "Roberu",
-        "upload_path": "Holostars/Roberu"
+        "name": "Yukoku Roberu",
+        "upload_path": "Holostars/Yukoku Roberu"
+    },
+    "UCsehvfwaWF6nWuFnXI0AqZQ": {
+        "id": "holostars",
+        "name": "Tsukishita Kaoru",
+        "upload_path": "Holostars/Tsukishita Kaoru"
+    },
+    "UChSvpZYRPh0FvG4SJGSga3g": {
+        "id": "holostars",
+        "name": "Kageyama Shien",
+        "upload_path": "Holostars/Kageyama Shien"
+    },
+    "UCwL7dgTxKo8Y4RFIKWaf8gA": {
+        "id": "holostars",
+        "name": "Aragami Oga",
+        "upload_path": "Holostars/Aragami Oga"
     },
     "UCDh2bWI5EDu7PavqwICkVpA": {
         "id": "honeystrap",

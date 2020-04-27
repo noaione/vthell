@@ -6,19 +6,19 @@
     "schedule_api": "https://storage.googleapis.com/vthell-data/live.json",
     "vliver": [
         {
-            "name": "Miyabi",
+            "name": "Hanasaki Miyabi",
             "youtube": "UC6t3-_N8A6ME1JShZHHqOMw"
         },
         {
-            "name": "Izuru",
+            "name": "Kanade Izuru",
             "youtube": "UCZgOv3YDEs-ZnZWDYVwJdmA"
         },
         {
-            "name": "Kira",
+            "name": "Kagami Kira",
             "youtube": "UCEzsociuFqVwgZuMaZqaCsg"
         },
         {
-            "name": "Aruran",
+            "name": "Arurandeisu",
             "youtube": "UCKeAhJvy8zgXWbh9duVjIaQ"
         },
         {
@@ -26,16 +26,28 @@
             "youtube": "UC9mf_ZVpouoILRY9NUIaK-w"
         },
         {
-            "name": "Astel",
+            "name": "Astel Leda",
             "youtube": "UCNVEsYbiZjH5QLmGeSgTSzg"
         },
         {
-            "name": "Temma",
+            "name": "Kishido Temma",
             "youtube": "UCGNI4MENvnsymYjKiZwv9eg"
         },
         {
-            "name": "Roberu",
+            "name": "Yukoku Roberu",
             "youtube": "UCANDOlYTJT7N5jlRC3zfzVA"
+        },
+        {
+            "name": "Tsukishita Kaoru",
+            "youtube": "UCsehvfwaWF6nWuFnXI0AqZQ"
+        },
+        {
+            "name": "Kageyama Shien",
+            "youtube": "UChSvpZYRPh0FvG4SJGSga3g"
+        },
+        {
+            "name": "Aragami Oga",
+            "youtube": "UCwL7dgTxKo8Y4RFIKWaf8gA"
         }
     ]
 }
