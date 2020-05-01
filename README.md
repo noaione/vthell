@@ -2,8 +2,8 @@
     <img src="https://media.discordapp.net/attachments/558322816995426305/687238504190574598/CocoOkite.gif"><br>
     N4O VTuber Recording Tools
 </h1>
-<p align="center"><b>Version 1.9</b><br><i>A rabbit hole you shouldn't enter, once entered you can't get out.</i></p>
-<p align="center">Created by: <b>N4O</b><br/>Last Updated: <b>24/04/2020</b></p>
+<p align="center"><b>Version 2.0</b><br><i>A rabbit hole you shouldn't enter, once entered you can't get out.</i></p>
+<p align="center">Created by: <b>N4O</b><br/>Last Updated: <b>01/05/2020</b></p>
 <p align="center"><a href="https://github.com/noaione/vthell/releases"><strong>Download</strong></a></p>
 
 **Table of Contents**:
@@ -317,7 +317,16 @@ So if you want to change it to drive `foo` and folder `VTuberBackup`: `foo:VTube
 
 
 ### Configuring auto-scheduler
-**Main file: [scripts/vtauto_schedule.py](https://github.com/noaione/vthell/blob/master/scripts/vtauto_schedule.py)**
+**Main file: [scripts/vtauto_schedule.py](https://github.com/noaione/vthell/blob/master/scripts/vtauto_schedule.py)**<br>
+**[dataset/_auto_scheduler.json](https://github.com/noaione/vthell/blob/master/dataset/_auto_scheduler.json)**
+
+**Update 2.0**
+<br>
+This update separate the mapping to it's own file, to edit if you want to enable Nijisanji or Hololive<br>
+you can refer to the `vtauto_schedule.py` file.
+
+While the `dataset/_auto_scheduler.json` contain what you want to allowed (enabled) or ignored (disabled).<br>
+The format are still the same as before, you can still follow the instructions below.
 
 **Update 1.9**
 <br>
@@ -335,11 +344,11 @@ PROCESS_HOLOLIVE = True
 PROCESS_NIJISANJI = False
 ```
 
-There's 2 main part to edit, `ENABLED_MAP` and `IGNORED_MAP`<br>
-`ENABLED_MAP` are streams that will be scheduled if it match one of the defined conditions.<br>
+There's 2 main part to edit, `enabled` and `disabled`<br>
+`enabled` are streams that will be scheduled if it match one of the defined conditions.<br>
 While `IGNORED_MAP` will remove anything that match the conditions.
 
-The default one for `ENABLED_MAP` are:
+The default one for `enabled` are:
 - Towa ch.
 - Korone ch.
 - Any title containing: `歌う`
@@ -348,7 +357,7 @@ The default one for `ENABLED_MAP` are:
 - Any title containing: `ASMR`
 - Any title containing: `うたうよ`
 
-The default one for `IGNORED_MAP` are:
+The default one for `disabled` are:
 - All HoloStars Channel
 - Any title containing: `(cover)`
 - Any title containing: `あさココ`
@@ -370,7 +379,7 @@ Record anything that have `歌う` (utau) in the title
 {"type": "channel", "data": "UC1uv2Oq6kNxgATlCiez59hw"}
 ```
 Record anything from `channel`: `UC1uv2Oq6kNxgATlCiez59hw` (`UC1uv2Oq6kNxgATlCiez59hw` are channel ID)<br>
-Channel ID for other HoloLiver are provided in `MAPPING` variable
+Channel ID are provided in dataset folder.
 
 You can add more by just creating a new line after the last one.<br>
 You also can remove any predefined one if you want.
