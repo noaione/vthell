@@ -5,6 +5,9 @@ import os
 import re
 import sys
 from datetime import datetime
+from os.path import basename as pbase
+from os.path import join as pjoin
+from os.path import splitext as psplit
 
 import pytz
 import requests
@@ -51,10 +54,8 @@ console.setFormatter(formatter1)
 vtlog.addHandler(console)
 
 vtlog.info("Collecting existing jobs...")
-vthell_jobs = glob.glob(BASE_VTHELL_PATH + "jobs/*.json")
-vthell_jobs = [
-    os.path.splitext(os.path.basename(job))[0] for job in vthell_jobs
-]
+vthell_jobs = glob.glob(pjoin(BASE_VTHELL_PATH, "jobs", "*.json"))
+vthell_jobs = [psplit(pbase(job))[0] for job in vthell_jobs]
 
 
 class AutoScheduler:
@@ -161,7 +162,9 @@ class NijisanjiScheduler(AutoScheduler):
 
     def __load_dataset(self):
         with open(
-            BASE_VTHELL_PATH + "nijisanji.json", "r", encoding="utf-8"
+            pjoin(BASE_VTHELL_PATH, "dataset", "nijisanji.json"),
+            "r",
+            encoding="utf-8",
         ) as fp:
             vtlog.debug("Loading dataset...")
             self.dataset = json.load(fp)
@@ -301,30 +304,14 @@ def format_filename(title, ctime, s_id):
     return secure_filename("{} {}".format(ts_strf, title))
 
 
-ENABLED_MAP = [
-    {"type": "channel", "data": "UC1uv2Oq6kNxgATlCiez59hw"},
-    {"type": "channel", "data": "UChAnqc_AY5_I3Px5dig3X1Q"},
-    {"type": "word", "data": "歌う"},
-    {"type": "word", "data": "歌枠"},
-    {"type": "word", "data": "歌雑談"},
-    {"type": "word", "data": "ASMR"},
-    {"type": "word", "data": "うたうよ"},
-]
-
-IGNORED_MAP = [
-    {"type": "channel", "data": "UCjlmCrq4TP1I4xguOtJ-31w"},
-    {"type": "channel", "data": "UCGNI4MENvnsymYjKiZwv9eg"},
-    {"type": "channel", "data": "UC9mf_ZVpouoILRY9NUIaK-w"},
-    {"type": "channel", "data": "UCEzsociuFqVwgZuMaZqaCsg"},
-    {"type": "channel", "data": "UCANDOlYTJT7N5jlRC3zfzVA"},
-    {"type": "channel", "data": "UCNVEsYbiZjH5QLmGeSgTSzg"},
-    {"type": "channel", "data": "UC6t3-_N8A6ME1JShZHHqOMw"},
-    {"type": "channel", "data": "UCKeAhJvy8zgXWbh9duVjIaQ"},
-    {"type": "channel", "data": "UCJFZiqLMntJufDCHc6bQixg"},
-    {"type": "channel", "data": "UCZgOv3YDEs-ZnZWDYVwJdmA"},
-    {"type": "word", "data": "(cover)"},
-    {"type": "word", "data": "あさココ"},
-]
+with open(
+    pjoin(BASE_VTHELL_PATH, "dataset", "_auto_scheduler.json"),
+    "r",
+    encoding="utf-8",
+) as fp:
+    SCHEDULER_MAP = json.load(fp)
+    ENABLED_MAP = SCHEDULER_MAP["enabled"]
+    IGNORED_MAP = SCHEDULER_MAP["disabled"]
 
 niji_set = []
 holo_set = []
@@ -382,7 +369,7 @@ for stream in collected_streams:
                 "isDownloaded": False,
                 "isPaused": False,
                 "firstRun": True,
-                "startTime": dts_ts - 120,  # T-2
+                "startTime": dts_ts - 60,  # T-1
                 "streamer": stream["streamer"],
                 "streamUrl": "https://www.youtube.com/watch?v=" + stream["id"],
             },
