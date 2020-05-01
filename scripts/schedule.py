@@ -4,6 +4,7 @@ import os
 import re
 import sys
 from datetime import datetime
+from os.path import join as pjoin
 
 import requests
 
@@ -29,7 +30,9 @@ def secure_filename(fn: str):
 logging.basicConfig(
     level=logging.DEBUG,
     handlers=[
-        logging.FileHandler(BASE_VTHELL_PATH + "nvthell.log", "a", "utf-8")
+        logging.FileHandler(
+            pjoin(BASE_VTHELL_PATH, "nvthell.log"), "a", "utf-8"
+        )
     ],
     format="%(asctime)s %(name)-1s -- [%(levelname)s]: %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
@@ -204,7 +207,7 @@ for ninp, input_url in enumerate(batched_urls, 1):
     vtlog.info("Saving fetched data into jobs file")
 
     with open(
-        BASE_VTHELL_PATH + "jobs/" + json_output["id"] + ".json",
+        pjoin(BASE_VTHELL_PATH, "jobs", json_output["id"] + ".json"),
         "w",
         encoding="utf-8",
     ) as fp:
