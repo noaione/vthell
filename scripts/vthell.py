@@ -388,9 +388,7 @@ vtlog.debug(" ".join(MKVMERGE_CMD))
 sp.call(MKVMERGE_CMD)
 
 if isfile(save_mux_name) and getsize(save_mux_name) > 0:
-    UPLOAD_CMD.extend(
-        [save_mux_name, UPLOAD_PATH]
-    )
+    UPLOAD_CMD.extend([save_mux_name, UPLOAD_PATH])
     vtlog.info("Executing rclone command!")
     vtlog.debug(" ".join(UPLOAD_CMD))
     sp.call(UPLOAD_CMD)
