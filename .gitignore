@@ -8,6 +8,8 @@
 
 *.txt
 *.log
+*.json
+!dataset/*.json
 
 jobs/*.json
 streamdump/*
