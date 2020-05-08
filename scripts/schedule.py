@@ -112,11 +112,15 @@ class YoutubeScheduler:
         )
         self.rgx2 = re.compile(r"watch\?v\=")
         self.streamweb = "YouTube"
+        self.member_stream = False
         self.API_KEY = None
         self.__fetch_id(url)
         self.__fetch_apikey()
 
     def __fetch_id(self, url):
+        if "ms." in url:
+            url = url.replace("ms.", "")
+            self.member_stream = True
         self.id = re.sub(self.rgx1, "", url)
         self.id = re.sub(self.rgx2, "", self.id)
         set_logger("YouTube", self.id)
@@ -129,6 +133,8 @@ class YoutubeScheduler:
 
     def process(self):
         vtlog.info("Fetching to API...")
+        if self.member_stream:
+            vtlog.info("Detected as Member-Only Stream.")
         s = requests.get(self.BASE_API.format(self.id, self.API_KEY))
         if s.status_code != 200:
             vtlog.error("Failed fetching to the API, please try again later.")
@@ -162,6 +168,7 @@ class YoutubeScheduler:
             "streamer": self.streamer,
             "streamUrl": self.BASE_YT_WATCH + self.id,
             "type": "youtube",
+            "memberOnly": self.member_stream,
             "isDownloading": False,
             "isDownloaded": False,
             "isPaused": False,
