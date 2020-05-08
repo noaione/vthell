@@ -57,9 +57,9 @@ else:
     stream_start = snippets["publishedAt"]
 dts = datetime.strptime(stream_start, "%Y-%m-%dT%H:%M:%S.%fZ")
 dts_ts = dts.timestamp() + 28800
-dts_new = datetime.fromtimestamp(dts_ts).strftime("[%Y-%m-%d]")
+dts_new = datetime.fromtimestamp(dts_ts).strftime("[%Y.%m.%d")
 title = snippets["title"]
-final_filename = "{} {}".format(dts_new, title)
+final_filename = "{}.{}] {}".format(dts_new, input_url, title)
 final_filename += r" [%(height)dp AAC].%(ext)s"
 final_filename = secure_filename(final_filename)
 print(final_filename)
