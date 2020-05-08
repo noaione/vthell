@@ -29,7 +29,7 @@ Netscape format:
 URL  INCLUDE_SUBDOMAINS  PATH  HTTPS_ONLY  EXPIRES  COOKIES_NAME  COOKIES_VALUE
 .youtube.com  TRUE  /  TRUE  0  SAMPLES  SAMPLEVALUES
 """
-COOKIES_NAME = "cookies.txt"  # Your cookies file name
+COOKIES_NAME = "membercookies.txt"  # Your cookies file name
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -143,7 +143,6 @@ vtlog.info("====================== Start of process! ======================")
 UPLOAD_CMD = [RCLONE_PATH, "-v", "-P", "copy"]
 MKVMERGE_CMD = ["mkvmerge", "-o"]
 MKVMERGE_LANG = ["--language", "0:jpn", "--language", "1:jpn"]
-UPLOAD_BASE_PATH = RCLONE_TARGET_BASE + "Stream Archive/{}"
 
 vtlog.removeHandler(console)
 formatter1 = logging.Formatter("[%(asctime)s] %(message)s")
@@ -183,7 +182,7 @@ def run_streamlink_proc(STL_CMD, vt, reload_mode=False):
         if "failed to reload playlist" in line:
             vtlog.warn("Failed, reloading playlist.")
             vtlog.warn("Will continue the job and merge together the result.")
-            reload_playlist = False
+            reload_playlist = True
             break
         if line.startswith("error") or line.startswith("streamlink: error"):
             if "read timeout" in line:
@@ -276,7 +275,8 @@ for vthjs in vthell_jobs:
                 "'" + save_ts_name + "_{}.ts'".format(c_next)
             )
         final_output.append(STREAMLINK_CMD[2])
-        STREAMLINK_CMD.extend(find_and_parse_cookies())
+        if vt["memberOnly"]:
+            STREAMLINK_CMD.extend(find_and_parse_cookies())
         STREAMLINK_CMD.extend([vt["streamUrl"], "best"])
 
         override_err = False
@@ -367,6 +367,17 @@ vthell_stream["isDownloaded"] = True
 with open(vtjsf, "w") as fp:
     json.dump(vthell_stream, fp)
 
+STREAM_FOLDER = "Stream Archive"
+STREAMER_PATH = upload_mapping.get(vthell_stream["streamer"], {}).get(
+    "upload_path", "Unknown"
+)
+if vthell_stream["memberOnly"]:
+    STREAM_FOLDER = "Member-Only " + STREAM_FOLDER
+
+UPLOAD_PATH = pjoin(RCLONE_TARGET_BASE, STREAM_FOLDER, STREAMER_PATH).replace(
+    "\\", "/"
+)
+
 MKVMERGE_CMD.append(save_mux_name)
 MKVMERGE_CMD.extend(MKVMERGE_LANG)
 MKVMERGE_CMD.extend(save_ts_name1)
@@ -378,14 +389,7 @@ sp.call(MKVMERGE_CMD)
 
 if isfile(save_mux_name) and getsize(save_mux_name) > 0:
     UPLOAD_CMD.extend(
-        [
-            save_mux_name,
-            UPLOAD_BASE_PATH.format(
-                upload_mapping.get(vthell_stream["streamer"], {}).get(
-                    "upload_path", "Unknown"
-                )
-            ),
-        ]
+        [save_mux_name, UPLOAD_PATH]
     )
     vtlog.info("Executing rclone command!")
     vtlog.debug(" ".join(UPLOAD_CMD))
