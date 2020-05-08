@@ -2,7 +2,6 @@ import glob
 import json
 import logging
 import os
-import re
 import sys
 from datetime import datetime
 from os.path import basename as pbase
@@ -15,7 +14,8 @@ from discord_webhook import DiscordEmbed, DiscordWebhook
 
 """
 A tools to automatically schedule upcoming streams!
-Only support Hololive and Nijisanji Main Group (Everyone except World)
+Only support Hololive and Nijisanji for now
+Using dragonjet (jetri.co) API Endpoint.
 
 Please change BASE_VTHELL_PATH to your VTHell folder.
 """
@@ -40,7 +40,9 @@ PROCESS_NIJISANJI = False
 logging.basicConfig(
     level=logging.DEBUG,
     handlers=[
-        logging.FileHandler(BASE_VTHELL_PATH + "nvthell.log", "a", "utf-8")
+        logging.FileHandler(
+            pjoin(BASE_VTHELL_PATH, "nvthell.log"), "a", "utf-8"
+        )
     ],
     format="%(asctime)s %(name)-1s -- [%(levelname)s]: %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
@@ -58,48 +60,139 @@ vthell_jobs = glob.glob(pjoin(BASE_VTHELL_PATH, "jobs", "*.json"))
 vthell_jobs = [psplit(pbase(job))[0] for job in vthell_jobs]
 
 
+class ValidationError(Exception):
+    def __init__(self, msg):
+        super().__init__(msg)
+
+
+class StreamData:
+    """Stream Information parser that used info like Jetri.co API
+    Required schema (You can other stuff yourself.)
+    {
+        "id": str,
+        "title": str
+        "channel": str,
+        "startTime": int/str
+    }
+    """
+
+    BASE_YT_WATCH = "https://www.youtube.com/watch?v="
+
+    def __init__(self, data: dict):
+        self._st_data = data
+        self.__validate_schema()
+        self.__parse_data()
+
+    def __validate_schema(self):
+        vtlog.debug("Validating schemas...")
+        schemas = {
+            "id": (str),
+            "title": (str),
+            "channel": (str),
+            "startTime": (str, int),
+        }
+        for key, value in schemas.items():
+            if key not in self._st_data:
+                raise ValidationError(
+                    "Key {} doesn't exist on your input, please revalidate."
+                )
+            if not isinstance(self._st_data[key], value):
+                if isinstance(value, tuple):
+                    tn = '"' + '" or "'.join([s.__name__ for s in value]) + '"'
+                else:
+                    tn = value.__name__
+                raise ValidationError(
+                    'Key "{}" format are wrong (must be {})'.format(key, tn)
+                )
+        vtlog.debug("Schema valid.")
+
+    def __secure_filename(self, fn: str):
+        replacement = {
+            "/": "／",
+            ":": "：",
+            "<": "＜",
+            ">": "＞",
+            '"': "”",
+            "'": "’",
+            "\\": "＼",
+            "?": "？",
+            "*": "⋆",
+            "|": "｜",
+            "#": "",
+        }
+        for k, v in replacement.items():
+            fn = fn.replace(k, v)
+        return fn
+
+    def __format_filename(self):
+        ctime = self._st_data["startTime"]
+        if isinstance(ctime, str):
+            ctime = int(ctime)
+        ctime += 9 * 60 * 60
+        tsd = datetime.fromtimestamp(ctime, pytz.timezone("Asia/Tokyo"))
+        ts_strf = tsd.strftime("[%Y.%m.%d")
+        ts_strf = ts_strf + ".{}]".format(self.id)
+        return self.__secure_filename("{} {}".format(ts_strf, self._title))
+
+    def __parse_data(self):
+        self.id = self._st_data["id"]
+        self._title = self._st_data["title"]
+        self._streamer = self._st_data["channel"]
+        if isinstance(self._st_data["startTime"], str):
+            self._st_data["startTime"] = int(self._st_data["startTime"])
+        self._start_time = self._st_data["startTime"]
+        self._filename = self.__format_filename()
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "filename": self._filename,
+            "startTime": self._start_time - 60,
+            "streamer": self._streamer,
+            "streamUrl": self.BASE_YT_WATCH + self.id,
+            "type": "youtube",
+            "memberOnly": False,
+            "isDownloading": False,
+            "isDownloaded": False,
+            "isPaused": False,
+            "firstRun": True,
+        }
+
+
 class AutoScheduler:
     """Main filtering and request process in here."""
 
     def __init__(self):
         self._ignore = True
 
-    def __collect_title(self, data):
-        title_set = []
-        for k, vv in data.items():
-            for ni, i in enumerate(vv):
-                t_ = {"t": i["title"], "i": ni, "k": k}
-                title_set.append(t_)
-        return title_set
-
     def __ignore_channel(self, data, channel):
-        if channel in data:
-            del data[channel]
-        return data
+        new_data = []
+        for st in data:
+            if channel == st["channel"]:
+                continue
+            new_data.append(st)
+        return new_data
 
     def __ignore_word(self, data, word):
-        title_set = self.__collect_title(data)
-        for title in title_set:
-            if word in title["t"]:
-                del data[title["k"]][title["i"]]
-        return data
+        new_data = []
+        for st in data:
+            if word in st["title"]:
+                continue
+            new_data.append(st)
+        return new_data
 
     def __collect_word(self, data, word):
-        title_set = self.__collect_title(data)
         collected = []
-        for t in title_set:
-            if word in t["t"]:
-                dt = data[t["k"]][t["i"]]
-                dt["streamer"] = t["k"]
-                collected.append(dt)
+        for st in data:
+            if word in st["title"]:
+                collected.append(StreamData(st))
         return collected
 
     def __collect_channel(self, data, channel):
         collected = []
-        if channel in data:
-            for st in data[channel]:
-                st["streamer"] = channel
-                collected.append(st)
+        for st in data:
+            if channel == st["channel"]:
+                collected.append(StreamData(st))
         return collected
 
     def __blackhole(self, data, u=None):
@@ -110,7 +203,7 @@ class AutoScheduler:
 
     def _requests_events(self, API_ENDPOINT):
         req = requests.get(
-            API_ENDPOINT, headers={"User-Agent": "VTHellAutoScheduler/1.9"}
+            API_ENDPOINT, headers={"User-Agent": "VTHellAutoScheduler/2.1"}
         )
         if req.status_code >= 400:
             vtlog.error("Can't fetch API")
@@ -123,27 +216,30 @@ class AutoScheduler:
         return scheduled_streams, "Success"
 
     def ignore_dataset(self, event_data, disabled):
+        callback = {
+            "word": self.__ignore_word,
+            "channel": self.__ignore_channel,
+        }
         for ignore in disabled:
             vtlog.debug(
                 "Ignoring: {} -- {}".format(ignore["type"], ignore["data"])
             )
-            m_ = {"word": self.__ignore_word, "channel": self.__ignore_channel}
-            event_data = m_.get(ignore["type"], self.__blackhole)(
+            event_data = callback.get(ignore["type"], self.__blackhole)(
                 event_data, ignore["data"]
             )
         return event_data
 
     def collect_dataset(self, event_data, allowed):
+        callback = {
+            "word": self.__collect_word,
+            "channel": self.__collect_channel,
+        }
         collected_streams = []
         for enable in allowed:
             vtlog.debug(
                 "Collecting: {} -- {}".format(enable["type"], enable["data"])
             )
-            m_ = {
-                "word": self.__collect_word,
-                "channel": self.__collect_channel,
-            }
-            collect = m_.get(enable["type"], self.__blackhole2)(
+            collect = callback.get(enable["type"], self.__blackhole2)(
                 event_data, enable["data"]
             )
             collected_streams.extend(collect)
@@ -152,22 +248,12 @@ class AutoScheduler:
 
 class NijisanjiScheduler(AutoScheduler):
 
-    API_ENDPOINT = "https://api.itsukaralink.jp/v1.2/events.json"
+    API_ENDPOINT = "https://api.jetri.co/nijisanji/live"
 
     def __init__(self, allowed_data, denied_data):
         self.ENABLED = allowed_data
         self.DISABLED = denied_data
         self.__format_console()
-        self.__load_dataset()
-
-    def __load_dataset(self):
-        with open(
-            pjoin(BASE_VTHELL_PATH, "dataset", "nijisanji.json"),
-            "r",
-            encoding="utf-8",
-        ) as fp:
-            vtlog.debug("Loading dataset...")
-            self.dataset = json.load(fp)
 
     def __format_console(self):
         vtlog.removeHandler(console)
@@ -175,50 +261,15 @@ class NijisanjiScheduler(AutoScheduler):
         console.setFormatter(formatter1)
         vtlog.addHandler(console)
 
-    def __jst_to_utctimestamp(self, timedata: str) -> float:
-        parse_dt = datetime.strptime(timedata, "%Y-%m-%dT%H:%M:%S.%f+09:00")
-        parse_dt = parse_dt.timestamp() - (9 * 60 * 60)
-        return parse_dt
-
-    def __filter_events(self, events: list) -> list:
-        filtered = []
-        for event in events:
-            parse_dt = self.__jst_to_utctimestamp(event["start_date"])
-            ts = datetime.now(pytz.timezone("UTC")).timestamp()
-            if parse_dt - 120 > ts:
-                filtered.append(event)
-        vtlog.debug(
-            "Filtered result: {} (from: {})".format(len(filtered), len(events))
-        )
-        return filtered
-
-    def __find_vliver(self, vliver_id):
-        for vliver in self.dataset["vliver"]:
-            if vliver_id == vliver["id"]:
-                return vliver
-
-    def __internal_processor(self, events: list) -> list:
-        processed_data = {}
-        for event in events:
-            vliver = self.__find_vliver(event["livers"][0]["id"])
-            vliver_chan = vliver["youtube"]
-            dataset = []
-            if vliver_chan in processed_data:
-                dataset = processed_data[vliver_chan]
-            d = {}
-            v_id = event["url"]
-            v_id = re.search(
-                r"https\:\/\/www\.youtube\.com/watch\?v=(?P<ids>.*)", v_id
-            )
-            d["id"] = v_id.group("ids")
-            d["title"] = event["name"]
-            d["type"] = "upcoming"
-            start_time = self.__jst_to_utctimestamp(event["start_date"])
-            start_time = int(round(start_time))
-            d["startTime"] = str(start_time)
-            dataset.append(d)
-            processed_data[vliver_chan] = dataset
-        return processed_data
+    def __filter_upcoming(self, event_data):
+        event_data = event_data["upcoming"]
+        upcoming = []
+        current_time = datetime.utcnow().timestamp()
+        for event in event_data:
+            if current_time >= int(event["startTime"]):
+                continue
+            upcoming.append(event)
+        return upcoming
 
     def process(self):
         vtlog.info("Fetching Nijisanji Schedule API.")
@@ -226,21 +277,17 @@ class NijisanjiScheduler(AutoScheduler):
         if not events_data:
             return []
 
-        events_data = events_data["data"]["events"]
-
-        vtlog.info("Filtering data...")
-        events_data = self.__filter_events(events_data)
-        processed_data = self.__internal_processor(events_data)
+        events_data = self.__filter_upcoming(events_data)
 
         vtlog.info("Collecting live data...")
-        processed_data = self.ignore_dataset(processed_data, self.DISABLED)
-        collected_streams = self.collect_dataset(processed_data, self.ENABLED)
+        events_data = self.ignore_dataset(events_data, self.DISABLED)
+        collected_streams = self.collect_dataset(events_data, self.ENABLED)
         return collected_streams
 
 
 class HololiveScheduler(AutoScheduler):
 
-    API_ENDPOINT = "https://storage.googleapis.com/vthell-data/live.json"
+    API_ENDPOINT = "https://api.jetri.co/live"
 
     def __init__(self, allowed_data, denied_data):
         self.ENABLED = allowed_data
@@ -253,11 +300,23 @@ class HololiveScheduler(AutoScheduler):
         console.setFormatter(formatter1)
         vtlog.addHandler(console)
 
+    def __filter_upcoming(self, event_data):
+        event_data = event_data["upcoming"]
+        upcoming = []
+        current_time = datetime.utcnow().timestamp()
+        for event in event_data:
+            if current_time >= int(event["startTime"]):
+                continue
+            upcoming.append(event)
+        return upcoming
+
     def process(self):
         vtlog.info("Fetching Hololive Schedule API.")
         events_data, msg = self._requests_events(self.API_ENDPOINT)
         if not events_data:
             return []
+
+        events_data = self.__filter_upcoming(events_data)
 
         vtlog.info("Collecting live data...")
         events_data = self.ignore_dataset(events_data, self.DISABLED)
@@ -279,29 +338,6 @@ def announce_shit(msg="Unknown"):
 
     webhook.add_embed(embed)
     webhook.execute()
-
-
-def secure_filename(fn: str):
-    fn = fn.replace("/", "／")
-    fn = fn.replace(":", "：")
-    fn = fn.replace("<", "＜")
-    fn = fn.replace(">", "＞")
-    fn = fn.replace('"', "”")
-    fn = fn.replace("\\", "＼")
-    fn = fn.replace("?", "？")
-    fn = fn.replace("*", "⋆")
-    fn = fn.replace("|", "｜")
-    fn = fn.replace("#", "")
-    return fn
-
-
-def format_filename(title, ctime, s_id):
-    if isinstance(ctime, str):
-        ctime = int(ctime)
-    tsd = datetime.fromtimestamp(ctime, pytz.timezone("Asia/Tokyo"))
-    ts_strf = tsd.strftime("[%Y.%m.%d]")
-    ts_strf = ts_strf[:-1] + ".{}]".format(s_id)
-    return secure_filename("{} {}".format(ts_strf, title))
 
 
 with open(
@@ -346,37 +382,15 @@ vtlog.info(
 )
 
 for stream in collected_streams:
-    if stream["id"] in vthell_jobs:
-        vtlog.warn("Skipping {}, jobs already made!".format(stream["id"]))
+    if stream.id in vthell_jobs:
+        vtlog.warn("Skipping {}, jobs already made!".format(stream.id))
         continue
-    if stream["type"] != "upcoming":
-        vtlog.warn(
-            "Skipping {} because it's not an upcoming stream".format(
-                stream["id"]
-            )
-        )
-        continue
-    final_filename = format_filename(
-        stream["title"], stream["startTime"], stream["id"]
-    )
-    dts_ts = datetime.fromtimestamp(int(stream["startTime"])).timestamp()
-    with open(BASE_VTHELL_PATH + "jobs/" + stream["id"] + ".json", "w") as fp:
+    job_file = pjoin(BASE_VTHELL_PATH, "jobs", stream.id + ".json")
+    with open(job_file, "w") as fp:
         json.dump(
-            {
-                "id": stream["id"],
-                "filename": final_filename,
-                "isDownloading": False,
-                "isDownloaded": False,
-                "isPaused": False,
-                "firstRun": True,
-                "startTime": dts_ts - 60,  # T-1
-                "streamer": stream["streamer"],
-                "streamUrl": "https://www.youtube.com/watch?v=" + stream["id"],
-            },
-            fp,
-            indent=2,
+            stream.to_dict(), fp, indent=2,
         )
-    vtlog.info("Added {} to jobs list".format(stream["id"]))
+    vtlog.info("Added {} to jobs list".format(stream.id))
     announce_shit(
-        "Added: https://www.youtube.com/watch?v={}".format(stream["id"])
+        "Added: https://www.youtube.com/watch?v={}".format(stream.id)
     )
