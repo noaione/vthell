@@ -2,8 +2,8 @@
     <img src="https://media.discordapp.net/attachments/558322816995426305/687238504190574598/CocoOkite.gif"><br>
     N4O VTuber Recording Tools
 </h1>
-<p align="center"><b>Version 2.0</b><br><i>A rabbit hole you shouldn't enter, once entered you can't get out.</i></p>
-<p align="center">Created by: <b>N4O</b><br/>Last Updated: <b>01/05/2020</b></p>
+<p align="center"><b>Version 2.1</b><br><i>A rabbit hole you shouldn't enter, once entered you can't get out.</i></p>
+<p align="center">Created by: <b>N4O</b><br/>Last Updated: <b>08/05/2020</b></p>
 <p align="center"><a href="https://github.com/noaione/vthell/releases"><strong>Download</strong></a></p>
 
 **Table of Contents**:
