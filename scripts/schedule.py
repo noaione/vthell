@@ -153,7 +153,10 @@ class YoutubeScheduler:
         title = snippets["title"]
         self.streamer = snippets["channelId"]
 
-        dts = datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S.%fZ")
+        try:
+            dts = datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S.%fZ")
+        except ValueError:
+            dts = datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%SZ")
         self.start_time = dts.timestamp()
         dtymd = to_utc9(dts).strftime("[%Y.%m.%d]")
         dtymd = dtymd[:-1] + ".{}]".format(self.id)

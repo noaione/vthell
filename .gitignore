@@ -13,6 +13,7 @@
 
 jobs/*.json
 streamdump/*
+scraper/*
 _oldstuff/
 dataset/_unused/
 dataset/*.py
