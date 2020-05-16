@@ -33,9 +33,15 @@ Default:
 - Enable Hololive
 - Disable Nijisanji
 So, it will process Hololive but skip Nijisanji completely.
+
+There's also `ENABLE_BILIBILI` this will enable fetching to the BiliBili API
+for Upcoming live data.
+Set to True if you want to check it.
 """
 PROCESS_HOLOLIVE = True
 PROCESS_NIJISANJI = False
+
+ENABLE_BILIBILI = True
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -77,14 +83,26 @@ class StreamData:
     """
 
     BASE_YT_WATCH = "https://www.youtube.com/watch?v="
+    BASE_BILI_WATCH = "https://live.bilibili.com/"
 
-    def __init__(self, data: dict):
+    def __init__(self, data: dict, web: str = "youtube"):
         self._st_data = data
+        self._type = web
         self.__validate_schema()
         self.__parse_data()
 
     def __validate_schema(self):
         vtlog.debug("Validating schemas...")
+        self._type = self._type.lower()
+        if self._type not in ("youtube", "bilibili"):
+            raise ValueError(
+                'Unknown "web" type, must be `youtube` or `bilibili`'
+            )
+        self._WATCH_URL = (
+            self.BASE_YT_WATCH
+            if self._type == "youtube"
+            else self.BASE_BILI_WATCH
+        )
         schemas = {
             "id": (str),
             "title": (str),
@@ -142,6 +160,9 @@ class StreamData:
             self._st_data["startTime"] = int(self._st_data["startTime"])
         self._start_time = self._st_data["startTime"]
         self._filename = self.__format_filename()
+        self.stream_url = self._WATCH_URL + self.id
+        if self._type == "bilibili":
+            self.stream_url = self._WATCH_URL + str(self._st_data["room_id"])
 
     def to_dict(self) -> dict:
         return {
@@ -149,8 +170,8 @@ class StreamData:
             "filename": self._filename,
             "startTime": self._start_time - 60,
             "streamer": self._streamer,
-            "streamUrl": self.BASE_YT_WATCH + self.id,
-            "type": "youtube",
+            "streamUrl": self.stream_url,
+            "type": self._type,
             "memberOnly": False,
             "isDownloading": False,
             "isDownloaded": False,
@@ -165,8 +186,17 @@ class AutoScheduler:
     def __init__(self):
         self._ignore = True
 
+    def __is_bilibili(self, data):
+        is_bili = False
+        if "webtype" in data and data["webtype"].lower() == "bilibili":
+            is_bili = True
+        if "room_id" in data and isinstance(data["room_id"], int):
+            is_bili = True
+        return is_bili
+
     def __ignore_channel(self, data, channel):
         new_data = []
+        channel = str(channel)
         for st in data:
             if channel == st["channel"]:
                 continue
@@ -185,14 +215,21 @@ class AutoScheduler:
         collected = []
         for st in data:
             if word in st["title"]:
-                collected.append(StreamData(st))
+                _type = "youtube"
+                if self.__is_bilibili(st):
+                    _type = "bilibili"
+                collected.append(StreamData(st, _type))
         return collected
 
     def __collect_channel(self, data, channel):
         collected = []
+        channel = str(channel)
         for st in data:
             if channel == st["channel"]:
-                collected.append(StreamData(st))
+                _type = "youtube"
+                if self.__is_bilibili(st):
+                    _type = "bilibili"
+                collected.append(StreamData(st, _type))
         return collected
 
     def __blackhole(self, data, u=None):
@@ -203,7 +240,7 @@ class AutoScheduler:
 
     def _requests_events(self, API_ENDPOINT):
         req = requests.get(
-            API_ENDPOINT, headers={"User-Agent": "VTHellAutoScheduler/2.1"}
+            API_ENDPOINT, headers={"User-Agent": "VTHellAutoScheduler/2.2"}
         )
         if req.status_code >= 400:
             vtlog.error("Can't fetch API")
@@ -249,10 +286,12 @@ class AutoScheduler:
 class NijisanjiScheduler(AutoScheduler):
 
     API_ENDPOINT = "https://api.jetri.co/nijisanji/live"
+    API_ENDPOINT_BILI = "https://api.ihateani.me/nijisanji/upcoming"
 
-    def __init__(self, allowed_data, denied_data):
+    def __init__(self, allowed_data, denied_data, enable_bili=False):
         self.ENABLED = allowed_data
         self.DISABLED = denied_data
+        self._bilibili = enable_bili
         self.__format_console()
 
     def __format_console(self):
@@ -271,27 +310,46 @@ class NijisanjiScheduler(AutoScheduler):
             upcoming.append(event)
         return upcoming
 
+    def __process_bilibili(self):
+        vtlog.info("Fetching BiliBili Schedule API.")
+        events_data, msg = self._requests_events(self.API_ENDPOINT_BILI)
+        if not events_data:
+            return []
+
+        events_data = self.__filter_upcoming(events_data)
+
+        vtlog.info("Collecting BiliBili live data...")
+        events_data = self.ignore_dataset(events_data, self.DISABLED)
+        collected_streams = self.collect_dataset(events_data, self.ENABLED)
+        return collected_streams
+
     def process(self):
-        vtlog.info("Fetching Nijisanji Schedule API.")
+        vtlog.info("Fetching YouTube Schedule API.")
         events_data, msg = self._requests_events(self.API_ENDPOINT)
         if not events_data:
             return []
 
         events_data = self.__filter_upcoming(events_data)
 
-        vtlog.info("Collecting live data...")
+        vtlog.info("Collecting YouTube live data...")
         events_data = self.ignore_dataset(events_data, self.DISABLED)
         collected_streams = self.collect_dataset(events_data, self.ENABLED)
+        if self._bilibili:
+            collected_streams.extend(
+                self.__process_bilibili()
+            )
         return collected_streams
 
 
 class HololiveScheduler(AutoScheduler):
 
     API_ENDPOINT = "https://api.jetri.co/live"
+    API_ENDPOINT_BILI = "https://api.ihateani.me/upcoming"
 
-    def __init__(self, allowed_data, denied_data):
+    def __init__(self, allowed_data, denied_data, enable_bili=False):
         self.ENABLED = allowed_data
         self.DISABLED = denied_data
+        self._bilibili = enable_bili
         self.__format_console()
 
     def __format_console(self):
@@ -310,17 +368,34 @@ class HololiveScheduler(AutoScheduler):
             upcoming.append(event)
         return upcoming
 
+    def __process_bilibili(self):
+        vtlog.info("Fetching BiliBili Schedule API.")
+        events_data, msg = self._requests_events(self.API_ENDPOINT_BILI)
+        if not events_data:
+            return []
+
+        events_data = self.__filter_upcoming(events_data)
+
+        vtlog.info("Collecting BiliBili live data...")
+        events_data = self.ignore_dataset(events_data, self.DISABLED)
+        collected_streams = self.collect_dataset(events_data, self.ENABLED)
+        return collected_streams
+
     def process(self):
-        vtlog.info("Fetching Hololive Schedule API.")
+        vtlog.info("Fetching YouTube Schedule API.")
         events_data, msg = self._requests_events(self.API_ENDPOINT)
         if not events_data:
             return []
 
         events_data = self.__filter_upcoming(events_data)
 
-        vtlog.info("Collecting live data...")
+        vtlog.info("Collecting YouTube live data...")
         events_data = self.ignore_dataset(events_data, self.DISABLED)
         collected_streams = self.collect_dataset(events_data, self.ENABLED)
+        if self._bilibili:
+            collected_streams.extend(
+                self.__process_bilibili()
+            )
         return collected_streams
 
 
@@ -355,11 +430,11 @@ holo_set = []
 collected_streams = []
 
 if PROCESS_HOLOLIVE:
-    holo = HololiveScheduler(ENABLED_MAP, IGNORED_MAP)
+    holo = HololiveScheduler(ENABLED_MAP, IGNORED_MAP, ENABLE_BILIBILI)
     holo_set = holo.process()
 
 if PROCESS_NIJISANJI:
-    niji = NijisanjiScheduler(ENABLED_MAP, IGNORED_MAP)
+    niji = NijisanjiScheduler(ENABLED_MAP, IGNORED_MAP, ENABLE_BILIBILI)
     niji_set = niji.process()
 
 collected_streams.extend(holo_set)
@@ -392,5 +467,5 @@ for stream in collected_streams:
         )
     vtlog.info("Added {} to jobs list".format(stream.id))
     announce_shit(
-        "Added: https://www.youtube.com/watch?v={}".format(stream.id)
+        "Added: {}".format(stream.stream_url)
     )
