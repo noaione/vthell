@@ -114,10 +114,30 @@
         "name": "Uruha Rushia",
         "upload_path": "Hololive/Uruha Rushia"
     },
+    "491474048": {
+        "id": "hololive",
+        "name": "Amane Kanata",
+        "upload_path": "Hololive/Amane Kanata"
+    },
+    "491474049": {
+        "id": "hololive",
+        "name": "Kiryu Coco",
+        "upload_path": "Hololive/Kiryu Coco"
+    },
+    "491474050": {
+        "id": "hololive",
+        "name": "Tsunomaki Watame",
+        "upload_path": "Hololive/Tsunomaki Watame"
+    },
     "491474051": {
         "id": "hololive",
         "name": "Tokoyami Towa",
         "upload_path": "Hololive/Tokoyami Towa"
+    },
+    "491474052": {
+        "id": "hololive",
+        "name": "Himemori Luna",
+        "upload_path": "Hololive/Himemori Luna"
     },
     "427061218": {
         "id": "hololivecn",
@@ -148,6 +168,21 @@
         "id": "hololivecn",
         "name": "Rosalyn",
         "upload_path": "Hololive/.Hololive CN/Rosalyn"
+    },
+    "456232604": {
+        "id": "holostars",
+        "name": "Kanade Izuru",
+        "upload_path": "Holostars/Kanade Izuru"
+    },
+    "350631685": {
+        "id": "holostars",
+        "name": "Rikka",
+        "upload_path": "Holostars/Rikka"
+    },
+    "12362451": {
+        "id": "noriopro",
+        "name": "Inuyama Tamaki",
+        "upload_path": "NorioPro/Inuyama Tamaki"
     },
     "421267475": {
         "id": "virtuareal",
