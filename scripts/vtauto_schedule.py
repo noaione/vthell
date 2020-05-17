@@ -42,9 +42,9 @@ PROCESS_HOLOLIVE = True
 PROCESS_NIJISANJI = False
 
 ENABLE_BILIBILI = True
-BILIBILI_X_API_KEY = (
-    ""  # If you have a special API Key for ihateani.me API.
-)
+BILIBILI_X_API_KEY = {  # If you have a special API Key for ihateani.me API.
+    "X-API-Key": ""
+}
 
 logging.basicConfig(
     level=logging.DEBUG,
