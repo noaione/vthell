@@ -9,7 +9,8 @@
         {"type": "word", "data": "歌雑談"},
         {"type": "word", "data": "歌放送"},
         {"type": "word", "data": "ASMR"},
-        {"type": "word", "data": "うたうよ"}
+        {"type": "word", "data": "うたうよ"},
+        {"type": "word", "data": "おうた"}
     ],
     "disabled": [
         {"type": "channel", "data": "UCjlmCrq4TP1I4xguOtJ-31w"},
