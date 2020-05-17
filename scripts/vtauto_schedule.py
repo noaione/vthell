@@ -42,7 +42,9 @@ PROCESS_HOLOLIVE = True
 PROCESS_NIJISANJI = False
 
 ENABLE_BILIBILI = True
-BILIBILI_X_API_KEY = ""  # If you have a special API Key for ihateani.me API.
+BILIBILI_X_API_KEY = (
+    ""  # If you have a special API Key for ihateani.me API.
+)
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -239,13 +241,12 @@ class AutoScheduler:
     def __blackhole2(self, data, u=None):
         return []
 
-    def _requests_events(self, API_ENDPOINT, EXTRA_HEADERS):
+    def _requests_events(self, API_ENDPOINT, EXTRA_HEADERS=None):
         MAIN_HEAD = {"User-Agent": "VTHellAutoScheduler/2.2"}
-        for k, v in EXTRA_HEADERS.items():
-            MAIN_HEAD[k] = v
-        req = requests.get(
-            API_ENDPOINT, headers=MAIN_HEAD
-        )
+        if EXTRA_HEADERS:
+            for k, v in EXTRA_HEADERS.items():
+                MAIN_HEAD[k] = v
+        req = requests.get(API_ENDPOINT, headers=MAIN_HEAD)
         if req.status_code >= 400:
             vtlog.error("Can't fetch API")
             return None, "Can't fetch API"
@@ -316,7 +317,9 @@ class NijisanjiScheduler(AutoScheduler):
 
     def __process_bilibili(self):
         vtlog.info("Fetching BiliBili Schedule API.")
-        events_data, msg = self._requests_events(self.API_ENDPOINT_BILI, BILIBILI_X_API_KEY)
+        events_data, msg = self._requests_events(
+            self.API_ENDPOINT_BILI, BILIBILI_X_API_KEY
+        )
         if not events_data:
             return []
 
@@ -339,9 +342,7 @@ class NijisanjiScheduler(AutoScheduler):
         events_data = self.ignore_dataset(events_data, self.DISABLED)
         collected_streams = self.collect_dataset(events_data, self.ENABLED)
         if self._bilibili:
-            collected_streams.extend(
-                self.__process_bilibili()
-            )
+            collected_streams.extend(self.__process_bilibili())
         return collected_streams
 
 
@@ -374,7 +375,9 @@ class HololiveScheduler(AutoScheduler):
 
     def __process_bilibili(self):
         vtlog.info("Fetching BiliBili Schedule API.")
-        events_data, msg = self._requests_events(self.API_ENDPOINT_BILI, BILIBILI_X_API_KEY)
+        events_data, msg = self._requests_events(
+            self.API_ENDPOINT_BILI, BILIBILI_X_API_KEY
+        )
         if not events_data:
             return []
 
@@ -397,9 +400,7 @@ class HololiveScheduler(AutoScheduler):
         events_data = self.ignore_dataset(events_data, self.DISABLED)
         collected_streams = self.collect_dataset(events_data, self.ENABLED)
         if self._bilibili:
-            collected_streams.extend(
-                self.__process_bilibili()
-            )
+            collected_streams.extend(self.__process_bilibili())
         return collected_streams
 
 
@@ -470,6 +471,4 @@ for stream in collected_streams:
             stream.to_dict(), fp, indent=2,
         )
     vtlog.info("Added {} to jobs list".format(stream.id))
-    announce_shit(
-        "Added: {}".format(stream.stream_url)
-    )
+    announce_shit("Added: {}".format(stream.stream_url))
