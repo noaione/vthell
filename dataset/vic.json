@@ -1,0 +1,18 @@
+{
+    "id": "vic",
+    "name": "VIC",
+    "main_key": "youtube",
+    "upload_base": "VIC",
+    "vliver": [
+        {
+            "name": "Pinky Pop Hepburn",
+            "youtube": "UC1pR2ig6NhndhvicEgclNdA",
+            "bilibili": "393940396"
+        },
+        {
+            "name": "Kaguya Luna",
+            "youtube": "UCQYADFw7xEJ9oZSM5ZbqyBw",
+            "bilibili": "265224956"
+        }
+    ]
+}
