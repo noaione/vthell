@@ -1,0 +1,20 @@
+{
+    "id": "eilene",
+    "name": "Eilene",
+    "main_key": "youtube",
+    "upload_base": "Eilene",
+    "vliver": [
+        {
+            "name": "Yomemi Etra",
+            "youtube": "UCy5lOmEQoivK5XK7QCaRKug"
+        },
+        {
+            "name": "Natsumi Moe",
+            "youtube": "UCBePKUYNhoMcjBi-BRmjarQ"
+        },
+        {
+            "name": "Sifir Esirer",
+            "youtube": "UCz0lin3ZsOtmr2yuTN2MDQg"
+        }
+    ]
+}
