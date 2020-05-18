@@ -1,0 +1,20 @@
+{
+    "id": "hoshimeguri",
+    "name": "Hoshimeguri High School",
+    "main_key": "youtube",
+    "upload_base": "Hoshimeguri Gakuen",
+    "vliver": [
+        {
+            "name": "Yuzuriha Honami",
+            "youtube": "UCqXvL55GYHtRZhBS03LVGnQ"
+        },
+        {
+            "name": "Yuugasa Kiumi",
+            "youtube": "UCeb76eafe-6kE0D4u7lOWbg"
+        },
+        {
+            "name": "Hanagumo Kuyuri",
+            "youtube": "UCw7ih8a3t5InezDXUnKU40Q"
+        }
+    ]
+}
