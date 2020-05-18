@@ -1,0 +1,28 @@
+{
+    "id": "hanayori",
+    "name": "Hanayori",
+    "main_key": "youtube",
+    "upload_base": "Hanayori",
+    "vliver": [
+        {
+            "name": "Kohigashi Hitona",
+            "youtube": "UCV2m2UifDGr3ebjSnDv5rUA",
+            "bilibili": "441382432"
+        },
+        {
+            "name": "Hanamaru Hareru",
+            "youtube": "UCyIcOCH-VWaRKH9IkR8hz7Q",
+            "bilibili": "441381282"
+        },
+        {
+            "name": "Nonomiya Nonono",
+            "youtube": "UCiexEBp7-D46FXUtQ-BpgWg",
+            "bilibili": "441403698"
+        },
+        {
+            "name": "Kano",
+            "youtube": "UCfuz6xYbYFGsWWBi3SpJI1w",
+            "bilibili": "316381099"
+        }
+    ]
+}
