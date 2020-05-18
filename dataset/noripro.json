@@ -1,8 +1,8 @@
 {
-    "id": "noriopro",
+    "id": "noripro",
     "name": "Norio Production",
     "main_key": "youtube",
-    "upload_base": "NorioPro",
+    "upload_base": "NoriPro",
     "vliver": [
         {
             "name": "Norio Burabura",
