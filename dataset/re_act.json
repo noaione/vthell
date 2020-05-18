@@ -1,0 +1,64 @@
+{
+    "id": "re_act",
+    "name": "Re:AcT",
+    "main_key": "youtube",
+    "upload_base": "ReAct",
+    "vliver": [
+        {
+            "name": "Hanabasami Kyo",
+            "youtube": "UC4OeUf_KfYRrwksschtRYow"
+        },
+        {
+            "name": "Shishigami Leona",
+            "youtube": "UCB1s_IdO-r0nUkY2mXeti-A"
+        },
+        {
+            "name": "Inuki Matoi",
+            "youtube": "UCFrH3bfn7gDeV29wrHHM80g"
+        },
+        {
+            "name": "Kirahoshi Uta",
+            "youtube": "UCX2Sm8SGWTUOyCizgrzadXA"
+        },
+        {
+            "name": "Koto Miyuri",
+            "youtube": "UCBe_jjkUHhVNAj46bukAbJA"
+        },
+        {
+            "name": "Himekuma Ribon",
+            "youtube": "UC6HjtF2rHZO8gAsX5FXF-Kg"
+        },
+        {
+            "name": "Amakawa Hano",
+            "youtube": "UCxJ9SJLG7dA00M7VoEe4ltw"
+        },
+        {
+            "name": "Mizugame Mia",
+            "youtube": "UCpPuEfqwYbpn7e2jWdQeWew"
+        },
+        {
+            "name": "Yumekawa Kanau",
+            "youtube": "UC8jskpQfW9fn2NLK3PdaGdg"
+        },
+        {
+            "name": "Yuki Shirane",
+            "youtube": "UCcD_EdnJcOjJMohDn435D3w"
+        },
+        {
+            "name": "Usami Yuno",
+            "youtube": "UCJQMHCFjVZOVRYafR6gY04Q"
+        },
+        {
+            "name": "Yomi Kurone",
+            "youtube": "UCmssHxtaJAxIvje7LTHoKiw"
+        },
+        {
+            "name": "Marumoti Tukimi",
+            "youtube": "UCTEZGNJDqv-isWSPRsEhnRA"
+        },
+        {
+            "name": "Inunmoti Tirol",
+            "youtube": "UC46Wizhr_xgL9Rm9onVkPQQ"
+        }
+    ]
+}

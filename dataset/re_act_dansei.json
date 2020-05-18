@@ -1,0 +1,20 @@
+{
+    "id": "re_act_dansei",
+    "name": "Re:AcT Dansei",
+    "main_key": "youtube",
+    "upload_base": "ReAct/.ReAcT Dansei",
+    "vliver": [
+        {
+            "name": "Kogami Yukari",
+            "youtube": "UCt0F29rrrkOU5Vu2gyYgrBA"
+        },
+        {
+            "name": "Yuiga Kohaku",
+            "youtube": "UCf6J4I7NwMXtuIU8YZKAjCA"
+        },
+        {
+            "name": "Minato Minami",
+            "youtube": "UCyTw66xE5YkeTL2YduA69QQ"
+        }
+    ]
+}
