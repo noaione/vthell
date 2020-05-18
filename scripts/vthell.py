@@ -193,7 +193,7 @@ def run_streamlink_proc(STL_CMD, vt, reload_mode=False):
                 args_unk_err = True
         if "opening stream" in line and not discord_announced:
             discord_announced = True
-            if "resolution" in vt:
+            if "resolution" not in vt:
                 vtlog.debug("Finding resolution from output line...")
                 vt["resolution"] = find_res(line)
                 vtlog.debug("Resolution: {}".format(vt["resolution"]))
