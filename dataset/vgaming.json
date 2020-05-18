@@ -1,0 +1,34 @@
+{
+    "id": "vgaming",
+    "name": "VGaming",
+    "main_key": null,
+    "upload_base": "VGaming",
+    "vliver": [
+        {
+            "name": "Amahane Yotsuha",
+            "bilibili": "383079163",
+            "youtube": "UCO2bnzPlCau6YzLoSt8EDdA"
+        },
+        {
+            "name": "Hatano Charo",
+            "bilibili": "13479495",
+            "youtube": "UC7HljgIDR-1P9mfwbvpbTZA"
+        },
+        {
+            "name": "Kuriyama Yanmi",
+            "youtube": "UCcqCHOzqi5c0j1tBd0h5j2Q"
+        },
+        {
+            "name": "Mayoi Sakyu",
+            "youtube": "UCF5_KY0GBDxQyLASpnZ8Y2w"
+        },
+        {
+            "name": "Yoruno Yui",
+            "youtube": "UCNRPBCcybdwJtfUVuNVaFYQ"
+        },
+        {
+            "name": "Shirayuki Reid",
+            "youtube": "UCIu-aUArYq_H84dBpCAokMA"
+        }
+    ]
+}
