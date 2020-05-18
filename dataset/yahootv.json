@@ -1,0 +1,21 @@
+{
+    "id": "yahootv",
+    "name": "YahooTV",
+    "main_key": "youtube",
+    "upload_base": "YahooTV",
+    "vliver": [
+        {
+            "name": "Annin Miru",
+            "bilibili": "233114861",
+            "youtube": "UCFahBR2wixu0xOex84bXFvg"
+        },
+        {
+            "name": "Hoonie Friends",
+            "youtube": "UC6s0wLR0TZauzTVoGGw2r6g"
+        },
+        {
+            "name": "Orith",
+            "youtube": "UCBEfNrJ98zft3TZemlKlBNQ"
+        }
+    ]
+}

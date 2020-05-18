@@ -1258,5 +1258,20 @@
         "id": "vrlive",
         "name": "Baacharu",
         "upload_path": "VR Live/Baacharu"
+    },
+    "UCFahBR2wixu0xOex84bXFvg": {
+        "id": "yahootv",
+        "name": "Annin Miru",
+        "upload_path": "YahooTV/Annin Miru"
+    },
+    "UC6s0wLR0TZauzTVoGGw2r6g": {
+        "id": "yahootv",
+        "name": "Hoonie Friends",
+        "upload_path": "YahooTV/Hoonie Friends"
+    },
+    "UCBEfNrJ98zft3TZemlKlBNQ": {
+        "id": "yahootv",
+        "name": "Orith",
+        "upload_path": "YahooTV/Orith"
     }
 }

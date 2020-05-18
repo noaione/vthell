@@ -623,5 +623,10 @@
         "id": "vrlive",
         "name": "Baacharu",
         "upload_path": "VR Live/Baacharu"
+    },
+    "233114861": {
+        "id": "yahootv",
+        "name": "Annin Miru",
+        "upload_path": "YahooTV/Annin Miru"
     }
 }
