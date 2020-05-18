@@ -96,22 +96,24 @@ class StreamData:
 
     def __validate_schema(self):
         vtlog.debug("Validating schemas...")
-        self._type = self._type.lower()
-        if self._type not in ("youtube", "bilibili"):
-            raise ValueError(
-                'Unknown "web" type, must be `youtube` or `bilibili`'
-            )
-        self._WATCH_URL = (
-            self.BASE_YT_WATCH
-            if self._type == "youtube"
-            else self.BASE_BILI_WATCH
-        )
         schemas = {
             "id": (str),
             "title": (str),
             "channel": (str),
             "startTime": (str, int),
         }
+        self._type = self._type.lower()
+        if self._type not in ("youtube", "bilibili"):
+            raise ValueError(
+                'Unknown "web" type, must be `youtube` or `bilibili`'
+            )
+        if self._type == "bilibili":
+            schemas["room_id"] = (str, int)
+        self._WATCH_URL = (
+            self.BASE_YT_WATCH
+            if self._type == "youtube"
+            else self.BASE_BILI_WATCH
+        )
         for key, value in schemas.items():
             if key not in self._st_data:
                 raise ValidationError(
