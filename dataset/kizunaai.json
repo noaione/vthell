@@ -1,0 +1,27 @@
+{
+    "id": "kizunaai",
+    "name": "Kizuna Ai Co.",
+    "main_key": "youtube",
+    "upload_base": "Kizuna Ai Co.",
+    "vliver": [
+        {
+            "name": "A.I.Channel",
+            "youtube": "UC4YaOt1yT-ZeyB0OmxHgolA",
+            "bilibili": "1473830"
+        },
+        {
+            "name": "A.I.Games",
+            "youtube": "UCbFwe3COkDrbNsbMyGNCsDg",
+            "bilibili": "1473830"
+        },
+        {
+            "name": "A.I.Channel China",
+            "youtube": "UCArUdy5xj0i0cTuhPHRVMpw",
+            "bilibili": "484322035"
+        },
+        {
+            "name": "love-pii channel",
+            "youtube": "UCYm8zALd2uHqyy6C1tb4_zA"
+        }
+    ]
+}
