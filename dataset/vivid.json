@@ -1,0 +1,33 @@
+{
+    "id": "vivid",
+    "name": "ViViD",
+    "main_key": "youtube",
+    "upload_base": "ViViD",
+    "vliver": [
+        {
+            "name": "Anko",
+            "youtube": "UCBKxF1PHQtT78ypcVYmBtBA",
+            "bilibili": "487317308"
+        },
+        {
+            "name": "Yunagi Elena",
+            "youtube": "UCKwATdrcjyzNv9c56PqJbWA",
+            "bilibili": "2336751"
+        },
+        {
+            "name": "Utakata Memory",
+            "youtube": "UClV7gDF9sUzu4jJCK7rCYkQ",
+            "bilibili": "487551829"
+        },
+        {
+            "name": "Nekonogi Bell",
+            "bilibili": "487550002",
+            "youtube": "UCflNPJUJ4VQh1hGDNK7bsFg"
+        },
+        {
+            "name": "Shirayuri Lily",
+            "youtube": "UCl-3q6t6zdZwgIsFZELb7Zg",
+            "bilibili": "421347849"
+        }
+    ]
+}
