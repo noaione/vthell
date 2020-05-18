@@ -18,7 +18,8 @@
         {
             "id": 3,
             "name": "Alice Mononobe",
-            "youtube": "UCt0clH12Xk1-Ej5PXKGfdPA"
+            "youtube": "UCt0clH12Xk1-Ej5PXKGfdPA",
+            "bilibili": "434565011"
         },
         {
             "id": 4,
@@ -32,33 +33,38 @@
         },
         {
             "id": 6,
-            "name": "Gilzaren \u2162",
+            "name": "Gilzaren Ⅲ",
             "youtube": "UCUzJ90o1EjqUbk2pBAy0_aw"
         },
         {
             "id": 7,
             "name": "Kanae",
-            "youtube": "UCspv01oxUFf_MTSipURRhkA"
+            "youtube": "UCspv01oxUFf_MTSipURRhkA",
+            "bilibili": "434563934"
         },
         {
             "id": 8,
             "name": "Kuzuha",
-            "youtube": "UCSFCh5NL4qXrAy9u-u2lX3g"
+            "youtube": "UCSFCh5NL4qXrAy9u-u2lX3g",
+            "bilibili": "434563422"
         },
         {
             "id": 9,
             "name": "Mugi Ienaga",
-            "youtube": "UC_GCs6GARLxEHxy1w40d6VQ"
+            "youtube": "UC_GCs6GARLxEHxy1w40d6VQ",
+            "bilibili": "436596837"
         },
         {
             "id": 10,
             "name": "Saku Sasaki",
-            "youtube": "UCoztvTULBYd3WmStqYeoHcA"
+            "youtube": "UCoztvTULBYd3WmStqYeoHcA",
+            "bilibili": "436596839"
         },
         {
             "id": 11,
             "name": "Rin Shizuka",
-            "youtube": "UC6oDys1BGgBsIC3WhG1BovQ"
+            "youtube": "UC6oDys1BGgBsIC3WhG1BovQ",
+            "bilibili": "403921378"
         },
         {
             "id": 12,
@@ -78,7 +84,8 @@
         {
             "id": 15,
             "name": "Sister Claire",
-            "youtube": "UC1zFJrfEKvCixhsjNSb1toQ"
+            "youtube": "UC1zFJrfEKvCixhsjNSb1toQ",
+            "bilibili": "477780496"
         },
         {
             "id": 16,
@@ -93,7 +100,8 @@
         {
             "id": 18,
             "name": "Debidebi Debiru",
-            "youtube": "UCjlmCrq4TP1I4xguOtJ-31w"
+            "youtube": "UCjlmCrq4TP1I4xguOtJ-31w",
+            "bilibili": "441666968"
         },
         {
             "id": 19,
@@ -103,7 +111,8 @@
         {
             "id": 20,
             "name": "Belmond Banderas",
-            "youtube": "UCbc8fwhdUNlqi-J99ISYu4A"
+            "youtube": "UCbc8fwhdUNlqi-J99ISYu4A",
+            "bilibili": "441666967"
         },
         {
             "id": 21,
@@ -123,7 +132,8 @@
         {
             "id": 26,
             "name": "Kakeru Yumeoi",
-            "youtube": "UCTIE7LM5X15NVugV7Krp9Hw"
+            "youtube": "UCTIE7LM5X15NVugV7Krp9Hw",
+            "bilibili": "511613154"
         },
         {
             "id": 27,
@@ -158,7 +168,8 @@
         {
             "id": 34,
             "name": "Himawari Honma",
-            "youtube": "UC0g1AE0DOjBYnLhkgoRWN1w"
+            "youtube": "UC0g1AE0DOjBYnLhkgoRWN1w",
+            "bilibili": "403928672"
         },
         {
             "id": 35,
@@ -168,17 +179,20 @@
         {
             "id": 36,
             "name": "Kazaki Morinaka",
-            "youtube": "UCtpB6Bvhs1Um93ziEDACQ8g"
+            "youtube": "UCtpB6Bvhs1Um93ziEDACQ8g",
+            "bilibili": "436596836"
         },
         {
             "id": 37,
             "name": "Yuika Shiina",
-            "youtube": "UC_4tXjqecqox5Uc05ncxpxg"
+            "youtube": "UC_4tXjqecqox5Uc05ncxpxg",
+            "bilibili": "403927583"
         },
         {
             "id": 38,
             "name": "Kaede Higuchi",
-            "youtube": "UCsg-YqdqQ-KFF0LNk23BY4A"
+            "youtube": "UCsg-YqdqQ-KFF0LNk23BY4A",
+            "bilibili": "410455162"
         },
         {
             "id": 40,
@@ -198,7 +212,8 @@
         {
             "id": 43,
             "name": "Kizuku Yashiro",
-            "youtube": "UCKMYISTJAQ8xTplUPHiABlA"
+            "youtube": "UCKMYISTJAQ8xTplUPHiABlA",
+            "bilibili": "458154141"
         },
         {
             "id": 44,
@@ -208,17 +223,20 @@
         {
             "id": 45,
             "name": "Mikoto Rindou",
-            "youtube": "UCPvGypSgfDkVe7JG2KygK7A"
+            "youtube": "UCPvGypSgfDkVe7JG2KygK7A",
+            "bilibili": "434564604"
         },
         {
             "id": 46,
             "name": "Ryushen",
-            "youtube": "UCt5-0i4AVHXaWJrL8Wql3mw"
+            "youtube": "UCt5-0i4AVHXaWJrL8Wql3mw",
+            "bilibili": "403930401"
         },
         {
             "id": 47,
             "name": "Keisuke Maimoto",
-            "youtube": "UCJubINhCcFXlsBwnHp0wl_g"
+            "youtube": "UCJubINhCcFXlsBwnHp0wl_g",
+            "bilibili": "477780497"
         },
         {
             "id": 48,
@@ -233,7 +251,8 @@
         {
             "id": 51,
             "name": "Utako Suzuka",
-            "youtube": "UCwokZsOK_uEre70XayaFnzA"
+            "youtube": "UCwokZsOK_uEre70XayaFnzA",
+            "bilibili": "458154144"
         },
         {
             "id": 53,
@@ -253,7 +272,8 @@
         {
             "id": 58,
             "name": "Rion Takamiya",
-            "youtube": "UCV5ZZlLjk5MKGg3L0n0vbzw"
+            "youtube": "UCV5ZZlLjk5MKGg3L0n0vbzw",
+            "bilibili": "436596840"
         },
         {
             "id": 59,
@@ -263,17 +283,20 @@
         {
             "id": 60,
             "name": "Meiji Warabeda",
-            "youtube": "UCveZ9Ic1VtcXbsyaBgxPMvg"
+            "youtube": "UCveZ9Ic1VtcXbsyaBgxPMvg",
+            "bilibili": "458154140"
         },
         {
             "id": 62,
             "name": "Mirei Gundo",
-            "youtube": "UCeShTCVgZyq2lsBW9QwIJcw"
+            "youtube": "UCeShTCVgZyq2lsBW9QwIJcw",
+            "bilibili": "458154139"
         },
         {
             "id": 63,
             "name": "Roa Yuzuki",
-            "youtube": "UCCVwhI5trmaSxfcze_Ovzfw"
+            "youtube": "UCCVwhI5trmaSxfcze_Ovzfw",
+            "bilibili": "477780499"
         },
         {
             "id": 64,
@@ -298,22 +321,26 @@
         {
             "id": 68,
             "name": "Era Otogibara",
-            "youtube": "UCwQ9Uv-m8xkE5PzRc7Bqx3Q"
+            "youtube": "UCwQ9Uv-m8xkE5PzRc7Bqx3Q",
+            "bilibili": "436596838"
         },
         {
             "id": 70,
             "name": "Ange Katrina",
-            "youtube": "UCHVXbQzkl3rDfsXWo8xi2qw"
+            "youtube": "UCHVXbQzkl3rDfsXWo8xi2qw",
+            "bilibili": "458154143"
         },
         {
             "id": 71,
             "name": "Toko Inui",
-            "youtube": "UCXRlIK3Cw_TJIQC5kSJJQMg"
+            "youtube": "UCXRlIK3Cw_TJIQC5kSJJQMg",
+            "bilibili": "458154142"
         },
         {
             "id": 72,
             "name": "Lize Helesta",
-            "youtube": "UCZ1xuCK1kNmn5RzPYIZop3w"
+            "youtube": "UCZ1xuCK1kNmn5RzPYIZop3w",
+            "bilibili": "436596841"
         },
         {
             "id": 73,
@@ -343,7 +370,8 @@
         {
             "id": 79,
             "name": "Ex Albio",
-            "youtube": "UCIytNcoz4pWzXfLda0DoULQ"
+            "youtube": "UCIytNcoz4pWzXfLda0DoULQ",
+            "bilibili": "477780498"
         },
         {
             "id": 82,
@@ -393,7 +421,8 @@
         {
             "id": 91,
             "name": "Kokoro Amamiya",
-            "youtube": "UCkIimWZ9gBJRamKF0rmPU8w"
+            "youtube": "UCkIimWZ9gBJRamKF0rmPU8w",
+            "bilibili": "488976342"
         },
         {
             "id": 92,

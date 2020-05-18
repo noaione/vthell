@@ -1,8 +1,18 @@
 {
+    "390899490": {
+        "id": "animare",
+        "name": "Hinako Umori",
+        "upload_path": "774 inc./Animare/Hinako Umori"
+    },
     "291296062": {
         "id": "entum",
         "name": "Nekomiya Hinata",
         "upload_path": "ENTUM/Nekomiya Hinata"
+    },
+    "389056211": {
+        "id": "hololive",
+        "name": "AZKi",
+        "upload_path": "Hololive/AZKi"
     },
     "286179206": {
         "id": "hololive",
@@ -174,15 +184,190 @@
         "name": "Kanade Izuru",
         "upload_path": "Holostars/Kanade Izuru"
     },
+    "551114700": {
+        "id": "holostars",
+        "name": "Arurandeisu",
+        "upload_path": "Holostars/Arurandeisu"
+    },
     "350631685": {
         "id": "holostars",
         "name": "Rikka",
         "upload_path": "Holostars/Rikka"
     },
+    "551114698": {
+        "id": "holostars",
+        "name": "Astel Leda",
+        "upload_path": "Holostars/Astel Leda"
+    },
+    "223580": {
+        "id": "honeystrap",
+        "name": "Eli",
+        "upload_path": "774 inc./HoneyStrap/Eli"
+    },
+    "434565011": {
+        "id": "nijisanji",
+        "name": "Alice Mononobe",
+        "upload_path": "Nijisanji/Alice Mononobe"
+    },
+    "434563934": {
+        "id": "nijisanji",
+        "name": "Kanae",
+        "upload_path": "Nijisanji/Kanae"
+    },
+    "434563422": {
+        "id": "nijisanji",
+        "name": "Kuzuha",
+        "upload_path": "Nijisanji/Kuzuha"
+    },
+    "436596837": {
+        "id": "nijisanji",
+        "name": "Mugi Ienaga",
+        "upload_path": "Nijisanji/Mugi Ienaga"
+    },
+    "436596839": {
+        "id": "nijisanji",
+        "name": "Saku Sasaki",
+        "upload_path": "Nijisanji/Saku Sasaki"
+    },
+    "403921378": {
+        "id": "nijisanji",
+        "name": "Rin Shizuka",
+        "upload_path": "Nijisanji/Rin Shizuka"
+    },
+    "477780496": {
+        "id": "nijisanji",
+        "name": "Sister Claire",
+        "upload_path": "Nijisanji/Sister Claire"
+    },
+    "441666968": {
+        "id": "nijisanji",
+        "name": "Debidebi Debiru",
+        "upload_path": "Nijisanji/Debidebi Debiru"
+    },
+    "441666967": {
+        "id": "nijisanji",
+        "name": "Belmond Banderas",
+        "upload_path": "Nijisanji/Belmond Banderas"
+    },
+    "511613154": {
+        "id": "nijisanji",
+        "name": "Kakeru Yumeoi",
+        "upload_path": "Nijisanji/Kakeru Yumeoi"
+    },
+    "403928672": {
+        "id": "nijisanji",
+        "name": "Himawari Honma",
+        "upload_path": "Nijisanji/Himawari Honma"
+    },
+    "436596836": {
+        "id": "nijisanji",
+        "name": "Kazaki Morinaka",
+        "upload_path": "Nijisanji/Kazaki Morinaka"
+    },
+    "403927583": {
+        "id": "nijisanji",
+        "name": "Yuika Shiina",
+        "upload_path": "Nijisanji/Yuika Shiina"
+    },
+    "410455162": {
+        "id": "nijisanji",
+        "name": "Kaede Higuchi",
+        "upload_path": "Nijisanji/Kaede Higuchi"
+    },
+    "458154141": {
+        "id": "nijisanji",
+        "name": "Kizuku Yashiro",
+        "upload_path": "Nijisanji/Kizuku Yashiro"
+    },
+    "434564604": {
+        "id": "nijisanji",
+        "name": "Mikoto Rindou",
+        "upload_path": "Nijisanji/Mikoto Rindou"
+    },
+    "403930401": {
+        "id": "nijisanji",
+        "name": "Ryushen",
+        "upload_path": "Nijisanji/Ryushen"
+    },
+    "477780497": {
+        "id": "nijisanji",
+        "name": "Keisuke Maimoto",
+        "upload_path": "Nijisanji/Keisuke Maimoto"
+    },
+    "458154144": {
+        "id": "nijisanji",
+        "name": "Utako Suzuka",
+        "upload_path": "Nijisanji/Utako Suzuka"
+    },
+    "436596840": {
+        "id": "nijisanji",
+        "name": "Rion Takamiya",
+        "upload_path": "Nijisanji/Rion Takamiya"
+    },
+    "458154140": {
+        "id": "nijisanji",
+        "name": "Meiji Warabeda",
+        "upload_path": "Nijisanji/Meiji Warabeda"
+    },
+    "458154139": {
+        "id": "nijisanji",
+        "name": "Mirei Gundo",
+        "upload_path": "Nijisanji/Mirei Gundo"
+    },
+    "477780499": {
+        "id": "nijisanji",
+        "name": "Roa Yuzuki",
+        "upload_path": "Nijisanji/Roa Yuzuki"
+    },
+    "436596838": {
+        "id": "nijisanji",
+        "name": "Era Otogibara",
+        "upload_path": "Nijisanji/Era Otogibara"
+    },
+    "458154143": {
+        "id": "nijisanji",
+        "name": "Ange Katrina",
+        "upload_path": "Nijisanji/Ange Katrina"
+    },
+    "458154142": {
+        "id": "nijisanji",
+        "name": "Toko Inui",
+        "upload_path": "Nijisanji/Toko Inui"
+    },
+    "436596841": {
+        "id": "nijisanji",
+        "name": "Lize Helesta",
+        "upload_path": "Nijisanji/Lize Helesta"
+    },
+    "477780498": {
+        "id": "nijisanji",
+        "name": "Ex Albio",
+        "upload_path": "Nijisanji/Ex Albio"
+    },
+    "488976342": {
+        "id": "nijisanji",
+        "name": "Kokoro Amamiya",
+        "upload_path": "Nijisanji/Kokoro Amamiya"
+    },
     "12362451": {
         "id": "noriopro",
         "name": "Inuyama Tamaki",
         "upload_path": "NorioPro/Inuyama Tamaki"
+    },
+    "405981431": {
+        "id": "noriopro",
+        "name": "Shirayuki Mishiro",
+        "upload_path": "NorioPro/Shirayuki Mishiro"
+    },
+    "419429042": {
+        "id": "noriopro",
+        "name": "Milk Enomiya",
+        "upload_path": "NorioPro/Milk Enomiya"
+    },
+    "354940834": {
+        "id": "vapart",
+        "name": "Kanon Kanade",
+        "upload_path": "774 inc./VApArt/Kanon Kanade"
     },
     "421267475": {
         "id": "virtuareal",

@@ -6,19 +6,28 @@
     "vliver": [
         {
             "name": "Mico",
-            "youtube": "UCDh2bWI5EDu7PavqwICkVpA"
+            "youtube": "UCDh2bWI5EDu7PavqwICkVpA",
+            "bilibili": "223580"
         },
         {
             "name": "Patra",
-            "youtube": "UCeLzT-7b2PBcunJplmWtoDg"
+            "youtube": "UCeLzT-7b2PBcunJplmWtoDg",
+            "bilibili": "223580"
         },
         {
             "name": "Charlotte",
-            "youtube": "UCYTz3uIgwVY3ZU-IQJS8r3A"
+            "youtube": "UCYTz3uIgwVY3ZU-IQJS8r3A",
+            "bilibili": "223580"
         },
         {
             "name": "Mary",
-            "youtube": "UCwePpiw1ocZRSNSkpKvVISw"
+            "youtube": "UCwePpiw1ocZRSNSkpKvVISw",
+            "bilibili": "223580"
+        },
+        {
+            "name": "Eli",
+            "youtube": "UC3UKMRQmBcjXWu66cvxcngA",
+            "bilibili": "223580"
         }
     ]
 }
