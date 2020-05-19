@@ -1,0 +1,889 @@
+{
+    "id": "solovtuber",
+    "name": "solovtuber",
+    "main_key": "youtube",
+    "upload_base": "Solo & Indie",
+    "vliver": [
+        {
+            "name": "69on",
+            "youtube": "UCx9sSKp4rNsHonHYMNjTv_g",
+            "bilibili": "14712304"
+        },
+        {
+            "name": "A.I.D",
+            "bilibili": "333325107",
+            "youtube": "UCoO6PIMIwatyMWRp7l6CvKQ"
+        },
+        {
+            "name": "Azulim",
+            "youtube": "UCARI2g7r-PHaxrIcAYsMfmA",
+            "bilibili": "508191"
+        },
+        {
+            "name": "DD",
+            "youtube": "UC9vyQt8JlsI8IvLRCtDjp-w",
+            "bilibili": "267970450"
+        },
+        {
+            "name": "Hiiro",
+            "bilibili": "508963009",
+            "twitch": "hiirosss",
+            "youtube": "UCTbFf0IcWd9XE5HxBuYTt1w"
+        },
+        {
+            "name": "Kanata Hikari",
+            "youtube": "UCV56QlnrJqRmKtWKXObLodg",
+            "bilibili": "298077390"
+        },
+        {
+            "name": "Liberate Anime Studio",
+            "youtube": "UCDHtgd0IJ2AVejbqZQSQu8g"
+        },
+        {
+            "name": "MEM project",
+            "youtube": "UCp1Pg6NVz7c3uVfpphEn6Og",
+            "bilibili": "406748610"
+        },
+        {
+            "name": "Maya Putri",
+            "bilibili": "455888811",
+            "youtube": "UCyZoDBhW8cLrzZ-dqKdQqEg"
+        },
+        {
+            "name": "Michele Rolo Cotton",
+            "youtube": "UCrRokkRvV6RSu-mZIHUUHvg",
+            "bilibili": "473935898"
+        },
+        {
+            "name": "NACHOCO",
+            "youtube": "UC9ad82fASVVMQLsJbshxdfA",
+            "bilibili": "9824984"
+        },
+        {
+            "name": "NoWorld",
+            "youtube": "UC-3piUPtXhIu-KAdEs7fT8A",
+            "bilibili": "434662713"
+        },
+        {
+            "name": "Note",
+            "youtube": "UCu6IFOMX4F8xn1NIc0DQ2Mg",
+            "bilibili": "92874801"
+        },
+        {
+            "name": "Overidea",
+            "youtube": "UCupCAZz1l52vV8m-dvaoBVQ",
+            "bilibili": "18149131"
+        },
+        {
+            "name": "Fujisaki Yua",
+            "youtube": "UC_zztIHGbBz9L-ZM-Ta2O1Q",
+            "bilibili": "358617079"
+        },
+        {
+            "name": "Hatsuka Chiyu",
+            "bilibili": "399546557",
+            "youtube": "UCfm7sKrU6VVo6o3LwPjJOmQ"
+        },
+        {
+            "name": "I Love You",
+            "youtube": "UCsNcV1BacT_HirptnIawqkQ",
+            "bilibili": "472019066"
+        },
+        {
+            "name": "Aoi's Kids",
+            "youtube": "UCIao2WtbCciU8GApFr2pLIA"
+        },
+        {
+            "name": "Asahina Yuuhi",
+            "youtube": "UCVDgnRZykj94Hqa8FuIt7Wg"
+        },
+        {
+            "name": "ileheart",
+            "youtube": "UCQG5eRfno9f2rptcM6srQZA",
+            "bilibili": "12367735"
+        },
+        {
+            "name": "Erukira",
+            "youtube": "UCN00mjuLh6fXZpf-PTVXEzg"
+        },
+        {
+            "name": "おあめどみねぃてぃんぐ!",
+            "youtube": "UC9tq5PPjwKo9CvaJB7jFvig"
+        },
+        {
+            "name": "OsaNazu",
+            "youtube": "UC5WJgKelM1YO3AsXtR-t4SQ",
+            "bilibili": "408833733"
+        },
+        {
+            "name": "Kagura Nana",
+            "youtube": "UCbfv8uuUXt3RSJGEwxny5Rw",
+            "bilibili": "386900246"
+        },
+        {
+            "name": "Kisana",
+            "youtube": "UCH7ikLTeb77nNlh81Hogcng"
+        },
+        {
+            "name": "Kumonoue Yumemi",
+            "youtube": "UCRUFY2ZCyVOvC-1rJIVZlKg"
+        },
+        {
+            "name": "Kurumi",
+            "bilibili": "433447639",
+            "youtube": "UCBJFtEEDnCpz8koPH-nLWUA"
+        },
+        {
+            "name": "Sakyubanoe",
+            "bilibili": "348436944",
+            "youtube": "UC2pgR5ymUSD9Phepm0ej8CQ"
+        },
+        {
+            "name": "Shigure Ui",
+            "bilibili": "2601367",
+            "youtube": "UCt30jJgChL8qeT9VPadidSw"
+        },
+        {
+            "name": "Suitooyo",
+            "youtube": "UCjaTnZujzaZMpmFr7jVzSww"
+        },
+        {
+            "name": "Suyasuya Nemunoki",
+            "youtube": "UCcEXdLbhQtqzxT6wc0ye2ag",
+            "bilibili": "385501313"
+        },
+        {
+            "name": "Soyokaze Ame",
+            "youtube": "UCth5j6WaPTf9osdNrdz92PA"
+        },
+        {
+            "name": "Chikuwa",
+            "youtube": "UC_AuJsYVZTfYO2LF1PDTuTA",
+            "bilibili": "397723865"
+        },
+        {
+            "name": "Dotto Live",
+            "youtube": "UCAZ_LA7f0sjuZ1Ni8L2uITw",
+            "bilibili": "11725160"
+        },
+        {
+            "name": "Naruhaya-chan",
+            "youtube": "UCyhccrfXKUoGGT8cuAJEGXw",
+            "bilibili": "423747660"
+        },
+        {
+            "name": "Nemu",
+            "youtube": "UC7xyzq_Hd72-IbJVoz4DSrQ"
+        },
+        {
+            "name": "Haruka",
+            "youtube": "UClazeGMH8zfHgjblSLdRGpw"
+        },
+        {
+            "name": "Hidamari",
+            "youtube": "UCUWcAwH8u8NR6vT1pUuhStA"
+        },
+        {
+            "name": "Fairys",
+            "youtube": "UC2Rr7mILebYLTjd38DNNUTw",
+            "bilibili": "432762700"
+        },
+        {
+            "name": "Penpen 2-go",
+            "youtube": "UCLQ97JVVcpAMFWubiEkkJvA"
+        },
+        {
+            "name": "Makoto",
+            "youtube": "UCwSOARsvB-Qa6PtuYyK74dA",
+            "bilibili": "472135480"
+        },
+        {
+            "name": "Mamumama",
+            "youtube": "UC7G_4-zTWPPWsGPIgomyB4w"
+        },
+        {
+            "name": "Marinasu (Kari)",
+            "youtube": "UCDgH-CfHO85D0rxtXnXeN2w"
+        },
+        {
+            "name": "Minami Mikoto",
+            "youtube": "UCo8wxkKqef8AFSn4VMe7wcA"
+        },
+        {
+            "name": "Milky",
+            "youtube": "UCBJPNd_nAzGkXdL4Wy87ADg",
+            "bilibili": "410741448"
+        },
+        {
+            "name": "Meiden",
+            "youtube": "UC2xrDXTlTyxagWiMNWTk6nA"
+        },
+        {
+            "name": "Meta Moe",
+            "youtube": "UCqHhsPDG1LlnhvgIn4O9gHA",
+            "bilibili": "401795607"
+        },
+        {
+            "name": "Mendako-chan",
+            "youtube": "UCXHPI-3mWB-4rfvjFoHAFWw",
+            "bilibili": "388693909"
+        },
+        {
+            "name": "Rei Kira",
+            "youtube": "UCSFaf99eT5T4wNN1O2Z3NZg",
+            "bilibili": "10077023"
+        },
+        {
+            "name": "Waimi",
+            "youtube": "UCsnGIHKfwKbbM5IRG3pF5oQ"
+        },
+        {
+            "name": "Amenosei",
+            "youtube": "UCKgndddKiQGIn0-T8jHzndg"
+        },
+        {
+            "name": "Inside-chan",
+            "youtube": "UCq6EBsKaFIUpac6fPkGu2PQ",
+            "bilibili": "406476630"
+        },
+        {
+            "name": "Ena",
+            "youtube": "UCAjPpHpxhxZF9EiROXwr9kQ",
+            "bilibili": "1869304"
+        },
+        {
+            "name": "Kuro Noroku",
+            "youtube": "UCAvgFoTWEisO5Pp7eYVDgEw"
+        },
+        {
+            "name": "Shiroi Kusuri",
+            "youtube": "UCmil4StBuk1NzxGnz7VNVGg"
+        },
+        {
+            "name": "Deepweb Underground",
+            "youtube": "UCSgheR9xOIcQjlkeXqIofLQ",
+            "bilibili": "39106621"
+        },
+        {
+            "name": "Virtual Gorilla",
+            "youtube": "UC2hA-6M66dE2Tt_4xM8K9wQ",
+            "bilibili": "11063770"
+        },
+        {
+            "name": "Virtual Ookami Game Jikkyou-sha Lilisuke",
+            "youtube": "UC__zaV3-RVF-Q7mXT8RvdKA"
+        },
+        {
+            "name": "HimeHina",
+            "youtube": "UCFv2z4iM5vHrS8bZPq4fHQQ",
+            "bilibili": "296909317"
+        },
+        {
+            "name": "Maaru",
+            "youtube": "UC_9nmotxi7FAfiJpo1RKy8A",
+            "bilibili": "387995724"
+        },
+        {
+            "name": "Miaru",
+            "youtube": "UCY_qeb4tQVUeDPDYipMUoGw"
+        },
+        {
+            "name": "Monokaki Aeru",
+            "youtube": "UCMekzScjoQqPsTR9naUh0Ag",
+            "bilibili": "55300691"
+        },
+        {
+            "name": "Ruki Roki",
+            "youtube": "UCf3DHSmd2DhZcoq2gwYXCIA",
+            "bilibili": "403768239"
+        },
+        {
+            "name": "Mita Sonia",
+            "youtube": "UCwAShjnxXiEIK0XVx_mAG9g",
+            "bilibili": "33398732"
+        },
+        {
+            "name": "Ushio Tia",
+            "youtube": "UCDPdK4ftX-GOWrWHtM4UMZw"
+        },
+        {
+            "name": "Chitose Kudou",
+            "youtube": "UCP2o-o6u4uX3uq1hXspl0rg",
+            "bilibili": "257492"
+        },
+        {
+            "name": "Otsuka Ray",
+            "youtube": "UCrAsByHNIFObjr2sEaZHkCg"
+        },
+        {
+            "name": "Igarashi Itutu",
+            "youtube": "UCNAhQXaNtzBes7hIcmD7k_g"
+        },
+        {
+            "name": "Hito to Towa",
+            "youtube": "UCBQIpfQ9Ribe3TCsDrM6bXw",
+            "bilibili": "432367601"
+        },
+        {
+            "name": "Sakuma Nemu",
+            "youtube": "UCtjxl1Uf9-Xk2XdpPdMrccQ",
+            "bilibili": "415858231"
+        },
+        {
+            "name": "Usa Mimi",
+            "youtube": "UCBAopGXGGatkiB1-qFRG9WA",
+            "bilibili": "216648"
+        },
+        {
+            "name": "Hachigatsu Niyuki",
+            "youtube": "UCHV-tYWznbEMFWoT0_oKmLQ"
+        },
+        {
+            "name": "六法陸六",
+            "youtube": "UCPVoNBPEGIY8VwPLFWhsOOw"
+        },
+        {
+            "name": "Chiyoya Puriri",
+            "youtube": "UCQFDp9pt9CM952sBso8crfw",
+            "bilibili": "6826308"
+        },
+        {
+            "name": "Aria",
+            "youtube": "UC8UZk3EE_LPxWNyQ7RUDCYA",
+            "bilibili": "398642121"
+        },
+        {
+            "name": "Futari Mai",
+            "bilibili": "262843999",
+            "youtube": "UCCvInijwD6Qg9xwdtYJcYtQ"
+        },
+        {
+            "name": "Futaba Shione",
+            "bilibili": "399592717",
+            "youtube": "UCuqcPmdBvwHEWGx00XYCFWg"
+        },
+        {
+            "name": "Natori Sana",
+            "youtube": "UCIdEIHpS0TdkqRkHL5OkLtA",
+            "bilibili": "395933021"
+        },
+        {
+            "name": "Siyo Azuma",
+            "youtube": "UC1UgLyUsaD0p5ZoWiL-nH_A"
+        },
+        {
+            "name": "Shishi",
+            "bilibili": "345819729",
+            "youtube": "UCo5uTjnUikW0giyrKOIrOQA"
+        },
+        {
+            "name": "Mashiro-channel",
+            "youtube": "UClf0kZBKcBVKVOAjGEGbQ-A",
+            "bilibili": "431113669"
+        },
+        {
+            "name": "大田マト",
+            "bilibili": "386258676",
+            "youtube": "UCY-rzz8F3xdJ9NS3Y5iAGjw"
+        },
+        {
+            "name": "天曰ひよ",
+            "bilibili": "27403816",
+            "youtube": "UC04QM30wwa0qMs101Mwz29w"
+        },
+        {
+            "name": "天神子兎音",
+            "youtube": "UCAr7rLi_Wn09G-XfTA07d4g",
+            "bilibili": "360221708"
+        },
+        {
+            "name": "天秤はかり",
+            "bilibili": "407979432",
+            "youtube": "UCBiJHt0WEb3GGayMyUz5QIQ"
+        },
+        {
+            "name": "天衣ゆめ",
+            "youtube": "UC_XeQHdkpmyDBAabMjn8nvw"
+        },
+        {
+            "name": "天開司",
+            "youtube": "UCZYyhgoV314CM14zBD6vd4A"
+        },
+        {
+            "name": "KisaragiKoyori",
+            "youtube": "UCWmJy4zKFf9Y_UQdS5sWuUg",
+            "bilibili": "524194761"
+        },
+        {
+            "name": "富士葵",
+            "youtube": "UC3Ruo_5doyu514PesWGvCAg",
+            "bilibili": "7078836"
+        },
+        {
+            "name": "小町ノノ",
+            "youtube": "UCnvoQdObCS2VsmciF4LnvYw"
+        },
+        {
+            "name": "小花衣しぃ",
+            "bilibili": "438020568",
+            "youtube": "UCjAWLwlMHp7fWHO_Gp3wxnQ"
+        },
+        {
+            "name": "小花衣ももみ",
+            "bilibili": "365233720",
+            "youtube": "UCjH4Z-uXHegQCTlGeUc7qUA"
+        },
+        {
+            "name": "小雀とと",
+            "youtube": "UCgTzsBI0DIRopMylJEDqnog"
+        },
+        {
+            "name": "紫海由爱",
+            "bilibili": "525105971",
+            "youtube": "UCPQRl6ceaNBTeuHkMqsfl7Q"
+        },
+        {
+            "name": "屍鬼",
+            "youtube": "UCTcGbTH9hlScXB-Bm1D4HNQ",
+            "bilibili": "390186116"
+        },
+        {
+            "name": "市ノ瀬ミナト",
+            "youtube": "UC0wL48EOsV-l4gGpnfiVoWw"
+        },
+        {
+            "name": "彩まよい",
+            "bilibili": "403638183",
+            "youtube": "UCsAzaxwiKWolOWLH1bIU3wA"
+        },
+        {
+            "name": "御門モモ",
+            "youtube": "UCXwBmY44rKiHaTkH9vzOfag",
+            "bilibili": "414857366"
+        },
+        {
+            "name": "星乃めあ",
+            "youtube": "UCsiKFVHkQSMlSe0vaCG0anw",
+            "bilibili": "5730"
+        },
+        {
+            "name": "星屑れん",
+            "youtube": "UCEmKIZezKaWL4ek4Lfj0eaw"
+        },
+        {
+            "name": "星月ノイ",
+            "youtube": "UCFUYAEDchFcrebfMwAqaJyg"
+        },
+        {
+            "name": "星空モノカ",
+            "youtube": "UC4nG8KLbdyCQh3Qmineic6w",
+            "bilibili": "440464475"
+        },
+        {
+            "name": "春原つくし",
+            "youtube": "UCdHZ_5d2DEp9fMlXRZw39Zg"
+        },
+        {
+            "name": "月見あんにん",
+            "youtube": "UCb2ZAPC7OS9i5GhA_EXvPDA",
+            "bilibili": "434048532"
+        },
+        {
+            "name": "朝ノ姉妹ぷろじぇくと",
+            "youtube": "UCODNLyn3L83wEmC0DLL0cxA",
+            "bilibili": "6777056"
+        },
+        {
+            "name": "朝比奈蒼",
+            "youtube": "UCwXub3WkpzfoilGS-r-EKsA",
+            "bilibili": "431971663"
+        },
+        {
+            "name": "Kurusu Raia",
+            "bilibili": "474200495",
+            "youtube": "UCLuyrUQPIjGkqID9UlKUP2g"
+        },
+        {
+            "name": "東雲めぐ",
+            "youtube": "UCNA0XC_zxS63d4Q-JMIMyug",
+            "bilibili": "308751411"
+        },
+        {
+            "name": "柚木凛",
+            "bilibili": "472631497",
+            "youtube": "UC_1Okh7IBMyazrTJD_ymYsQ"
+        },
+        {
+            "name": "柴山あずき",
+            "youtube": "UCaQWd2sDWGPCYp66CwPoSCg"
+        },
+        {
+            "name": "桃ゐ咲鬼",
+            "youtube": "UCp01G7ZvzZh_Rn0J9QsCFbg"
+        },
+        {
+            "name": "桜美ゆな",
+            "youtube": "UCcnoKv531otgPrd3NcR0mag",
+            "bilibili": "1448323"
+        },
+        {
+            "name": "橘涼葉",
+            "youtube": "UCLl6SoIaxp3cZQZ6g7jeMaA",
+            "bilibili": "3660370"
+        },
+        {
+            "name": "櫻歌ミコ",
+            "youtube": "UCpIDXdO3ztu1hXza9R7OR5A"
+        },
+        {
+            "name": "比良坂芽衣",
+            "bilibili": "414753292",
+            "youtube": "UCckQQRZVF9x2GjroBjNIX_Q"
+        },
+        {
+            "name": "水影もね",
+            "youtube": "UC9mqVHMqp11sShAw462MrGg"
+        },
+        {
+            "name": "水無瀬るい",
+            "youtube": "UCxavYpm91UOgngdMCGQt0Xg",
+            "bilibili": "390131950"
+        },
+        {
+            "name": "水科葵",
+            "youtube": "UCVFpIqGoTmFaoMmyFPRYrKA",
+            "bilibili": "355810003"
+        },
+        {
+            "name": "沙羽",
+            "youtube": "UCuP6SgYbqVg2Vkp1Q866O8A",
+            "bilibili": "436846433"
+        },
+        {
+            "name": "清露イクナ",
+            "bilibili": "3772162",
+            "youtube": "UClSiZo83Q1n5Mv6jwyBpupw"
+        },
+        {
+            "name": "滝川みう",
+            "youtube": "UC61P6oww6JXAJ6NYT_b5_Vg"
+        },
+        {
+            "name": "燦鳥ノム",
+            "bilibili": "15178117",
+            "youtube": "UCwRKt_raV3N5KZgxcFyC1vw"
+        },
+        {
+            "name": "Moarin",
+            "bilibili": "739296",
+            "youtube": "UCrhf6HYKnV6bxyaB6ooJzbw",
+            "twitch": "MoarinVtuber"
+        },
+        {
+            "name": "狐狐音",
+            "youtube": "UCEDH2GslIAoyMjNO9MRD5RQ",
+            "bilibili": "3584186"
+        },
+        {
+            "name": "狛犬ポメ",
+            "youtube": "UC0oLhE1jGH9trMxzQprEgPg",
+            "bilibili": "417507910"
+        },
+        {
+            "name": "猫又佳斗",
+            "youtube": "UCCrJTG9mIYe5bCKntbn2EtA"
+        },
+        {
+            "name": "猫宫ノル",
+            "bilibili": "396728248",
+            "youtube": "UCryGmcxRu8mLMHKeGNrhspA"
+        },
+        {
+            "name": "猫耳銀髪少女",
+            "youtube": "UCt0-W53G4AecsFCg-P2ujgA"
+        },
+        {
+            "name": "猫音すず",
+            "youtube": "UCpEESTSpGHDgKTDJfS57Zkg"
+        },
+        {
+            "name": "珠根うた",
+            "youtube": "UC-UmUsocuVAxsKog3QonhpA",
+            "bilibili": "318581967"
+        },
+        {
+            "name": "琴乃葉 雪乃",
+            "youtube": "UCMAc88lqzqGV0uxgw9JDj0w",
+            "bilibili": "358516600"
+        },
+        {
+            "name": "Kotobuki Yume",
+            "youtube": "UCezfmwKc2B8dtVIAgRHXrKQ",
+            "bilibili": "442426299"
+        },
+        {
+            "name": "琴月てと",
+            "youtube": "UCnK6aCU0ZTRXyrKkaXd-RMg"
+        },
+        {
+            "name": "甘沼ほより",
+            "youtube": "UCUYa5UZVandk6i6g6nL95sQ",
+            "bilibili": "400753692"
+        },
+        {
+            "name": "田中のおっさん",
+            "youtube": "UCw5MXcDMVg6oT69yfulq33Q"
+        },
+        {
+            "name": "病井こころ",
+            "youtube": "UCcVn0OiL4isLZfa_WWelLyQ"
+        },
+        {
+            "name": "白咲べる",
+            "youtube": "UCfnI5YS8RX8byI7O5hBvSgw",
+            "bilibili": "9375210"
+        },
+        {
+            "name": "白虎えま",
+            "youtube": "UCeEUCbXjf095zAH_5B1DKcg"
+        },
+        {
+            "name": "白魔女のパンドラ",
+            "youtube": "UCe9nP90-eiuXLmhhEkNbUDQ"
+        },
+        {
+            "name": "Snowpuff",
+            "youtube": "UC82SjX5JrkN70g21GPHFReQ",
+            "bilibili": "410636303"
+        },
+        {
+            "name": "碧居結衣",
+            "youtube": "UCzq3GtdcWmLKFKW7VQVzhmA",
+            "bilibili": "179459"
+        },
+        {
+            "name": "神岡ちろる",
+            "bilibili": "411700399",
+            "youtube": "UCKIEzDUVwfXcct3JPgNUw7w"
+        },
+        {
+            "name": "秋雪琥珀",
+            "bilibili": "98000698",
+            "youtube": "UCQLyq7TDKHlmp2Ufd5Z2qMw"
+        },
+        {
+            "name": "竜宮うら",
+            "youtube": "UCFOccbf0Hq-tPs71EL8dAfw"
+        },
+        {
+            "name": "竹取かるた",
+            "youtube": "UC2pZbfaSvWGNQmabt-L4Cig",
+            "bilibili": "399554022"
+        },
+        {
+            "name": "竹花ノート",
+            "youtube": "UCuPrcSmgo6twlAQzwYPlSkQ"
+        },
+        {
+            "name": "紅谷リア",
+            "youtube": "UCRKtHhreDvM1VO8KFScnlWg"
+        },
+        {
+            "name": "紙木絹",
+            "youtube": "UCxOErQIr3Zv6W_YxFbht4gw"
+        },
+        {
+            "name": "紫音VGチャンネル",
+            "youtube": "UCri7Aft0jr2Jd0wIdTft84A"
+        },
+        {
+            "name": "結心愛",
+            "youtube": "UCjbj7_mhBQkzdFkhb_U-SRw"
+        },
+        {
+            "name": "Minami Nami",
+            "youtube": "UCrwJvtphcyux30pAgoX68jA"
+        },
+        {
+            "name": "羽原ゆとり",
+            "youtube": "UCJG86VvFErqEwiHdSxjO53g"
+        },
+        {
+            "name": "羽宮のあ",
+            "youtube": "UCkxGPGlk9AZA58vvIuVRGog"
+        },
+        {
+            "name": "Rinfair",
+            "bilibili": "35892690",
+            "youtube": "UC7jFoGjZQrax3rgd3SB6WmQ"
+        },
+        {
+            "name": "胡桃いく",
+            "bilibili": "404409600",
+            "youtube": "UCaKbWdaSQ31s6BkqgHh0lDw"
+        },
+        {
+            "name": "Kochou Momiji",
+            "youtube": "UCN3L41COcrsDsqTKa7Pgczg",
+            "twitch": "kochou_momiji",
+            "bilibili": "410274411"
+        },
+        {
+            "name": "舞鶴よかと",
+            "youtube": "UCIkifM3QoL2BP2rwYcyetGg"
+        },
+        {
+            "name": "花野蜜",
+            "youtube": "UCuwpvDAYMV0nV98DQk-W9mQ"
+        },
+        {
+            "name": "華香院つばき",
+            "youtube": "UCI-xaXiiRD_2l8qxQRIpeEw"
+        },
+        {
+            "name": "蒼乃ゆうき",
+            "youtube": "UC7HixHznciTQf1DhlbBIZmA",
+            "bilibili": "397222615"
+        },
+        {
+            "name": "薬師寺朱雀",
+            "youtube": "UCGKgJ4MtJ1coi6tWJUfnsQA"
+        },
+        {
+            "name": "赤星ナナハ",
+            "youtube": "UCXnRRrVplnehXtqdcZd1vlQ",
+            "bilibili": "397047629"
+        },
+        {
+            "name": "赤月ゆに",
+            "youtube": "UCsA8nM8e5--IdeRaxZwTWHg",
+            "bilibili": "402724422"
+        },
+        {
+            "name": "轻又",
+            "bilibili": "826101",
+            "youtube": "UCELb-uMjz0Bbtlg5qHooGDA"
+        },
+        {
+            "name": "逢乃エリィ",
+            "youtube": "UCrdPLxZE3IoofDDP2TQiUhQ"
+        },
+        {
+            "name": "邪神ちゃんねる",
+            "youtube": "UChu8Yu_w9z8DGFtXzuGvDlg",
+            "bilibili": "384230128"
+        },
+        {
+            "name": "酒呑みみこ",
+            "youtube": "UCMnMR24GAMCcB9kjdIulGXg"
+        },
+        {
+            "name": "鈴谷アキ",
+            "youtube": "UCt9qik4Z-_J-rj3bKKQCeHg",
+            "bilibili": "1552664"
+        },
+        {
+            "name": "銀めくる",
+            "youtube": "UCprQaynf6W8Qargmo5jg2-Q",
+            "bilibili": "409743803"
+        },
+        {
+            "name": "銀河アリス",
+            "youtube": "UCT1AQFit-Eaj_YQMsfV0RhQ",
+            "bilibili": "176486647"
+        },
+        {
+            "name": "門叶困の野望(仮)",
+            "youtube": "UCyDdJzG9BQeLKtc0upGf3Bg"
+        },
+        {
+            "name": "闇夜乃モルル",
+            "youtube": "UCNUgrFCo2Hr_VXc9bEwjcHQ",
+            "bilibili": "399574079"
+        },
+        {
+            "name": "阿古江レイスケ",
+            "youtube": "UCnPuGqPlf4KJ5EyXwhtG_7A"
+        },
+        {
+            "name": "陽向ここみ",
+            "youtube": "UCU0zun8U7X-d45G0xt4KsiQ",
+            "bilibili": "492862"
+        },
+        {
+            "name": "雨天狗妖",
+            "youtube": "UCPt6d3KqJ4_8cPH9nwbAyeA"
+        },
+        {
+            "name": "雪乃せかい",
+            "youtube": "UC9Zodsv5NMdYFI9htLR5Gng",
+            "bilibili": "283053549"
+        },
+        {
+            "name": "雪汝",
+            "youtube": "UCfM_A7lE6LkGrzx6_mOtI4g"
+        },
+        {
+            "name": "音俣るか",
+            "youtube": "UCNSr_pgMH3in2d0RGtcdEEg",
+            "bilibili": "406548031"
+        },
+        {
+            "name": "音無咲良",
+            "youtube": "UCtTrr8FKm_jpyvc5qV7OMMw"
+        },
+        {
+            "name": "Asuka",
+            "bilibili": "16694113",
+            "youtube": "UCmCF-LVgKNSCe_dpzK3Fnag"
+        },
+        {
+            "name": "高峰伊織",
+            "youtube": "UCksCLL04bRIe61wnzZ7vXRg",
+            "bilibili": "402176802"
+        },
+        {
+            "name": "鬼ヶ島ちゃんねるฅ •ω• ฅ",
+            "youtube": "UCkzKSwRcM4Vp45dMynHDa5A"
+        },
+        {
+            "name": "鳴神裁",
+            "bilibili": "236022662",
+            "youtube": "UCR1vMiGggY5jSDL_eTkXJCA"
+        },
+        {
+            "name": "tsukasa ria",
+            "bilibili": "2450927",
+            "youtube": "UCC12ijOcPxnRSQPLvjWYXUg"
+        },
+        {
+            "name": "鷹森ツヅル",
+            "youtube": "UCTNqdmisGoH93iyTLDV1J5A",
+            "bilibili": "408265707"
+        },
+        {
+            "name": "黒咲りん",
+            "bilibili": "430817403",
+            "youtube": "UCNPu5zXzXvS6pLCCaI5SnSA"
+        },
+        {
+            "name": "黑桐亚里亚",
+            "youtube": "UCSUOEmvQLKPdiRnUgmHYX2g",
+            "bilibili": "4911722"
+        },
+        {
+            "name": "黒澤ゆき",
+            "youtube": "UCWB3QoiPhCwbJoK_sAbSY2Q",
+            "bilibili": "4160114"
+        },
+        {
+            "name": "黒羽マオ",
+            "bilibili": "8426295",
+            "youtube": "UCPjotP9qDvvTuBSAXdrhBzg"
+        },
+        {
+            "name": "黒音うらら",
+            "youtube": "UCJWkvInYEeXbISGHSj6tNOA"
+        }
+    ]
+}
