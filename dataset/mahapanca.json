@@ -1,0 +1,20 @@
+{
+    "id": "mahapanca",
+    "name": "Mahapanca",
+    "main_key": "youtube",
+    "upload_base": "Mahapanca",
+    "vliver": [
+        {
+            "name": "Andi Adinata",
+            "youtube": "UC9QnAjC7mT4ggHuedr1_kqQ"
+        },
+        {
+            "name": "Alia Adelia",
+            "youtube": "UCK4t1P3Aqqe6NDyRS92Opcg"
+        },
+        {
+            "name": "NANARIKA",
+            "youtube": "UCwICNPiOKwToYw_SEoFOnPw"
+        }
+    ]
+}
