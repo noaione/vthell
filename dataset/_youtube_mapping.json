@@ -439,6 +439,26 @@
         "name": "love-pii channel",
         "upload_path": "Kizuna Ai Co./love-pii channel"
     },
+    "UC5LyYg6cCA4yHEYvtUsir3g": {
+        "id": "lupinusvg",
+        "name": "Ichinose Uruha",
+        "upload_path": "Lupinus Virtual Games/Ichinose Uruha"
+    },
+    "UCyLGcqYs7RsBb3L0SJfzGYA": {
+        "id": "lupinusvg",
+        "name": "Sumire Kaga",
+        "upload_path": "Lupinus Virtual Games/Sumire Kaga"
+    },
+    "UCiMG6VdScBabPhJ1ZtaVmbw": {
+        "id": "lupinusvg",
+        "name": "Nazuna Kaga",
+        "upload_path": "Lupinus Virtual Games/Nazuna Kaga"
+    },
+    "UCgTzsBI0DIRopMylJEDqnog": {
+        "id": "lupinusvg",
+        "name": "Kogara Toto",
+        "upload_path": "Lupinus Virtual Games/Kogara Toto"
+    },
     "UC9QnAjC7mT4ggHuedr1_kqQ": {
         "id": "mahapanca",
         "name": "Andi Adinata",
@@ -1669,11 +1689,6 @@
         "name": "Kohana Momomi",
         "upload_path": "Solo & Indie/Kohana Momomi"
     },
-    "UCgTzsBI0DIRopMylJEDqnog": {
-        "id": "solovtuber",
-        "name": "Kogara Toto",
-        "upload_path": "Solo & Indie/Kogara Toto"
-    },
     "UCPQRl6ceaNBTeuHkMqsfl7Q": {
         "id": "solovtuber",
         "name": "Shumiyoshi Ai",
@@ -2159,6 +2174,21 @@
         "name": "Kurone Urara",
         "upload_path": "Solo & Indie/Kurone Urara"
     },
+    "UCji4kFR4n5TnEpqga0SHxlQ": {
+        "id": "solovtuber",
+        "name": "Nanase Subaru",
+        "upload_path": "Solo & Indie/Nanase Subaru"
+    },
+    "UCMxxFFeuhFQ30quuePTym0A": {
+        "id": "solovtuber",
+        "name": "Evelyn",
+        "upload_path": "Solo & Indie/Evelyn"
+    },
+    "UC7PYQOLdlvo9VgJjhrYeGaQ": {
+        "id": "solovtuber",
+        "name": "Mia Canasyna",
+        "upload_path": "Solo & Indie/Mia Canasyna"
+    },
     "UCoieZAlwgK3uLkIYiJARDQw": {
         "id": "sugarlyric",
         "name": "SugarLyric Official",
@@ -2456,8 +2486,8 @@
     },
     "UC3EhsuKdEkI99TWZwZgWutg": {
         "id": "vapart",
-        "name": "Uge to Anzu",
-        "upload_path": "774 inc./VApArt/Uge to Anzu"
+        "name": "Ando Uge",
+        "upload_path": "774 inc./VApArt/Ando Uge"
     },
     "UCL-2thbJ7grC9fmGF4OLuTg": {
         "id": "vapart",
