@@ -1,0 +1,25 @@
+{
+    "id": "lupinusvg",
+    "name": "Lupinus Virtual Games",
+    "main_key": "youtube",
+    "upload_base": "Lupinus Virtual Games",
+    "vliver": [
+        {
+            "name": "Ichinose Uruha",
+            "youtube": "UC5LyYg6cCA4yHEYvtUsir3g"
+        },
+        {
+            "name": "Sumire Kaga",
+            "youtube": "UCyLGcqYs7RsBb3L0SJfzGYA"
+        },
+        {
+            "name": "Nazuna Kaga",
+            "youtube": "UCiMG6VdScBabPhJ1ZtaVmbw"
+        },
+        {
+            "name": "Nanase Subaru",
+            "youtube": "UCji4kFR4n5TnEpqga0SHxlQ",
+            "bilibili": "398709832"
+        }
+    ]
+}
