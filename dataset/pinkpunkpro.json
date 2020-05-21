@@ -1,0 +1,16 @@
+{
+    "id": "pinkpunkpro",
+    "name": "PinkPunkPro",
+    "main_key": "youtube",
+    "upload_base": "PinkPunkPro",
+    "vliver": [
+        {
+            "name": "Arum Felruaben",
+            "youtube": "UCGsaZH1E1vMc0iXgJsqFTcQ"
+        },
+        {
+            "name": "Tenshouin Hiina",
+            "youtube": "UCswVE2V9baUzcSlR9O6Jmug"
+        }
+    ]
+}
