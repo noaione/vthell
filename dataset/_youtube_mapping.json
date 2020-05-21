@@ -974,6 +974,16 @@
         "name": "Kei Nagao",
         "upload_path": "Nijisanji/Kei Nagao"
     },
+    "UCt9qik4Z-_J-rj3bKKQCeHg": {
+        "id": "nijisanji",
+        "name": "Suzuya Aki",
+        "upload_path": "Nijisanji/Suzuya Aki"
+    },
+    "UCP2o-o6u4uX3uq1hXspl0rg": {
+        "id": "nijisanji",
+        "name": "Chitose Kudou",
+        "upload_path": "Nijisanji/Chitose Kudou"
+    },
     "UCpJtk0myFr5WnyfsmnInP-w": {
         "id": "nijisanjiid",
         "name": "Hana Macchia",
@@ -1554,11 +1564,6 @@
         "name": "Ushio Tia",
         "upload_path": "Solo & Indie/Ushio Tia"
     },
-    "UCP2o-o6u4uX3uq1hXspl0rg": {
-        "id": "solovtuber",
-        "name": "Chitose Kudou",
-        "upload_path": "Solo & Indie/Chitose Kudou"
-    },
     "UCrAsByHNIFObjr2sEaZHkCg": {
         "id": "solovtuber",
         "name": "Otsuka Ray",
@@ -2058,11 +2063,6 @@
         "id": "solovtuber",
         "name": "Sakenomi Miko",
         "upload_path": "Solo & Indie/Sakenomi Miko"
-    },
-    "UCt9qik4Z-_J-rj3bKKQCeHg": {
-        "id": "solovtuber",
-        "name": "Suzuya Aki",
-        "upload_path": "Solo & Indie/Suzuya Aki"
     },
     "UCprQaynf6W8Qargmo5jg2-Q": {
         "id": "solovtuber",

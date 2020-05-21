@@ -404,6 +404,16 @@
         "name": "Kokoro Amamiya",
         "upload_path": "Nijisanji/Kokoro Amamiya"
     },
+    "1552664": {
+        "id": "nijisanji",
+        "name": "Suzuya Aki",
+        "upload_path": "Nijisanji/Suzuya Aki"
+    },
+    "257492": {
+        "id": "nijisanji",
+        "name": "Chitose Kudou",
+        "upload_path": "Nijisanji/Chitose Kudou"
+    },
     "12362451": {
         "id": "noripro",
         "name": "Inuyama Tamaki",
@@ -663,11 +673,6 @@
         "id": "solovtuber",
         "name": "Mita Sonia",
         "upload_path": "Solo & Indie/Mita Sonia"
-    },
-    "257492": {
-        "id": "solovtuber",
-        "name": "Chitose Kudou",
-        "upload_path": "Solo & Indie/Chitose Kudou"
     },
     "432367601": {
         "id": "solovtuber",
@@ -968,11 +973,6 @@
         "id": "solovtuber",
         "name": "Jashin Channel",
         "upload_path": "Solo & Indie/Jashin Channel"
-    },
-    "1552664": {
-        "id": "solovtuber",
-        "name": "Suzuya Aki",
-        "upload_path": "Solo & Indie/Suzuya Aki"
     },
     "409743803": {
         "id": "solovtuber",
