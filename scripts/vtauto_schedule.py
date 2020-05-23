@@ -293,7 +293,7 @@ class AutoScheduler:
 class NijisanjiScheduler(AutoScheduler):
 
     API_ENDPOINT = "https://api.jetri.co/nijisanji/live"
-    API_ENDPOINT_BILI = "https://api.ihateani.me/nijisanji/upcoming"
+    API_ENDPOINT_BILI = "https://api.ihateani.me/nijisanji/live"
 
     def __init__(self, allowed_data, denied_data, enable_bili=False):
         self.ENABLED = allowed_data
@@ -351,7 +351,7 @@ class NijisanjiScheduler(AutoScheduler):
 class HololiveScheduler(AutoScheduler):
 
     API_ENDPOINT = "https://api.jetri.co/live"
-    API_ENDPOINT_BILI = "https://api.ihateani.me/upcoming"
+    API_ENDPOINT_BILI = "https://api.ihateani.me/live"
 
     def __init__(self, allowed_data, denied_data, enable_bili=False):
         self.ENABLED = allowed_data
