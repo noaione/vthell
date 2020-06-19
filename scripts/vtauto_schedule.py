@@ -193,7 +193,7 @@ class AutoScheduler:
 
     def __is_bilibili(self, data):
         is_bili = False
-        if "webtype" in data and data["webtype"].lower() == "bilibili":
+        if "platform" in data and data["platform"].lower() == "bilibili":
             is_bili = True
         if "room_id" in data and isinstance(data["room_id"], int):
             is_bili = True
@@ -350,7 +350,7 @@ class NijisanjiScheduler(AutoScheduler):
 
 class HololiveScheduler(AutoScheduler):
 
-    API_ENDPOINT = "https://api.jetri.co/live"
+    API_ENDPOINT = "https://api.jetri.co/live/1.1"
     API_ENDPOINT_BILI = "https://api.ihateani.me/live"
 
     def __init__(self, allowed_data, denied_data, enable_bili=False):
@@ -372,7 +372,8 @@ class HololiveScheduler(AutoScheduler):
         for event in event_data:
             if current_time >= int(event["startTime"]):
                 continue
-            upcoming.append(event)
+            if event["platform"] == "youtube":
+                upcoming.append(event)
         return upcoming
 
     def __process_bilibili(self):
