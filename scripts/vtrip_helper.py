@@ -55,7 +55,10 @@ if "liveStreamingDetails" in res["items"][0]:
         ]
 else:
     stream_start = snippets["publishedAt"]
-dts = datetime.strptime(stream_start, "%Y-%m-%dT%H:%M:%S.%fZ")
+try:
+    dts = datetime.strptime(stream_start, "%Y-%m-%dT%H:%M:%S.%fZ")
+except ValueError:
+    dts = datetime.strptime(stream_start, "%Y-%m-%dT%H:%M:%SZ")
 dts_ts = dts.timestamp() + 28800
 dts_new = datetime.fromtimestamp(dts_ts).strftime("[%Y.%m.%d")
 title = snippets["title"]
