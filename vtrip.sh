@@ -21,8 +21,9 @@ YTDL_PATH="/media/sdac/mizore/pip3/bin/youtube-dl"
 PY3_PATH="/media/sdac/mizore/pip3/bin/python3"
 VTHELL_PATH="/media/sdac/mizore/vthell"
 
+MAIN_ARGS=`${PY3_PATH} ${VTHELL_PATH}/scripts/vtrip_argsbuild.py $@`
 OUTPUT_FN=`${PY3_PATH} ${VTHELL_PATH}/scripts/vtrip_helper.py ${URL}`
 
 echo $OUTPUT_FN
 
-$YTDL_PATH -f "$FORMAT" --merge-output-format mkv --all-subs --embed-subs --convert-subs ass -o "$OUTPUT_FN" $URL
+$MAIN_ARGS -o "$OUTPUT_FN" $URL
