@@ -5,6 +5,7 @@ import os
 import subprocess as sp
 import sys
 from datetime import datetime
+from os.path import join as pjoin
 
 import pytz
 import requests
@@ -25,7 +26,7 @@ DISCORD_WEBHOOK_URL = os.getenv("VTHELL_DISCORD_WEBHOOK", "")
 logging.basicConfig(
     level=logging.DEBUG,
     handlers=[
-        logging.FileHandler(BASE_VTHELL_PATH + "nvthell.log", "a", "utf-8")
+        logging.FileHandler(pjoin(BASE_VTHELL_PATH, "nvthell.log"), "a", "utf-8")
     ],
     format="%(asctime)s %(name)-1s -- [%(levelname)s]: %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
@@ -66,19 +67,16 @@ def reset_handler(r=True):
     vtlog.addHandler(console)
 
 
+class TwitcastingData:
+    pass
+
+
 reset_handler(False)
 
-upload_mapping = {
-    # Other
-    # Non-Gen
-    # Gamers
-    # Gen 1
-    "natsuiromatsuri": "Natsuiro Matsuri",
-    # Gen 2
-    # Gen 3
-    # Gen 4
-    # HoloID - Gen 1
-}
+dataset_path = pjoin(BASE_VTHELL_PATH, "dataset")
+
+with open(pjoin(dataset_path, "_twitcasting_mapping.json")) as fp:
+    upload_mapping = json.load(fp)
 
 
 ENABLED_USERS = ["natsuiromatsuri"]  # Enter twitcasting ID here.
