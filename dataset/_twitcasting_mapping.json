@@ -34,6 +34,26 @@
         "name": "Shirakami Fubuki",
         "upload_path": "Hololive/Shirakami Fubuki"
     },
+    "kanadeizuru": {
+        "id": "holostars",
+        "name": "Kanade Izuru",
+        "upload_path": "Holostars/Kanade Izuru"
+    },
+    "arurandeisu": {
+        "id": "holostars",
+        "name": "Arurandeisu",
+        "upload_path": "Holostars/Arurandeisu"
+    },
+    "rikkaroid": {
+        "id": "holostars",
+        "name": "Rikka",
+        "upload_path": "Holostars/Rikka"
+    },
+    "astelleda": {
+        "id": "holostars",
+        "name": "Astel Leda",
+        "upload_path": "Holostars/Astel Leda"
+    },
     "udukikohh": {
         "id": "nijisanji",
         "name": "Kou Uzuki",
