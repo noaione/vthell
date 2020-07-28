@@ -3,7 +3,7 @@ import json
 import logging
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from os.path import basename as pbase
 from os.path import join as pjoin
 from os.path import splitext as psplit
@@ -350,7 +350,7 @@ class NijisanjiScheduler(AutoScheduler):
 
 class HololiveScheduler(AutoScheduler):
 
-    API_ENDPOINT = "https://api.jetri.co/live/1.1"
+    API_ENDPOINT = "https://api.holotools.app/v1/live"
     API_ENDPOINT_BILI = "https://api.ihateani.me/live"
 
     def __init__(self, allowed_data, denied_data, enable_bili=False):
@@ -391,13 +391,47 @@ class HololiveScheduler(AutoScheduler):
         collected_streams = self.collect_dataset(events_data, self.ENABLED)
         return collected_streams
 
-    def process(self):
-        vtlog.info("Fetching YouTube Schedule API.")
+    def __process_youtube(self):
         events_data, msg = self._requests_events(self.API_ENDPOINT)
         if not events_data:
             return []
 
-        events_data = self.__filter_upcoming(events_data)
+        parsed_upcoming = []
+        current_time = datetime.now(tz=timezone.utc).timestamp()
+        vtlog.info("Parsing results...")
+        for upcome in events_data["upcoming"]:
+            if not upcome["yt_video_key"]:
+                continue # Is bilibili
+            proper_parsed = {
+                "id": "",
+                "channel": "",
+                "startTime": 0,
+                "status": "upcoming",
+                "title": "",
+                "platform": "youtube",
+            }
+            utc_time = upcome["live_schedule"].replace("Z", "")
+            try:
+                parsed_date = datetime.strptime(
+                    utc_time, "%Y-%m-%dT%H:%M:%S.%f"
+                ).replace(tzinfo=timezone.utc).timestamp()
+            except ValueError:
+                parsed_date = datetime.strptime(
+                    utc_time, "%Y-%m-%dT%H:%M:%S"
+                ).replace(tzinfo=timezone.utc).timestamp()
+            parsed_date = int(parsed_date)
+            if current_time >= parsed_date:
+                continue
+            proper_parsed["id"] = upcome["yt_video_key"]
+            proper_parsed["channel"] = upcome["channel"]["yt_channel_id"]
+            proper_parsed["startTime"] = parsed_date
+            proper_parsed["title"] = upcome["title"]
+            parsed_upcoming.append(proper_parsed)
+        return parsed_upcoming
+
+    def process(self):
+        vtlog.info("Fetching YouTube Schedule API.")
+        events_data = self.__process_youtube()
 
         vtlog.info("Collecting YouTube live data...")
         events_data = self.ignore_dataset(events_data, self.DISABLED)
