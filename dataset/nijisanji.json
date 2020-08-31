@@ -1,9 +1,8 @@
 {
     "id": "nijisanji",
-    "name": "Hololive Main",
+    "name": "Nijisanji Main Branch",
     "main_key": "youtube",
     "upload_base": "Nijisanji",
-    "schedule_api": "https://api.itsukaralink.jp/v1.2/events.json",
     "vliver": [
         {
             "id": 1,
@@ -539,25 +538,38 @@
         },
         {
             "id": 114,
-            "name": "Suzuya Aki",
-            "youtube": "UCt9qik4Z-_J-rj3bKKQCeHg",
-            "bilibili": "1552664"
+            "name": "Kirame Sorahoshi",
+            "youtube": "UC_82HBGtvwN1hcGeOGHzUBQ"
         },
         {
             "id": 115,
-            "name": "Chitose Kudou",
-            "youtube": "UCP2o-o6u4uX3uq1hXspl0rg",
-            "bilibili": "257492"
-        },
-        {
-            "id": 116,
             "name": "Meiro Kingyozaka",
             "youtube": "UC69URn8iP4u8D_zUp-IJ1sg"
         },
         {
+            "id": 116,
+            "name": "Chigusa Nishizono",
+            "youtube": "UCkngxfPbmGyGl_RIq4FA3MQ"
+        },
+        {
             "id": 117,
-            "name": "Kirame Sorahoshi",
-            "youtube": "UC_82HBGtvwN1hcGeOGHzUBQ"
+            "name": "Akane Asahina",
+            "youtube": "UCe_p3YEuYJb8Np0Ip9dk-FQ"
+        },
+        {
+            "id": 118,
+            "name": "Sango Suo",
+            "youtube": "UCL_O_HXgLJx3Auteer0n0pA"
+        },
+        {
+            "id": 119,
+            "name": "Kohaku Todo",
+            "youtube": "UCebT4Aq-3XWb5je1S1FvR_A"
+        },
+        {
+            "id": 120,
+            "name": "Hisui Kitakoji",
+            "youtube": "UCRqBKoKuX30ruKAq05pCeRQ"
         }
     ]
 }
