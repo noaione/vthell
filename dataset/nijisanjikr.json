@@ -3,11 +3,7 @@
     "name": "Nijisanji Korea",
     "main_key": "youtube",
     "upload_base": "Nijisanji/.Nijisanji KR",
-    "vliver": [    
-        {
-            "name": "Ruri Yu",
-            "youtube": "UCIJ9zP6gIkT8BB4Lz4UYPhA"
-        },
+    "vliver": [
         {
             "name": "Wiffy",
             "youtube": "UCzMAP-oh5-pC8j6RlCPf26w"
@@ -25,20 +21,8 @@
             "youtube": "UCpRXCTyNNa-MnjhK6gisnRw"
         },
         {
-            "name": "Kaen",
-            "youtube": "UCZgRRTDMYwHpQ7sCl0aCp2Q"
-        },
-        {
-            "name": "LOROU",
-            "youtube": "UCLSzgV37Dt24T8p3-TNiSLg"
-        },
-        {
             "name": "Chiho Han",
             "youtube": "UCJ6LH4jMNy0JN9RSThz1mMQ"
-        },
-        {
-            "name": "Hakuren",
-            "youtube": "UC6WU2SrnG019ucm_bdY6qxQ"
         },
         {
             "name": "Siu Lee",
