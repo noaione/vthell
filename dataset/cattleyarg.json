@@ -1,0 +1,20 @@
+{
+    "id": "cattleyarg",
+    "name": "Cattleya Regina Games",
+    "main_key": "youtube",
+    "upload_base": "Virtual eSports Project/Cattleya Regina Games",
+    "vliver": [
+        {
+            "name": "Hanabusa Lisa",
+            "youtube": "UCurEA8YoqFwimJcAuSHU0MQ"
+        },
+        {
+            "name": "Tosaki Mimi",
+            "youtube": "UCnvVG9RbOW3J6Ifqo-zKLiw"
+        },
+        {
+            "name": "Asumi Sena",
+            "youtube": "UCF_U2GCKHvDz52jWdizppIA"
+        }
+    ]
+}

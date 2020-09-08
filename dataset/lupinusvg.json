@@ -2,7 +2,7 @@
     "id": "lupinusvg",
     "name": "Lupinus Virtual Games",
     "main_key": "youtube",
-    "upload_base": "Lupinus Virtual Games",
+    "upload_base": "Virtual eSports Project/Lupinus Virtual Games",
     "vliver": [
         {
             "name": "Ichinose Uruha",
@@ -19,10 +19,6 @@
         {
             "name": "Kogara Toto",
             "youtube": "UCgTzsBI0DIRopMylJEDqnog"
-        },
-        {
-            "name": "Kurumi Noah",
-            "youtube": "UCIcAj6WkJ8vZ7DeJVgmeqKw"
         }
     ]
 }
