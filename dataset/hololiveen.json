@@ -2,7 +2,7 @@
     "id": "hololiveen",
     "name": "Hololive English",
     "main_key": "youtube",
-    "upload_base": "Hololive",
+    "upload_base": "Hololive/.Hololive EN",
     "vliver": [
         {
             "name": "Hololive English",
