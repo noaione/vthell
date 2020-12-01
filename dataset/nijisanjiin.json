@@ -1,8 +1,8 @@
 {
-    "id": "nijisanjien",
-    "name": "Nijisanji English",
+    "id": "nijisanjiin",
+    "name": "Nijisanji India",
     "main_key": "youtube",
-    "upload_base": "Nijisanji/.Nijisanji EN",
+    "upload_base": "Nijisanji/.Nijisanji IN",
     "vliver": [
         {
             "name": "Aadya",
