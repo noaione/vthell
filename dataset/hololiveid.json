@@ -3,7 +3,6 @@
     "name": "Hololive Indonesia",
     "upload_base": "Hololive/.Hololive ID",
     "main_key": "youtube",
-    "schedule_api": "https://storage.googleapis.com/vthell-data/live.json",
     "vliver": [
         {
             "name": "Ayunda Risu",
@@ -15,6 +14,18 @@
         },
         {
             "name": "Airani Iofifteen",
+            "youtube": "UCAoy6rzhSf4ydcYjJw3WoVg"
+        },
+        {
+            "name": "Kureiji Ollie",
+            "youtube": "UCYz_5n-uDuChHtLo7My1HnQ"
+        },
+        {
+            "name": "Anya Melfissa",
+            "youtube": "UCYz_5n-uDuChHtLo7My1HnQ"
+        },
+        {
+            "name": "Pavolia Reine",
             "youtube": "UCAoy6rzhSf4ydcYjJw3WoVg"
         }
     ]
