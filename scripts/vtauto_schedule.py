@@ -42,9 +42,6 @@ PROCESS_HOLOLIVE = True
 PROCESS_NIJISANJI = False
 
 ENABLE_BILIBILI = True
-BILIBILI_X_API_KEY = {  # If you have a special API Key for ihateani.me API.
-    "X-API-Key": ""
-}
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -292,7 +289,7 @@ class AutoScheduler:
 
 class NijisanjiScheduler(AutoScheduler):
 
-    API_ENDPOINT = "https://api.jetri.co/nijisanji/live"
+    API_ENDPOINT = "https://api.ihateani.me/nijisanji/youtube/live"
     API_ENDPOINT_BILI = "https://api.ihateani.me/nijisanji/live"
 
     def __init__(self, allowed_data, denied_data, enable_bili=False):
@@ -319,9 +316,7 @@ class NijisanjiScheduler(AutoScheduler):
 
     def __process_bilibili(self):
         vtlog.info("Fetching BiliBili Schedule API.")
-        events_data, msg = self._requests_events(
-            self.API_ENDPOINT_BILI, BILIBILI_X_API_KEY
-        )
+        events_data, msg = self._requests_events(self.API_ENDPOINT_BILI)
         if not events_data:
             return []
 
@@ -378,9 +373,7 @@ class HololiveScheduler(AutoScheduler):
 
     def __process_bilibili(self):
         vtlog.info("Fetching BiliBili Schedule API.")
-        events_data, msg = self._requests_events(
-            self.API_ENDPOINT_BILI, BILIBILI_X_API_KEY
-        )
+        events_data, msg = self._requests_events(self.API_ENDPOINT_BILI)
         if not events_data:
             return []
 
@@ -401,7 +394,8 @@ class HololiveScheduler(AutoScheduler):
         vtlog.info("Parsing results...")
         for upcome in events_data["upcoming"]:
             if not upcome["yt_video_key"]:
-                continue # Is bilibili
+                continue  # Is bilibili
+
             proper_parsed = {
                 "id": "",
                 "channel": "",
