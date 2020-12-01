@@ -3,7 +3,6 @@
     "name": "Hololive Main",
     "main_key": "youtube",
     "upload_base": "Hololive",
-    "schedule_api": "https://storage.googleapis.com/vthell-data/live.json",
     "vliver": [
         {
             "name": "Hololive Official",
