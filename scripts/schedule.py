@@ -14,16 +14,21 @@ BASE_VTHELL_PATH = (
 
 
 def secure_filename(fn: str):
-    fn = fn.replace("/", "／")
-    fn = fn.replace(":", "：")
-    fn = fn.replace("<", "＜")
-    fn = fn.replace(">", "＞")
-    fn = fn.replace('"', "”")
-    fn = fn.replace("\\", "＼")
-    fn = fn.replace("?", "？")
-    fn = fn.replace("*", "⋆")
-    fn = fn.replace("|", "｜")
-    fn = fn.replace("#", "")
+    replacement = {
+        "/": "／",
+        ":": "：",
+        "<": "＜",
+        ">": "＞",
+        '"': "”",
+        "'": "’",
+        "\\": "＼",
+        "?": "？",
+        "*": "⋆",
+        "|": "｜",
+        "#": "",
+    }
+    for k, v in replacement.items():
+        fn = fn.replace(k, v)
     return fn
 
 
