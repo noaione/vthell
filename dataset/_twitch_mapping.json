@@ -1,0 +1,82 @@
+{
+    "sakuramiko_hololive": {
+        "id": "hololive",
+        "name": "Sakura Miko",
+        "upload_path": "Hololive/Sakura Miko"
+    },
+    "artia_hololive": {
+        "id": "hololivecn",
+        "name": "Artia",
+        "upload_path": "Hololive/.Hololive CN/Artia"
+    },
+    "kanae_2434": {
+        "id": "nijisanji",
+        "name": "Kanae",
+        "upload_path": "Nijisanji/Kanae"
+    },
+    "hiirosss": {
+        "id": "solovtuber",
+        "name": "Hiiro",
+        "upload_path": "Solo & Indie/Hiiro"
+    },
+    "MoarinVtuber": {
+        "id": "solovtuber",
+        "name": "Moarin",
+        "upload_path": "Solo & Indie/Moarin"
+    },
+    "kochou_momiji": {
+        "id": "solovtuber",
+        "name": "Kochou Momiji",
+        "upload_path": "Solo & Indie/Kochou Momiji"
+    },
+    "pakichi": {
+        "id": "solovtuber",
+        "name": "Pakichi",
+        "upload_path": "Solo & Indie/Pakichi"
+    },
+    "shibuyahal": {
+        "id": "upd8",
+        "name": "Shibuya Hal",
+        "upload_path": "upd8/Shibuya Hal"
+    },
+    "pikameeamano": {
+        "id": "voms",
+        "name": "Amano Pikamee",
+        "upload_path": "VOMS/Amano Pikamee"
+    },
+    "nyanners": {
+        "id": "vshojo",
+        "name": "Nyatasha Nyanners",
+        "upload_path": "VShojo/Nyatasha Nyanners"
+    },
+    "projektmelody": {
+        "id": "vshojo",
+        "name": "Projekt Melody",
+        "upload_path": "VShojo/Projekt Melody"
+    },
+    "bsapricot": {
+        "id": "vshojo",
+        "name": "Froot",
+        "upload_path": "VShojo/Froot"
+    },
+    "zentreya": {
+        "id": "vshojo",
+        "name": "Zentreya",
+        "upload_path": "VShojo/Zentreya"
+    },
+    "silvervale": {
+        "id": "vshojo",
+        "name": "Silvervale",
+        "upload_path": "VShojo/Silvervale"
+    },
+    "ironmouse": {
+        "id": "vshojo",
+        "name": "Ironmouse",
+        "upload_path": "VShojo/Ironmouse"
+    },
+    "hajime": {
+        "id": "vshojo",
+        "name": "Hime Hajime",
+        "upload_path": "VShojo/Hime Hajime"
+    }
+}
