@@ -374,6 +374,21 @@
         "name": "Airani Iofifteen",
         "upload_path": "Hololive/.Hololive ID/Airani Iofifteen"
     },
+    "UCYz_5n-uDuChHtLo7My1HnQ": {
+        "id": "hololiveid",
+        "name": "Kureiji Ollie",
+        "upload_path": "Hololive/.Hololive ID/Kureiji Ollie"
+    },
+    "UC727SQYUvx5pDDGQpTICNWg": {
+        "id": "hololiveid",
+        "name": "Anya Melfissa",
+        "upload_path": "Hololive/.Hololive ID/Anya Melfissa"
+    },
+    "UChgTyjG-pdNvxxhdsXfHQ5Q": {
+        "id": "hololiveid",
+        "name": "Pavolia Reine",
+        "upload_path": "Hololive/.Hololive ID/Pavolia Reine"
+    },
     "UC6t3-_N8A6ME1JShZHHqOMw": {
         "id": "holostars",
         "name": "Hanasaki Miyabi",
@@ -1084,21 +1099,6 @@
         "name": "Hisui Kitakoji",
         "upload_path": "Nijisanji/Hisui Kitakoji"
     },
-    "UC_aB_-PHLFHiP61djM0oOiQ": {
-        "id": "nijisanjien",
-        "name": "Aadya",
-        "upload_path": "Nijisanji/.Nijisanji EN/Aadya"
-    },
-    "UC6oW4FXETgEGOFTxWmI2h5Q": {
-        "id": "nijisanjien",
-        "name": "Noor",
-        "upload_path": "Nijisanji/.Nijisanji EN/Noor"
-    },
-    "UC0lik9pHju6ONgkBh7N5wHw": {
-        "id": "nijisanjien",
-        "name": "Vihaan",
-        "upload_path": "Nijisanji/.Nijisanji EN/Vihaan"
-    },
     "UCpJtk0myFr5WnyfsmnInP-w": {
         "id": "nijisanjiid",
         "name": "Hana Macchia",
@@ -1163,6 +1163,36 @@
         "id": "nijisanjiid",
         "name": "Siska Leontyne",
         "upload_path": "Nijisanji/.Nijisanji ID/Siska Leontyne"
+    },
+    "UCijNnZ-6m8g85UGaRAWuw7g": {
+        "id": "nijisanjiid",
+        "name": "Nagisa Arcinia",
+        "upload_path": "Nijisanji/.Nijisanji ID/Nagisa Arcinia"
+    },
+    "UCMzVa7B8UEdrvUGsPmSgyjA": {
+        "id": "nijisanjiid",
+        "name": "Derem Kado",
+        "upload_path": "Nijisanji/.Nijisanji ID/Derem Kado"
+    },
+    "UC5yckZliCkuaEFbqzLBD7hQ": {
+        "id": "nijisanjiid",
+        "name": "Reza Avanluna",
+        "upload_path": "Nijisanji/.Nijisanji ID/Reza Avanluna"
+    },
+    "UC_aB_-PHLFHiP61djM0oOiQ": {
+        "id": "nijisanjiin",
+        "name": "Aadya",
+        "upload_path": "Nijisanji/.Nijisanji IN/Aadya"
+    },
+    "UC6oW4FXETgEGOFTxWmI2h5Q": {
+        "id": "nijisanjiin",
+        "name": "Noor",
+        "upload_path": "Nijisanji/.Nijisanji IN/Noor"
+    },
+    "UC0lik9pHju6ONgkBh7N5wHw": {
+        "id": "nijisanjiin",
+        "name": "Vihaan",
+        "upload_path": "Nijisanji/.Nijisanji IN/Vihaan"
     },
     "UCzMAP-oh5-pC8j6RlCPf26w": {
         "id": "nijisanjikr",
