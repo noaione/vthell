@@ -1,0 +1,28 @@
+{
+    "id": "axel-v",
+    "name": "AXEL-V",
+    "main_key": "youtube",
+    "upload_base": "AXEL-V",
+    "vliver": [
+        {
+            "name": "Kokuri Kurune",
+            "youtube": "UC2rIXE0D3Vb8kS48DQrW-Jg"
+        },
+        {
+            "name": "Momo Suimitsu",
+            "youtube": "UC9XcNoPlGUe9urp1MGDM2wQ"
+        },
+        {
+            "name": "Hikone Hinokami",
+            "youtube": "UCp-UfRz1EEPlX6xwfPKd2lQ"
+        },
+        {
+            "name": "Saki Akuma",
+            "youtube": "UC-SSusywniohnRHif72eYdw"
+        },
+        {
+            "name": "Canal Mizukura",
+            "youtube": "UCBsPgdseCIJXKr1i2flmWYQ"
+        }
+    ]
+}
