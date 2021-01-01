@@ -5,8 +5,12 @@
     "upload_base": "Eilene",
     "vliver": [
         {
-            "name": "Yomemi Etra",
+            "name": "Yomemi",
             "youtube": "UCy5lOmEQoivK5XK7QCaRKug"
+        },
+        {
+            "name": "Etra",
+            "youtube": "UCAHXqn4nAd2j3LRu1Qyi_JA"
         },
         {
             "name": "Natsumi Moe",
@@ -15,6 +19,10 @@
         {
             "name": "Sifir Esirer",
             "youtube": "UCz0lin3ZsOtmr2yuTN2MDQg"
+        },
+        {
+            "name": "Yomeno Moemi",
+            "youtube": "UCIwHOJn_3QjBTwQ_gNj7WRA"
         }
     ]
 }
