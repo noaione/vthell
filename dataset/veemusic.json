@@ -1,0 +1,65 @@
+{
+    "id": "veemusic",
+    "name": "VEEMusic",
+    "main_key": "youtube",
+    "upload_base": "VEEMusic",
+    "vliver": [
+        {
+            "name": "Virtual Gorilla",
+            "youtube": "UC2hA-6M66dE2Tt_4xM8K9wQ",
+            "bilibili": "11063770"
+        },
+        {
+            "name": "Virtual Gorilla Games",
+            "youtube": "UCjtEttSHpJacfd7a6fc4VXQ"
+        },
+        {
+            "name": "Takao Shinji",
+            "youtube": "UCM2SwvNjA0uH8oc5D0ihSDA"
+        },
+        {
+            "name": "Ninja Inui",
+            "youtube": "UC8QEgcJgjrJWy4B43aXxsAQ"
+        },
+        {
+            "name": "Nidai Meaka",
+            "youtube": "UCvy86WpnHG-h7-tgBVQBJYg"
+        },
+        {
+            "name": "PAP",
+            "youtube": "UCFYEdWawKUvw6zTR5FLBYhQ"
+        },
+        {
+            "name": "Ayane Leon",
+            "youtube": "UCRyfBWvZI0cASr3vRy0dEaw"
+        },
+        {
+            "name": "Kaz Hoshinouta",
+            "youtube": "UC_n3V9K0VoEhGSO9ikOE6pw"
+        },
+        {
+            "name": "Jiyou Mizunagi",
+            "youtube": "UCZxiDsYaOAQw7Oi9Gs274Dw"
+        },
+        {
+            "name": "Ryuji Kohinata",
+            "youtube": "UCSv-sZE1vmCV3EjYccpmu9A"
+        },
+        {
+            "name": "Izumi Konno",
+            "youtube": "UC8t9-JmJwCCHIW6tl7gjkLA"
+        },
+        {
+            "name": "Asahina",
+            "youtube": "UCwXub3WkpzfoilGS-r-EKsA"
+        },
+        {
+            "name": "Sumeragi Chiyori",
+            "youtube": "UCf8K5a8WtkUuSaiBCR2H9qw"
+        },
+        {
+            "name": "Sakuraba Shion",
+            "youtube": "UCYeXE77sQ_QDmcpRRD_xCSw"   
+        }
+    ]
+}
