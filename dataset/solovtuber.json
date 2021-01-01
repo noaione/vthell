@@ -162,11 +162,6 @@
             "bilibili": "397723865"
         },
         {
-            "name": "Dotto Live",
-            "youtube": "UCAZ_LA7f0sjuZ1Ni8L2uITw",
-            "bilibili": "11725160"
-        },
-        {
             "name": "Naruhaya-chan",
             "youtube": "UCyhccrfXKUoGGT8cuAJEGXw",
             "bilibili": "423747660"
@@ -263,11 +258,6 @@
             "name": "Deepweb Underground",
             "youtube": "UCSgheR9xOIcQjlkeXqIofLQ",
             "bilibili": "39106621"
-        },
-        {
-            "name": "Virtual Gorilla",
-            "youtube": "UC2hA-6M66dE2Tt_4xM8K9wQ",
-            "bilibili": "11063770"
         },
         {
             "name": "Virtual Ookami Game Jikkyou-sha Lilisuke",
@@ -483,11 +473,6 @@
             "name": "Ashino Sister Project",
             "youtube": "UCODNLyn3L83wEmC0DLL0cxA",
             "bilibili": "6777056"
-        },
-        {
-            "name": "Asahina Ao",
-            "youtube": "UCwXub3WkpzfoilGS-r-EKsA",
-            "bilibili": "431971663"
         },
         {
             "name": "Kurusu Raia",
@@ -903,6 +888,26 @@
         {
             "name": "Pakichi",
             "twitch": "pakichi"
+        },
+        {
+            "name": "Amatsuka Uto",
+            "youtube": "UCdYR5Oyz8Q4g0ZmB4PkTD7g"
+        },
+        {
+            "name": "Mirea Kazakura",
+            "youtube": "UCIumx9FItlv6B_JsHVMjVYA"
+        },
+        {
+            "name": "BOOGEY VOXX",
+            "youtube": "UCtk3KnxYCoGiyrLVdIOgG1Q"
+        },
+        {
+            "name": "Bao",
+            "youtube": "UCZQ7nZ8Lc7pslBN0gN1Jg0w"
+        },
+        {
+            "name": "Artemis of the Blue",
+            "youtube": "UCWImOidHDmm0KK20bkF-rSQ"
         }
     ]
 }
