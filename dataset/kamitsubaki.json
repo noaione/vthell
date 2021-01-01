@@ -5,6 +5,10 @@
     "upload_base": "Kamitsubaki Studio",
     "vliver": [
         {
+            "name": "Kamitsubaki Studio",
+            "youtube": "UCAOhUv73jM5iCpOhuJOQzxA"
+        },
+        {
             "name": "DUST_CELL",
             "bilibili": "488979186"
         },
@@ -27,6 +31,14 @@
             "name": "Kaf",
             "youtube": "UCQ1U65-CQdIoZ2_NA4Z4F7A",
             "bilibili": "488970166"
+        },
+        {
+            "name": "KAFU",
+            "youtube": "UCm_1n9F3A6pz-Ms2NP93tBA"
+        },
+        {
+            "name": "Koko",
+            "youtube": "UC7Gow-kNHq21oejSIDg9PAg"
         }
     ]
 }
