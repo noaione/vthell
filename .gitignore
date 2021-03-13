@@ -18,3 +18,4 @@ _oldstuff/
 dataset/_unused/
 dataset/*.py
 !requirements.txt
+chatarchive/*

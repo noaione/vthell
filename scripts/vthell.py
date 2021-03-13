@@ -4,8 +4,8 @@ import logging
 import subprocess as sp
 import sys
 from datetime import datetime
-from os import getenv, remove
-from os.path import getsize, isfile
+from os import getenv, remove, makedirs
+from os.path import getsize, isfile, exists
 from os.path import join as pjoin
 
 from discord_webhook import DiscordEmbed, DiscordWebhook
@@ -30,6 +30,22 @@ URL  INCLUDE_SUBDOMAINS  PATH  HTTPS_ONLY  EXPIRES  COOKIES_NAME  COOKIES_VALUE
 .youtube.com  TRUE  /  TRUE  0  SAMPLES  SAMPLEVALUES
 """
 COOKIES_NAME = "membercookies.txt"  # Your cookies file name
+FORCE_COOKIES = True  # Force use oookies (used to bypass 429)
+
+"""
+Proxy URL to use, leave it at None if you don't want to use it,
+format it with `http://` as the starting point
+"""
+HTTP_PROXY = None
+
+"""
+Enable chat downloader via https://github.com/xenova/chat-downloader
+Please install the module to your venv `pip install -U chat-downloader
+This will download the chat in .json format
+
+Fair warning: This can get very large.
+"""
+DOWNLOAD_CHAT = False
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -113,15 +129,15 @@ def print_end():
 def find_res(line: str):
     """Find video resolution"""
     lines = [
-        l.rstrip()
-        for l in line.split()
-        if not l.startswith("(") and not l.endswith(")")
+        le.rstrip()
+        for le in line.split()
+        if not le.startswith("(") and not le.endswith(")")
     ]
-    lines = [l for l in lines if not l.startswith("[") and not l.endswith("]")]
+    lines = [le for le in lines if not le.startswith("[") and not le.endswith("]")]
     res = None
-    for l in lines:
-        if l.endswith("p"):
-            res = l
+    for le in lines:
+        if le.endswith("p"):
+            res = le
             break
     return res
 
@@ -157,6 +173,26 @@ if not vthell_jobs:
     reset_handler()
     print_end()
     exit(0)
+
+
+def parallel_run_chat_archive(youtube_url, output_name):
+    folder_path = pjoin(BASE_VTHELL_PATH, "chatarchive")
+    real_output = output_name + ".chat.json"
+    full_cmd = [
+        pjoin(BASE_VENV_BIN, "chat_downloader"),
+        youtube_url,
+        "-o",
+        pjoin(folder_path, real_output),
+        "-q"
+    ]
+    if FORCE_COOKIES:
+        full_cmd.extend(["--cookies", pjoin(BASE_VTHELL_PATH, COOKIES_NAME)])
+    if not exists(folder_path):
+        makedirs(folder_path)
+    vtlog.info("Spawning chat downloader for {}".format(youtube_url))
+    vtlog.warning("Sadly, you need to manually upload the chat logs")
+    vtlog.info("Outputing to chatarchive/{}".format(real_output))
+    sp.Popen(full_cmd, stdout=sp.PIPE, stderr=sp.STDOUT)
 
 
 def run_streamlink_proc(STL_CMD, vt, reload_mode=False):
@@ -199,6 +235,8 @@ def run_streamlink_proc(STL_CMD, vt, reload_mode=False):
                 vtlog.debug("Resolution: {}".format(vt["resolution"]))
             if not reload_mode:
                 announce_shit("Job " + vt["id"] + " started recording!")
+                if DOWNLOAD_CHAT:
+                    parallel_run_chat_archive(vt["streamUrl"], vt["filename"])
             else:
                 announce_shit("Job " + vt["id"] + " re-recording stream!")
 
@@ -275,8 +313,10 @@ for vthjs in vthell_jobs:
                 "'" + save_ts_name + "_{}.ts'".format(c_next)
             )
         final_output.append(STREAMLINK_CMD[2])
-        if vt["memberOnly"]:
+        if vt["memberOnly"] or FORCE_COOKIES:
             STREAMLINK_CMD.extend(find_and_parse_cookies())
+        if HTTP_PROXY is not None:
+            STREAMLINK_CMD.extend(["--http-proxy", HTTP_PROXY])
         STREAMLINK_CMD.extend([vt["streamUrl"], "best"])
 
         override_err = False
