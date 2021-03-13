@@ -54,6 +54,31 @@
         "name": "Hinako Umori",
         "upload_path": "774 inc./Animare/Hinako Umori"
     },
+    "UC2rIXE0D3Vb8kS48DQrW-Jg": {
+        "id": "axel-v",
+        "name": "Kokuri Kurune",
+        "upload_path": "AXEL-V/Kokuri Kurune"
+    },
+    "UC9XcNoPlGUe9urp1MGDM2wQ": {
+        "id": "axel-v",
+        "name": "Momo Suimitsu",
+        "upload_path": "AXEL-V/Momo Suimitsu"
+    },
+    "UCp-UfRz1EEPlX6xwfPKd2lQ": {
+        "id": "axel-v",
+        "name": "Hikone Hinokami",
+        "upload_path": "AXEL-V/Hikone Hinokami"
+    },
+    "UC-SSusywniohnRHif72eYdw": {
+        "id": "axel-v",
+        "name": "Saki Akuma",
+        "upload_path": "AXEL-V/Saki Akuma"
+    },
+    "UCBsPgdseCIJXKr1i2flmWYQ": {
+        "id": "axel-v",
+        "name": "Canal Mizukura",
+        "upload_path": "AXEL-V/Canal Mizukura"
+    },
     "UCurEA8YoqFwimJcAuSHU0MQ": {
         "id": "cattleyarg",
         "name": "Hanabusa Lisa",
@@ -74,6 +99,11 @@
         "name": "Moemi & Yomemi",
         "upload_path": "ENTUM/Moemi & Yomemi"
     },
+    "UCAHXqn4nAd2j3LRu1Qyi_JA": {
+        "id": "eilene",
+        "name": "Etra",
+        "upload_path": "Eilene/Etra"
+    },
     "UCBePKUYNhoMcjBi-BRmjarQ": {
         "id": "eilene",
         "name": "Natsumi Moe",
@@ -83,6 +113,11 @@
         "id": "eilene",
         "name": "Sifir Esirer",
         "upload_path": "Eilene/Sifir Esirer"
+    },
+    "UCIwHOJn_3QjBTwQ_gNj7WRA": {
+        "id": "eilene",
+        "name": "Yomeno Moemi",
+        "upload_path": "Eilene/Yomeno Moemi"
     },
     "UCMYtONm441rBogWK_xPH9HA": {
         "id": "entum",
@@ -489,6 +524,11 @@
         "name": "Hinano Tachibana",
         "upload_path": "Virtual eSports Project/Iris Black Games/Hinano Tachibana"
     },
+    "UCAOhUv73jM5iCpOhuJOQzxA": {
+        "id": "kamitsubaki",
+        "name": "Kamitsubaki Studio",
+        "upload_path": "Kamitsubaki Studio/Kamitsubaki Studio"
+    },
     "UCah4_WVjmr8XA7i5aigwV-Q": {
         "id": "kamitsubaki",
         "name": "Isekai Joucho",
@@ -508,6 +548,16 @@
         "id": "kamitsubaki",
         "name": "Kaf",
         "upload_path": "Kamitsubaki Studio/Kaf"
+    },
+    "UCm_1n9F3A6pz-Ms2NP93tBA": {
+        "id": "kamitsubaki",
+        "name": "KAFU",
+        "upload_path": "Kamitsubaki Studio/KAFU"
+    },
+    "UC7Gow-kNHq21oejSIDg9PAg": {
+        "id": "kamitsubaki",
+        "name": "Koko",
+        "upload_path": "Kamitsubaki Studio/Koko"
     },
     "UC4YaOt1yT-ZeyB0OmxHgolA": {
         "id": "kizunaai",
@@ -563,6 +613,21 @@
         "id": "mahapanca",
         "name": "NANARIKA",
         "upload_path": "Mahapanca/NANARIKA"
+    },
+    "UCge_6FJHyeOCxRtWCmaVTAQ": {
+        "id": "mahapanca",
+        "name": "Lumi Celestia",
+        "upload_path": "Mahapanca/Lumi Celestia"
+    },
+    "UCD2W-dcuukl4oChTKATdSiw": {
+        "id": "mahapanca",
+        "name": "Nia Redalion",
+        "upload_path": "Mahapanca/Nia Redalion"
+    },
+    "UCUummegUoc-w7EDdk8Ps7BQ": {
+        "id": "mahapanca",
+        "name": "Zen Gunawan",
+        "upload_path": "Mahapanca/Zen Gunawan"
     },
     "UCLpYMk5h1bq8_GAFVBgXhPQ": {
         "id": "nijisanji",
@@ -1254,6 +1319,21 @@
         "name": "Milk Enomiya",
         "upload_path": "NoriPro/Milk Enomiya"
     },
+    "UCle1cz6rcyH0a-xoMYwLlAg": {
+        "id": "noripro",
+        "name": "Himesaki Yuzuru",
+        "upload_path": "NoriPro/Himesaki Yuzuru"
+    },
+    "UCLyTXfCZtl7dyhta9Jg3pZg": {
+        "id": "noripro",
+        "name": "Hoozuki Warabe",
+        "upload_path": "NoriPro/Hoozuki Warabe"
+    },
+    "UCCXME7oZmXB2VFHJbz5496A": {
+        "id": "noripro",
+        "name": "Kumagaya Takuma",
+        "upload_path": "NoriPro/Kumagaya Takuma"
+    },
     "UCrhx4PaF3uIo9mDcTxHnmIg": {
         "id": "paryiproject",
         "name": "Paryi",
@@ -1554,11 +1634,6 @@
         "name": "Chikuwa",
         "upload_path": "Solo & Indie/Chikuwa"
     },
-    "UCAZ_LA7f0sjuZ1Ni8L2uITw": {
-        "id": "solovtuber",
-        "name": "Dotto Live",
-        "upload_path": "Solo & Indie/Dotto Live"
-    },
     "UCyhccrfXKUoGGT8cuAJEGXw": {
         "id": "solovtuber",
         "name": "Naruhaya-chan",
@@ -1668,11 +1743,6 @@
         "id": "solovtuber",
         "name": "Deepweb Underground",
         "upload_path": "Solo & Indie/Deepweb Underground"
-    },
-    "UC2hA-6M66dE2Tt_4xM8K9wQ": {
-        "id": "solovtuber",
-        "name": "Virtual Gorilla",
-        "upload_path": "Solo & Indie/Virtual Gorilla"
     },
     "UC__zaV3-RVF-Q7mXT8RvdKA": {
         "id": "solovtuber",
@@ -1903,11 +1973,6 @@
         "id": "solovtuber",
         "name": "Ashino Sister Project",
         "upload_path": "Solo & Indie/Ashino Sister Project"
-    },
-    "UCwXub3WkpzfoilGS-r-EKsA": {
-        "id": "solovtuber",
-        "name": "Asahina Ao",
-        "upload_path": "Solo & Indie/Asahina Ao"
     },
     "UCLuyrUQPIjGkqID9UlKUP2g": {
         "id": "solovtuber",
@@ -2354,6 +2419,36 @@
         "name": "L0L0",
         "upload_path": "Solo & Indie/L0L0"
     },
+    "UCdYR5Oyz8Q4g0ZmB4PkTD7g": {
+        "id": "solovtuber",
+        "name": "Amatsuka Uto",
+        "upload_path": "Solo & Indie/Amatsuka Uto"
+    },
+    "UCIumx9FItlv6B_JsHVMjVYA": {
+        "id": "solovtuber",
+        "name": "Mirea Kazakura",
+        "upload_path": "Solo & Indie/Mirea Kazakura"
+    },
+    "UCtk3KnxYCoGiyrLVdIOgG1Q": {
+        "id": "solovtuber",
+        "name": "BOOGEY VOXX",
+        "upload_path": "Solo & Indie/BOOGEY VOXX"
+    },
+    "UCZQ7nZ8Lc7pslBN0gN1Jg0w": {
+        "id": "solovtuber",
+        "name": "Bao",
+        "upload_path": "Solo & Indie/Bao"
+    },
+    "UCWImOidHDmm0KK20bkF-rSQ": {
+        "id": "solovtuber",
+        "name": "Artemis of the Blue",
+        "upload_path": "Solo & Indie/Artemis of the Blue"
+    },
+    "UCtXhPqsPG-UwrijbXmA4Puw": {
+        "id": "solovtuber",
+        "name": "Utsu Tsuyomi",
+        "upload_path": "Solo & Indie/Utsu Tsuyomi"
+    },
     "UCoieZAlwgK3uLkIYiJARDQw": {
         "id": "sugarlyric",
         "name": "SugarLyric Official",
@@ -2668,6 +2763,76 @@
         "id": "vapart",
         "name": "Kanon Kanade",
         "upload_path": "774 inc./VApArt/Kanon Kanade"
+    },
+    "UC2hA-6M66dE2Tt_4xM8K9wQ": {
+        "id": "veemusic",
+        "name": "Virtual Gorilla",
+        "upload_path": "VEEMusic/Virtual Gorilla"
+    },
+    "UCjtEttSHpJacfd7a6fc4VXQ": {
+        "id": "veemusic",
+        "name": "Virtual Gorilla Games",
+        "upload_path": "VEEMusic/Virtual Gorilla Games"
+    },
+    "UCM2SwvNjA0uH8oc5D0ihSDA": {
+        "id": "veemusic",
+        "name": "Takao Shinji",
+        "upload_path": "VEEMusic/Takao Shinji"
+    },
+    "UC8QEgcJgjrJWy4B43aXxsAQ": {
+        "id": "veemusic",
+        "name": "Ninja Inui",
+        "upload_path": "VEEMusic/Ninja Inui"
+    },
+    "UCvy86WpnHG-h7-tgBVQBJYg": {
+        "id": "veemusic",
+        "name": "Nidai Meaka",
+        "upload_path": "VEEMusic/Nidai Meaka"
+    },
+    "UCFYEdWawKUvw6zTR5FLBYhQ": {
+        "id": "veemusic",
+        "name": "PAP",
+        "upload_path": "VEEMusic/PAP"
+    },
+    "UCRyfBWvZI0cASr3vRy0dEaw": {
+        "id": "veemusic",
+        "name": "Ayane Leon",
+        "upload_path": "VEEMusic/Ayane Leon"
+    },
+    "UC_n3V9K0VoEhGSO9ikOE6pw": {
+        "id": "veemusic",
+        "name": "Kaz Hoshinouta",
+        "upload_path": "VEEMusic/Kaz Hoshinouta"
+    },
+    "UCZxiDsYaOAQw7Oi9Gs274Dw": {
+        "id": "veemusic",
+        "name": "Jiyou Mizunagi",
+        "upload_path": "VEEMusic/Jiyou Mizunagi"
+    },
+    "UCSv-sZE1vmCV3EjYccpmu9A": {
+        "id": "veemusic",
+        "name": "Ryuji Kohinata",
+        "upload_path": "VEEMusic/Ryuji Kohinata"
+    },
+    "UC8t9-JmJwCCHIW6tl7gjkLA": {
+        "id": "veemusic",
+        "name": "Izumi Konno",
+        "upload_path": "VEEMusic/Izumi Konno"
+    },
+    "UCwXub3WkpzfoilGS-r-EKsA": {
+        "id": "veemusic",
+        "name": "Asahina",
+        "upload_path": "VEEMusic/Asahina"
+    },
+    "UCf8K5a8WtkUuSaiBCR2H9qw": {
+        "id": "veemusic",
+        "name": "Sumeragi Chiyori",
+        "upload_path": "VEEMusic/Sumeragi Chiyori"
+    },
+    "UCYeXE77sQ_QDmcpRRD_xCSw": {
+        "id": "veemusic",
+        "name": "Sakuraba Shion",
+        "upload_path": "VEEMusic/Sakuraba Shion"
     },
     "UCO2bnzPlCau6YzLoSt8EDdA": {
         "id": "vgaming",

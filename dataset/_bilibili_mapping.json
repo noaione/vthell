@@ -574,11 +574,6 @@
         "name": "Chikuwa",
         "upload_path": "Solo & Indie/Chikuwa"
     },
-    "11725160": {
-        "id": "solovtuber",
-        "name": "Dotto Live",
-        "upload_path": "Solo & Indie/Dotto Live"
-    },
     "423747660": {
         "id": "solovtuber",
         "name": "Naruhaya-chan",
@@ -628,11 +623,6 @@
         "id": "solovtuber",
         "name": "Deepweb Underground",
         "upload_path": "Solo & Indie/Deepweb Underground"
-    },
-    "11063770": {
-        "id": "solovtuber",
-        "name": "Virtual Gorilla",
-        "upload_path": "Solo & Indie/Virtual Gorilla"
     },
     "296909317": {
         "id": "solovtuber",
@@ -788,11 +778,6 @@
         "id": "solovtuber",
         "name": "Ashino Sister Project",
         "upload_path": "Solo & Indie/Ashino Sister Project"
-    },
-    "431971663": {
-        "id": "solovtuber",
-        "name": "Asahina Ao",
-        "upload_path": "Solo & Indie/Asahina Ao"
     },
     "474200495": {
         "id": "solovtuber",
@@ -1143,6 +1128,11 @@
         "id": "vapart",
         "name": "Kanon Kanade",
         "upload_path": "774 inc./VApArt/Kanon Kanade"
+    },
+    "11063770": {
+        "id": "veemusic",
+        "name": "Virtual Gorilla",
+        "upload_path": "VEEMusic/Virtual Gorilla"
     },
     "383079163": {
         "id": "vgaming",
