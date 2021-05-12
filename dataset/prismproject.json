@@ -1,0 +1,28 @@
+{
+    "id": "prismproject",
+    "name": "PRISM Project",
+    "main_key": "youtube",
+    "upload_base": "PRISM Project",
+    "vliver": [
+        {
+            "name": "Aoi Tokimori",
+            "youtube": "UCRWF6QSuklmwY3UJHyVTQ1w"
+        },
+        {
+            "name": "Meno Ibuki",
+            "youtube": "UCZfQRuwSLty74QAj55BaKlA"
+        },
+        {
+            "name": "Iku Hoshifuri",
+            "youtube": "UC2hWFlqMew61Jy6A8zu5HzQ"
+        },
+        {
+            "name": "Luto Araka",
+            "youtube": "UCnYhIk9aGEx_bIgheVjs53w"
+        },
+        {
+            "name": "Rita Kamishiro",
+            "youtube": "UCBJFsaCvgBa1a9BnEaxu97Q"
+        }
+    ]
+}

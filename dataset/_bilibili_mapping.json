@@ -4,6 +4,81 @@
         "name": "Hinako Umori",
         "upload_path": "774 inc./Animare/Hinako Umori"
     },
+    "391876799": {
+        "id": "vrlive",
+        "name": "Siro",
+        "upload_path": "VR Live/Siro"
+    },
+    "441666962": {
+        "id": "vrlive",
+        "name": "Iroha Kongo",
+        "upload_path": "VR Live/Iroha Kongo"
+    },
+    "455868076": {
+        "id": "vrlive",
+        "name": "Riko Ushimaki",
+        "upload_path": "VR Live/Riko Ushimaki"
+    },
+    "441666957": {
+        "id": "vrlive",
+        "name": "Tama Yozakura",
+        "upload_path": "VR Live/Tama Yozakura"
+    },
+    "455868077": {
+        "id": "vrlive",
+        "name": "Suzu Kagura",
+        "upload_path": "VR Live/Suzu Kagura"
+    },
+    "441666965": {
+        "id": "vrlive",
+        "name": "Mememe Mokota",
+        "upload_path": "VR Live/Mememe Mokota"
+    },
+    "441666956": {
+        "id": "vrlive",
+        "name": "Pino Carro",
+        "upload_path": "VR Live/Pino Carro"
+    },
+    "441666963": {
+        "id": "vrlive",
+        "name": "Natori Yaezawa",
+        "upload_path": "VR Live/Natori Yaezawa"
+    },
+    "441666959": {
+        "id": "vrlive",
+        "name": "Futaba Kitakami",
+        "upload_path": "VR Live/Futaba Kitakami"
+    },
+    "441666958": {
+        "id": "vrlive",
+        "name": "Azuki Kiso",
+        "upload_path": "VR Live/Azuki Kiso"
+    },
+    "441666964": {
+        "id": "vrlive",
+        "name": "Kakyoin Chieri",
+        "upload_path": "VR Live/Kakyoin Chieri"
+    },
+    "441666961": {
+        "id": "vrlive",
+        "name": "Iori Yamato",
+        "upload_path": "VR Live/Iori Yamato"
+    },
+    "441666960": {
+        "id": "vrlive",
+        "name": "Mochi Nekonoki",
+        "upload_path": "VR Live/Mochi Nekonoki"
+    },
+    "441666966": {
+        "id": "vrlive",
+        "name": "Milk Merry",
+        "upload_path": "VR Live/Milk Merry"
+    },
+    "455868075": {
+        "id": "vrlive",
+        "name": "Baacharu",
+        "upload_path": "VR Live/Baacharu"
+    },
     "291296062": {
         "id": "entum",
         "name": "Nekomiya Hinata",
@@ -219,11 +294,6 @@
         "name": "Eli",
         "upload_path": "774 inc./HoneyStrap/Eli"
     },
-    "488979186": {
-        "id": "kamitsubaki",
-        "name": "DUST_CELL",
-        "upload_path": "Kamitsubaki Studio/DUST_CELL"
-    },
     "488978908": {
         "id": "kamitsubaki",
         "name": "Isekai Joucho",
@@ -236,8 +306,8 @@
     },
     "489046950": {
         "id": "kamitsubaki",
-        "name": "Rime",
-        "upload_path": "Kamitsubaki Studio/Rime"
+        "name": "Rim",
+        "upload_path": "Kamitsubaki Studio/Rim"
     },
     "488970166": {
         "id": "kamitsubaki",
@@ -1343,81 +1413,6 @@
         "id": "vivid",
         "name": "Shirayuri Lily",
         "upload_path": "ViViD/Shirayuri Lily"
-    },
-    "391876799": {
-        "id": "vrlive",
-        "name": "Siro",
-        "upload_path": "VR Live/Siro"
-    },
-    "441666962": {
-        "id": "vrlive",
-        "name": "Iroha Kongo",
-        "upload_path": "VR Live/Iroha Kongo"
-    },
-    "455868076": {
-        "id": "vrlive",
-        "name": "Riko Ushimaki",
-        "upload_path": "VR Live/Riko Ushimaki"
-    },
-    "441666957": {
-        "id": "vrlive",
-        "name": "Tama Yozakura",
-        "upload_path": "VR Live/Tama Yozakura"
-    },
-    "455868077": {
-        "id": "vrlive",
-        "name": "Suzu Kagura",
-        "upload_path": "VR Live/Suzu Kagura"
-    },
-    "441666965": {
-        "id": "vrlive",
-        "name": "Mememe Mokota",
-        "upload_path": "VR Live/Mememe Mokota"
-    },
-    "441666956": {
-        "id": "vrlive",
-        "name": "Pino Carro",
-        "upload_path": "VR Live/Pino Carro"
-    },
-    "441666963": {
-        "id": "vrlive",
-        "name": "Natori Yaezawa",
-        "upload_path": "VR Live/Natori Yaezawa"
-    },
-    "441666959": {
-        "id": "vrlive",
-        "name": "Futaba Kitakami",
-        "upload_path": "VR Live/Futaba Kitakami"
-    },
-    "441666958": {
-        "id": "vrlive",
-        "name": "Azuki Kiso",
-        "upload_path": "VR Live/Azuki Kiso"
-    },
-    "441666964": {
-        "id": "vrlive",
-        "name": "Kakyoin Chieri",
-        "upload_path": "VR Live/Kakyoin Chieri"
-    },
-    "441666961": {
-        "id": "vrlive",
-        "name": "Iori Yamato",
-        "upload_path": "VR Live/Iori Yamato"
-    },
-    "441666960": {
-        "id": "vrlive",
-        "name": "Mochi Nekonoki",
-        "upload_path": "VR Live/Mochi Nekonoki"
-    },
-    "441666966": {
-        "id": "vrlive",
-        "name": "Milk Merry",
-        "upload_path": "VR Live/Milk Merry"
-    },
-    "455868075": {
-        "id": "vrlive",
-        "name": "Baacharu",
-        "upload_path": "VR Live/Baacharu"
     },
     "233114861": {
         "id": "yahootv",

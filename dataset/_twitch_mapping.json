@@ -14,6 +14,76 @@
         "name": "Kanae",
         "upload_path": "Nijisanji/Kanae"
     },
+    "yuyashin2434": {
+        "id": "nijisanjikr",
+        "name": "Yuya Shin",
+        "upload_path": "Nijisanji/.Nijisanji KR/Yuya Shin"
+    },
+    "suhamin2434": {
+        "id": "nijisanjikr",
+        "name": "Suha Min",
+        "upload_path": "Nijisanji/.Nijisanji KR/Suha Min"
+    },
+    "gaon_2434": {
+        "id": "nijisanjikr",
+        "name": "Mogaon",
+        "upload_path": "Nijisanji/.Nijisanji KR/Mogaon"
+    },
+    "chihorahao": {
+        "id": "nijisanjikr",
+        "name": "Chiho Han",
+        "upload_path": "Nijisanji/.Nijisanji KR/Chiho Han"
+    },
+    "siulee2434": {
+        "id": "nijisanjikr",
+        "name": "Siu Lee",
+        "upload_path": "Nijisanji/.Nijisanji KR/Siu Lee"
+    },
+    "nagiso2434": {
+        "id": "nijisanjikr",
+        "name": "Nagi So",
+        "upload_path": "Nijisanji/.Nijisanji KR/Nagi So"
+    },
+    "arachae2434": {
+        "id": "nijisanjikr",
+        "name": "Ara Chae",
+        "upload_path": "Nijisanji/.Nijisanji KR/Ara Chae"
+    },
+    "boranun2434": {
+        "id": "nijisanjikr",
+        "name": "Nun Bora",
+        "upload_path": "Nijisanji/.Nijisanji KR/Nun Bora"
+    },
+    "rayakira2434": {
+        "id": "nijisanjikr",
+        "name": "Akira Ray",
+        "upload_path": "Nijisanji/.Nijisanji KR/Akira Ray"
+    },
+    "rohalee2434": {
+        "id": "nijisanjikr",
+        "name": "Lee Roha",
+        "upload_path": "Nijisanji/.Nijisanji KR/Lee Roha"
+    },
+    "jiyuoh2434": {
+        "id": "nijisanjikr",
+        "name": "Oh Jiyu",
+        "upload_path": "Nijisanji/.Nijisanji KR/Oh Jiyu"
+    },
+    "kirushin2434": {
+        "id": "nijisanjikr",
+        "name": "Shin Kiru",
+        "upload_path": "Nijisanji/.Nijisanji KR/Shin Kiru"
+    },
+    "nariyang2434": {
+        "id": "nijisanjikr",
+        "name": "Yang Nari",
+        "upload_path": "Nijisanji/.Nijisanji KR/Yang Nari"
+    },
+    "hariryu2434": {
+        "id": "nijisanjikr",
+        "name": "Ryu Hari",
+        "upload_path": "Nijisanji/.Nijisanji KR/Ryu Hari"
+    },
     "hiirosss": {
         "id": "solovtuber",
         "name": "Hiiro",
@@ -34,6 +104,31 @@
         "name": "Pakichi",
         "upload_path": "Solo & Indie/Pakichi"
     },
+    "hoshinochar": {
+        "id": "tsunderia",
+        "name": "Hoshino Charlotte",
+        "upload_path": "Tsunderia/Hoshino Charlotte"
+    },
+    "inukaipurin": {
+        "id": "tsunderia",
+        "name": "Inukai Purin",
+        "upload_path": "Tsunderia/Inukai Purin"
+    },
+    "matsuromeru": {
+        "id": "tsunderia",
+        "name": "Matsuro Meru",
+        "upload_path": "Tsunderia/Matsuro Meru"
+    },
+    "yazakikallin": {
+        "id": "tsunderia",
+        "name": "Yazaki Kallin",
+        "upload_path": "Tsunderia/Yazaki Kallin"
+    },
+    "niniyuuna": {
+        "id": "tsunderia",
+        "name": "Nini Yuuna",
+        "upload_path": "Tsunderia/Nini Yuuna"
+    },
     "shibuyahal": {
         "id": "upd8",
         "name": "Shibuya Hal",
@@ -43,40 +138,5 @@
         "id": "voms",
         "name": "Amano Pikamee",
         "upload_path": "VOMS/Amano Pikamee"
-    },
-    "nyanners": {
-        "id": "vshojo",
-        "name": "Nyatasha Nyanners",
-        "upload_path": "VShojo/Nyatasha Nyanners"
-    },
-    "projektmelody": {
-        "id": "vshojo",
-        "name": "Projekt Melody",
-        "upload_path": "VShojo/Projekt Melody"
-    },
-    "bsapricot": {
-        "id": "vshojo",
-        "name": "Froot",
-        "upload_path": "VShojo/Froot"
-    },
-    "zentreya": {
-        "id": "vshojo",
-        "name": "Zentreya",
-        "upload_path": "VShojo/Zentreya"
-    },
-    "silvervale": {
-        "id": "vshojo",
-        "name": "Silvervale",
-        "upload_path": "VShojo/Silvervale"
-    },
-    "ironmouse": {
-        "id": "vshojo",
-        "name": "Ironmouse",
-        "upload_path": "VShojo/Ironmouse"
-    },
-    "hajime": {
-        "id": "vshojo",
-        "name": "Hime Hajime",
-        "upload_path": "VShojo/Hime Hajime"
     }
 }

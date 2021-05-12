@@ -6,6 +6,10 @@
     "schedule_api": "https://storage.googleapis.com/vthell-data/live.json",
     "vliver": [
         {
+            "name": "Holostars Official",
+            "youtube": "UCWsfcksUUpoEvhia0_ut0bA"
+        },
+        {
             "name": "Hanasaki Miyabi",
             "youtube": "UC6t3-_N8A6ME1JShZHHqOMw"
         },
@@ -47,7 +51,8 @@
         },
         {
             "name": "Kageyama Shien",
-            "youtube": "UChSvpZYRPh0FvG4SJGSga3g"
+            "youtube": "UChSvpZYRPh0FvG4SJGSga3g",
+            "twitcasting": "kageyamashien"
         },
         {
             "name": "Aragami Oga",

@@ -1,8 +1,7 @@
 {
+    "$schema": "https://ihateani.me/vt-schemas.json",
     "id": "vshojo",
     "name": "VShojo",
-    "main_key": "twitch",
-    "upload_base": "VShojo",
     "vliver": [
         {
             "name": "Nyatasha Nyanners",
@@ -31,6 +30,10 @@
         {
             "name": "Hime Hajime",
             "twitch": "hajime"
+        },
+        {
+            "name": "Veibae",
+            "twitch": "veibae"
         }
     ]
 }

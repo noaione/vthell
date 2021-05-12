@@ -1,7 +1,7 @@
 {
     "id": "vgaming",
     "name": "VGaming",
-    "main_key": null,
+    "main_key": "youtube",
     "upload_base": "VGaming",
     "vliver": [
         {

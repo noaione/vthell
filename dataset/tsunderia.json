@@ -1,0 +1,37 @@
+{
+    "id": "tsunderia",
+    "name": "Tsunderia",
+    "main_key": "youtube",
+    "upload_base": "Tsunderia",
+    "vliver": [
+        {
+            "name": "Kamiko Kana",
+            "youtube": "UCn1coImC6NMDYCQfH_ILzXw"
+        },
+        {
+            "name": "Hoshino Charlotte",
+            "youtube": "UCdCczCYPOeP5hTfbx6tzz_A",
+            "twitch": "hoshinochar"
+        },
+        {
+            "name": "Inukai Purin",
+            "youtube": "UCdrQWcX7XLDSUEh9SAxnyBg",
+            "twitch": "inukaipurin"
+        },
+        {
+            "name": "Matsuro Meru",
+            "youtube": "UCIJ6TGsTcBlYGUj-zbL60EQ",
+            "twitch": "matsuromeru"
+        },
+        {
+            "name": "Yazaki Kallin",
+            "youtube": "UCbTkauz77OIO9KE5YcAKPlg",
+            "twitch": "yazakikallin"
+        },
+        {
+            "name": "Nini Yuuna",
+            "youtube": "UC8CKGSvp9bRfmtWyfV5L9Jw",
+            "twitch": "niniyuuna"
+        }
+    ]
+}

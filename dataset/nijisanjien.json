@@ -1,0 +1,24 @@
+{
+    "id": "nijisanjien",
+    "name": "Nijisanji English",
+    "main_key": "youtube",
+    "upload_base": "Nijisanji/.Nijisanji EN",
+    "vliver": [
+        {
+            "name": "NIJISANJI English Official",
+            "youtube": "UC-JSeFfovhNsEhftt1WHMvg"
+        },
+        {
+            "name": "Finana Ryugu",
+            "youtube": "UCu-J8uIXuLZh16gG-cT1naw"
+        },
+        {
+            "name": "Elira Pendora",
+            "youtube": "UCIeSUTOTkF9Hs7q3SGcO-Ow"
+        },
+        {
+            "name": "Pomu Rainpuff",
+            "youtube": "UCP4nMSTdwU1KqYWu3UH5DHQ"
+        }
+    ]
+}

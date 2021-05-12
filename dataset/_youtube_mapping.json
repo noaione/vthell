@@ -94,6 +94,86 @@
         "name": "Asumi Sena",
         "upload_path": "Virtual eSports Project/Cattleya Regina Games/Asumi Sena"
     },
+    "UCLhUvJ_wO9hOvv_yYENu4fQ": {
+        "id": "vrlive",
+        "name": "Siro",
+        "upload_path": "VR Live/Siro"
+    },
+    "UCkD-wlU06zeiGSk31y2qIOw": {
+        "id": "vrlive",
+        "name": "Siro Games",
+        "upload_path": "VR Live/Siro Games"
+    },
+    "UCiGcHHHT3kBB1IGOrv7f3qQ": {
+        "id": "vrlive",
+        "name": "Iroha Kongo",
+        "upload_path": "VR Live/Iroha Kongo"
+    },
+    "UCKUcnaLsG2DeQqza8zRXHiA": {
+        "id": "vrlive",
+        "name": "Riko Ushimaki",
+        "upload_path": "VR Live/Riko Ushimaki"
+    },
+    "UCOefINa2_BmpuX4BbHjdk9A": {
+        "id": "vrlive",
+        "name": "Tama Yozakura",
+        "upload_path": "VR Live/Tama Yozakura"
+    },
+    "UCUZ5AlC3rTlM-rA2cj5RP6w": {
+        "id": "vrlive",
+        "name": "Suzu Kagura",
+        "upload_path": "VR Live/Suzu Kagura"
+    },
+    "UCz6Gi81kE6p5cdW1rT0ixqw": {
+        "id": "vrlive",
+        "name": "Mememe Mokota",
+        "upload_path": "VR Live/Mememe Mokota"
+    },
+    "UCMzxQ58QL4NNbWghGymtHvw": {
+        "id": "vrlive",
+        "name": "Pino Carro",
+        "upload_path": "VR Live/Pino Carro"
+    },
+    "UC1519-d1jzGiL1MPTxEdtSA": {
+        "id": "vrlive",
+        "name": "Natori Yaezawa",
+        "upload_path": "VR Live/Natori Yaezawa"
+    },
+    "UC5nfcGkOAm3JwfPvJvzplHg": {
+        "id": "vrlive",
+        "name": "Futaba Kitakami",
+        "upload_path": "VR Live/Futaba Kitakami"
+    },
+    "UCmM5LprTu6-mSlIiRNkiXYg": {
+        "id": "vrlive",
+        "name": "Azuki Kiso",
+        "upload_path": "VR Live/Azuki Kiso"
+    },
+    "UCP9ZgeIJ3Ri9En69R0kJc9Q": {
+        "id": "vrlive",
+        "name": "Kakyoin Chieri",
+        "upload_path": "VR Live/Kakyoin Chieri"
+    },
+    "UCyb-cllCkMREr9de-hoiDrg": {
+        "id": "vrlive",
+        "name": "Iori Yamato",
+        "upload_path": "VR Live/Iori Yamato"
+    },
+    "UC02LBsjt_Ehe7k0CuiNC6RQ": {
+        "id": "vrlive",
+        "name": "Mochi Nekonoki",
+        "upload_path": "VR Live/Mochi Nekonoki"
+    },
+    "UCju7v8SkoWUQ5ITCQwmYpYg": {
+        "id": "vrlive",
+        "name": "Milk Merry",
+        "upload_path": "VR Live/Milk Merry"
+    },
+    "UC6TyfKcsrPwBsBnx2QobVLQ": {
+        "id": "vrlive",
+        "name": "Baacharu",
+        "upload_path": "VR Live/Baacharu"
+    },
     "UCy5lOmEQoivK5XK7QCaRKug": {
         "id": "entum",
         "name": "Moemi & Yomemi",
@@ -394,6 +474,11 @@
         "name": "Watson Amelia",
         "upload_path": "Hololive/.Hololive EN/Watson Amelia"
     },
+    "UCfrWoRGlawPQDQxxeIDRP0Q": {
+        "id": "hololiveid",
+        "name": "Hololive Indonesia",
+        "upload_path": "Hololive/.Hololive ID/Hololive Indonesia"
+    },
     "UCOyYb1c43VlX9rc_lT6NKQw": {
         "id": "hololiveid",
         "name": "Ayunda Risu",
@@ -423,6 +508,11 @@
         "id": "hololiveid",
         "name": "Pavolia Reine",
         "upload_path": "Hololive/.Hololive ID/Pavolia Reine"
+    },
+    "UCWsfcksUUpoEvhia0_ut0bA": {
+        "id": "holostars",
+        "name": "Holostars Official",
+        "upload_path": "Holostars/Holostars Official"
     },
     "UC6t3-_N8A6ME1JShZHHqOMw": {
         "id": "holostars",
@@ -541,8 +631,8 @@
     },
     "UCfBkUgaJ6eqYA9_TX2cmq9A": {
         "id": "kamitsubaki",
-        "name": "Rime",
-        "upload_path": "Kamitsubaki Studio/Rime"
+        "name": "Rim",
+        "upload_path": "Kamitsubaki Studio/Rim"
     },
     "UCQ1U65-CQdIoZ2_NA4Z4F7A": {
         "id": "kamitsubaki",
@@ -1164,6 +1254,26 @@
         "name": "Hisui Kitakoji",
         "upload_path": "Nijisanji/Hisui Kitakoji"
     },
+    "UC-JSeFfovhNsEhftt1WHMvg": {
+        "id": "nijisanjien",
+        "name": "NIJISANJI English Official",
+        "upload_path": "Nijisanji/.Nijisanji EN/NIJISANJI English Official"
+    },
+    "UCu-J8uIXuLZh16gG-cT1naw": {
+        "id": "nijisanjien",
+        "name": "Finana Ryugu",
+        "upload_path": "Nijisanji/.Nijisanji EN/Finana Ryugu"
+    },
+    "UCIeSUTOTkF9Hs7q3SGcO-Ow": {
+        "id": "nijisanjien",
+        "name": "Elira Pendora",
+        "upload_path": "Nijisanji/.Nijisanji EN/Elira Pendora"
+    },
+    "UCP4nMSTdwU1KqYWu3UH5DHQ": {
+        "id": "nijisanjien",
+        "name": "Pomu Rainpuff",
+        "upload_path": "Nijisanji/.Nijisanji EN/Pomu Rainpuff"
+    },
     "UCpJtk0myFr5WnyfsmnInP-w": {
         "id": "nijisanjiid",
         "name": "Hana Macchia",
@@ -1299,6 +1409,41 @@
         "name": "Ara Chae",
         "upload_path": "Nijisanji/.Nijisanji KR/Ara Chae"
     },
+    "UC1ZV7KBscK0EMoJKFu1DnDg": {
+        "id": "nijisanjikr",
+        "name": "Nun Bora",
+        "upload_path": "Nijisanji/.Nijisanji KR/Nun Bora"
+    },
+    "UC7hffDQLKIEG-_zoAQkMIvg": {
+        "id": "nijisanjikr",
+        "name": "Akira Ray",
+        "upload_path": "Nijisanji/.Nijisanji KR/Akira Ray"
+    },
+    "UCClwIqTUn5LDpFucHyaAhHg": {
+        "id": "nijisanjikr",
+        "name": "Lee Roha",
+        "upload_path": "Nijisanji/.Nijisanji KR/Lee Roha"
+    },
+    "UCnzZmBOSrQf2wDBbnsDajVw": {
+        "id": "nijisanjikr",
+        "name": "Oh Jiyu",
+        "upload_path": "Nijisanji/.Nijisanji KR/Oh Jiyu"
+    },
+    "UCi6nV5Z2dzFuXBzLG3P9zqQ": {
+        "id": "nijisanjikr",
+        "name": "Shin Kiru",
+        "upload_path": "Nijisanji/.Nijisanji KR/Shin Kiru"
+    },
+    "UCCHH0nWYXFZmtDS_4tvMxHQ": {
+        "id": "nijisanjikr",
+        "name": "Yang Nari",
+        "upload_path": "Nijisanji/.Nijisanji KR/Yang Nari"
+    },
+    "UClS6k3w1sPwlVFqK3-yID5A": {
+        "id": "nijisanjikr",
+        "name": "Ryu Hari",
+        "upload_path": "Nijisanji/.Nijisanji KR/Ryu Hari"
+    },
     "UCEd6G9T-jLieKWKVfpTlAKg": {
         "id": "noripro",
         "name": "Norio Burabura",
@@ -1333,6 +1478,21 @@
         "id": "noripro",
         "name": "Kumagaya Takuma",
         "upload_path": "NoriPro/Kumagaya Takuma"
+    },
+    "UCH11P1Hq4PXdznyw1Hhr3qw": {
+        "id": "noripro",
+        "name": "Yumeno Lilith",
+        "upload_path": "NoriPro/Yumeno Lilith"
+    },
+    "UCBAeKqEIugv69Q2GIgcH7oA": {
+        "id": "noripro",
+        "name": "Ouma Kirara",
+        "upload_path": "NoriPro/Ouma Kirara"
+    },
+    "UCxrmkJf_X1Yhte_a4devFzA": {
+        "id": "noripro",
+        "name": "Kurumizawa Momo",
+        "upload_path": "NoriPro/Kurumizawa Momo"
     },
     "UCrhx4PaF3uIo9mDcTxHnmIg": {
         "id": "paryiproject",
@@ -1383,6 +1543,31 @@
         "id": "pinkpunkpro",
         "name": "Tenshouin Hiina",
         "upload_path": "PinkPunkPro/Tenshouin Hiina"
+    },
+    "UCRWF6QSuklmwY3UJHyVTQ1w": {
+        "id": "prismproject",
+        "name": "Aoi Tokimori",
+        "upload_path": "PRISM Project/Aoi Tokimori"
+    },
+    "UCZfQRuwSLty74QAj55BaKlA": {
+        "id": "prismproject",
+        "name": "Meno Ibuki",
+        "upload_path": "PRISM Project/Meno Ibuki"
+    },
+    "UC2hWFlqMew61Jy6A8zu5HzQ": {
+        "id": "prismproject",
+        "name": "Iku Hoshifuri",
+        "upload_path": "PRISM Project/Iku Hoshifuri"
+    },
+    "UCnYhIk9aGEx_bIgheVjs53w": {
+        "id": "prismproject",
+        "name": "Luto Araka",
+        "upload_path": "PRISM Project/Luto Araka"
+    },
+    "UCBJFsaCvgBa1a9BnEaxu97Q": {
+        "id": "prismproject",
+        "name": "Rita Kamishiro",
+        "upload_path": "PRISM Project/Rita Kamishiro"
     },
     "UC4OeUf_KfYRrwksschtRYow": {
         "id": "re_act",
@@ -2449,6 +2634,26 @@
         "name": "Utsu Tsuyomi",
         "upload_path": "Solo & Indie/Utsu Tsuyomi"
     },
+    "UC1ucgoC_sGww_Euu5iMqpQw": {
+        "id": "solovtuber",
+        "name": "Ririsya",
+        "upload_path": "Solo & Indie/Ririsya"
+    },
+    "UCyO7wyh07pYJaZk51OV75bA": {
+        "id": "solovtuber",
+        "name": "96Neko",
+        "upload_path": "Solo & Indie/96Neko"
+    },
+    "UC7CtvN04ublW4LGTPksG6mg": {
+        "id": "solovtuber",
+        "name": "Figaro",
+        "upload_path": "Solo & Indie/Figaro"
+    },
+    "UC7XCjKxBEct0uAukpQXNFPw": {
+        "id": "solovtuber",
+        "name": "HACHI",
+        "upload_path": "Solo & Indie/HACHI"
+    },
     "UCoieZAlwgK3uLkIYiJARDQw": {
         "id": "sugarlyric",
         "name": "SugarLyric Official",
@@ -2468,6 +2673,36 @@
         "id": "sugarlyric",
         "name": "Anna Kojo",
         "upload_path": "774 inc./SugarLyric/Anna Kojo"
+    },
+    "UCn1coImC6NMDYCQfH_ILzXw": {
+        "id": "tsunderia",
+        "name": "Kamiko Kana",
+        "upload_path": "Tsunderia/Kamiko Kana"
+    },
+    "UCdCczCYPOeP5hTfbx6tzz_A": {
+        "id": "tsunderia",
+        "name": "Hoshino Charlotte",
+        "upload_path": "Tsunderia/Hoshino Charlotte"
+    },
+    "UCdrQWcX7XLDSUEh9SAxnyBg": {
+        "id": "tsunderia",
+        "name": "Inukai Purin",
+        "upload_path": "Tsunderia/Inukai Purin"
+    },
+    "UCIJ6TGsTcBlYGUj-zbL60EQ": {
+        "id": "tsunderia",
+        "name": "Matsuro Meru",
+        "upload_path": "Tsunderia/Matsuro Meru"
+    },
+    "UCbTkauz77OIO9KE5YcAKPlg": {
+        "id": "tsunderia",
+        "name": "Yazaki Kallin",
+        "upload_path": "Tsunderia/Yazaki Kallin"
+    },
+    "UC8CKGSvp9bRfmtWyfV5L9Jw": {
+        "id": "tsunderia",
+        "name": "Nini Yuuna",
+        "upload_path": "Tsunderia/Nini Yuuna"
     },
     "UCPLeqi7rIqS9uY4_TrSUOMg": {
         "id": "unlimited",
@@ -2919,85 +3154,10 @@
         "name": "Jitomi Monoe",
         "upload_path": "VOMS/Jitomi Monoe"
     },
-    "UCLhUvJ_wO9hOvv_yYENu4fQ": {
-        "id": "vrlive",
-        "name": "Siro",
-        "upload_path": "VR Live/Siro"
-    },
-    "UCkD-wlU06zeiGSk31y2qIOw": {
-        "id": "vrlive",
-        "name": "Siro Games",
-        "upload_path": "VR Live/Siro Games"
-    },
-    "UCiGcHHHT3kBB1IGOrv7f3qQ": {
-        "id": "vrlive",
-        "name": "Iroha Kongo",
-        "upload_path": "VR Live/Iroha Kongo"
-    },
-    "UCKUcnaLsG2DeQqza8zRXHiA": {
-        "id": "vrlive",
-        "name": "Riko Ushimaki",
-        "upload_path": "VR Live/Riko Ushimaki"
-    },
-    "UCOefINa2_BmpuX4BbHjdk9A": {
-        "id": "vrlive",
-        "name": "Tama Yozakura",
-        "upload_path": "VR Live/Tama Yozakura"
-    },
-    "UCUZ5AlC3rTlM-rA2cj5RP6w": {
-        "id": "vrlive",
-        "name": "Suzu Kagura",
-        "upload_path": "VR Live/Suzu Kagura"
-    },
-    "UCz6Gi81kE6p5cdW1rT0ixqw": {
-        "id": "vrlive",
-        "name": "Mememe Mokota",
-        "upload_path": "VR Live/Mememe Mokota"
-    },
-    "UCMzxQ58QL4NNbWghGymtHvw": {
-        "id": "vrlive",
-        "name": "Pino Carro",
-        "upload_path": "VR Live/Pino Carro"
-    },
-    "UC1519-d1jzGiL1MPTxEdtSA": {
-        "id": "vrlive",
-        "name": "Natori Yaezawa",
-        "upload_path": "VR Live/Natori Yaezawa"
-    },
-    "UC5nfcGkOAm3JwfPvJvzplHg": {
-        "id": "vrlive",
-        "name": "Futaba Kitakami",
-        "upload_path": "VR Live/Futaba Kitakami"
-    },
-    "UCmM5LprTu6-mSlIiRNkiXYg": {
-        "id": "vrlive",
-        "name": "Azuki Kiso",
-        "upload_path": "VR Live/Azuki Kiso"
-    },
-    "UCP9ZgeIJ3Ri9En69R0kJc9Q": {
-        "id": "vrlive",
-        "name": "Kakyoin Chieri",
-        "upload_path": "VR Live/Kakyoin Chieri"
-    },
-    "UCyb-cllCkMREr9de-hoiDrg": {
-        "id": "vrlive",
-        "name": "Iori Yamato",
-        "upload_path": "VR Live/Iori Yamato"
-    },
-    "UC02LBsjt_Ehe7k0CuiNC6RQ": {
-        "id": "vrlive",
-        "name": "Mochi Nekonoki",
-        "upload_path": "VR Live/Mochi Nekonoki"
-    },
-    "UCju7v8SkoWUQ5ITCQwmYpYg": {
-        "id": "vrlive",
-        "name": "Milk Merry",
-        "upload_path": "VR Live/Milk Merry"
-    },
-    "UC6TyfKcsrPwBsBnx2QobVLQ": {
-        "id": "vrlive",
-        "name": "Baacharu",
-        "upload_path": "VR Live/Baacharu"
+    "UCMp55EbT_ZlqiMS3lCj01BQ": {
+        "id": "vspo",
+        "name": "Kaminari Qpi",
+        "upload_path": "Virtual eSports Project/Kaminari Qpi"
     },
     "UCFahBR2wixu0xOex84bXFvg": {
         "id": "yahootv",

@@ -4,6 +4,11 @@
         "name": "Roboco-san",
         "upload_path": "Hololive/Roboco-san"
     },
+    "yozoramel": {
+        "id": "hololive",
+        "name": "Yozora Mel",
+        "upload_path": "Hololive/Yozora Mel"
+    },
     "natsuiromatsuri": {
         "id": "hololive",
         "name": "Natsuiro Matsuri",
@@ -54,6 +59,11 @@
         "name": "Astel Leda",
         "upload_path": "Holostars/Astel Leda"
     },
+    "kageyamashien": {
+        "id": "holostars",
+        "name": "Kageyama Shien",
+        "upload_path": "Holostars/Kageyama Shien"
+    },
     "udukikohh": {
         "id": "nijisanji",
         "name": "Kou Uzuki",
@@ -69,7 +79,7 @@
         "name": "Inuyama Tamaki",
         "upload_path": "NoriPro/Inuyama Tamaki"
     },
-    "KaguraMea_VoV": {
+    "kaguramea_vov": {
         "id": "paryiproject",
         "name": "Kagura Mea",
         "upload_path": "Paryi Project/Kagura Mea"
