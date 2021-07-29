@@ -474,6 +474,11 @@
         "name": "Watson Amelia",
         "upload_path": "Hololive/.Hololive EN/Watson Amelia"
     },
+    "UC8rcEBzJSleTkf_-agPM20g": {
+        "id": "hololiveen",
+        "name": "IRyS",
+        "upload_path": "Hololive/.Hololive EN/IRyS"
+    },
     "UCfrWoRGlawPQDQxxeIDRP0Q": {
         "id": "hololiveid",
         "name": "Hololive Indonesia",
@@ -1254,6 +1259,31 @@
         "name": "Hisui Kitakoji",
         "upload_path": "Nijisanji/Hisui Kitakoji"
     },
+    "UC8oPnditPSp5lZu45fnXWCA": {
+        "id": "nijisanji",
+        "name": "Axia Krone",
+        "upload_path": "Nijisanji/Axia Krone"
+    },
+    "UCgmFrRcyH7d1zR9sIVQhFow": {
+        "id": "nijisanji",
+        "name": "Lauren Iroas",
+        "upload_path": "Nijisanji/Lauren Iroas"
+    },
+    "UC-6rZgmxZSIbq786j3RD5ow": {
+        "id": "nijisanji",
+        "name": "Leos Vincent",
+        "upload_path": "Nijisanji/Leos Vincent"
+    },
+    "UCqjTqdVlvIipZXIKeCkHKUA": {
+        "id": "nijisanji",
+        "name": "Oliver Evans",
+        "upload_path": "Nijisanji/Oliver Evans"
+    },
+    "UCRm6lqtdxs_Qo6HeL-SRQ-w": {
+        "id": "nijisanji",
+        "name": "Lain Paterson",
+        "upload_path": "Nijisanji/Lain Paterson"
+    },
     "UC-JSeFfovhNsEhftt1WHMvg": {
         "id": "nijisanjien",
         "name": "NIJISANJI English Official",
@@ -1273,6 +1303,21 @@
         "id": "nijisanjien",
         "name": "Pomu Rainpuff",
         "upload_path": "Nijisanji/.Nijisanji EN/Pomu Rainpuff"
+    },
+    "UCV1xUwfM2v2oBtT3JNvic3w": {
+        "id": "nijisanjien",
+        "name": "Selen Tatsuki",
+        "upload_path": "Nijisanji/.Nijisanji EN/Selen Tatsuki"
+    },
+    "UC4WvIIAo89_AzGUh1AZ6Dkg": {
+        "id": "nijisanjien",
+        "name": "Rosemi Lovelock",
+        "upload_path": "Nijisanji/.Nijisanji EN/Rosemi Lovelock"
+    },
+    "UCgA2jKRkqpY_8eysPUs8sjw": {
+        "id": "nijisanjien",
+        "name": "Petra Gurin",
+        "upload_path": "Nijisanji/.Nijisanji EN/Petra Gurin"
     },
     "UCpJtk0myFr5WnyfsmnInP-w": {
         "id": "nijisanjiid",
@@ -1443,6 +1488,21 @@
         "id": "nijisanjikr",
         "name": "Ryu Hari",
         "upload_path": "Nijisanji/.Nijisanji KR/Ryu Hari"
+    },
+    "UCeGendL8CO5RkffB6IFwHow": {
+        "id": "nijisanjikr",
+        "name": "Seffyna",
+        "upload_path": "Nijisanji/.Nijisanji KR/Seffyna"
+    },
+    "UCLjx3lqIkYkPCBJop8czJ2A": {
+        "id": "nijisanjikr",
+        "name": "Ban Hada",
+        "upload_path": "Nijisanji/.Nijisanji KR/Ban Hada"
+    },
+    "UCyqzU2nq7eGNi4kN0uHx7TA": {
+        "id": "nijisanjikr",
+        "name": "Song Mia",
+        "upload_path": "Nijisanji/.Nijisanji KR/Song Mia"
     },
     "UCEd6G9T-jLieKWKVfpTlAKg": {
         "id": "noripro",
