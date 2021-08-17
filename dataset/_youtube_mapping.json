@@ -479,6 +479,31 @@
         "name": "IRyS",
         "upload_path": "Hololive/.Hololive EN/IRyS"
     },
+    "UCsUj0dszADCGbF3gNrQEuSQ": {
+        "id": "hololiveen",
+        "name": "Tsukumo Sana",
+        "upload_path": "Hololive/.Hololive EN/Tsukumo Sana"
+    },
+    "UCO_aKKYxn4tvrqPjcTzZ6EQ": {
+        "id": "hololiveen",
+        "name": "Ceres Fauna",
+        "upload_path": "Hololive/.Hololive EN/Ceres Fauna"
+    },
+    "UCmbs8T6MWqUHP1tIQvSgKrg": {
+        "id": "hololiveen",
+        "name": "Ouro Kronii",
+        "upload_path": "Hololive/.Hololive EN/Ouro Kronii"
+    },
+    "UC3n5uGu18FoCy23ggWWp8tA": {
+        "id": "hololiveen",
+        "name": "Nanashi Mumei",
+        "upload_path": "Hololive/.Hololive EN/Nanashi Mumei"
+    },
+    "UCgmPnx-EEeOrZSg5Tiw7ZRQ": {
+        "id": "hololiveen",
+        "name": "Hakos Baelz",
+        "upload_path": "Hololive/.Hololive EN/Hakos Baelz"
+    },
     "UCfrWoRGlawPQDQxxeIDRP0Q": {
         "id": "hololiveid",
         "name": "Hololive Indonesia",
@@ -1398,6 +1423,21 @@
         "id": "nijisanjiid",
         "name": "Reza Avanluna",
         "upload_path": "Nijisanji/.Nijisanji ID/Reza Avanluna"
+    },
+    "UCIBj1-d71vKjRftiauF50pg": {
+        "id": "nijisanjiid",
+        "name": "Hyona Elatiora",
+        "upload_path": "Nijisanji/.Nijisanji ID/Hyona Elatiora"
+    },
+    "UCoJ0Ct-jdas4cLPpSp06gZg": {
+        "id": "nijisanjiid",
+        "name": "Xia Ekavira",
+        "upload_path": "Nijisanji/.Nijisanji ID/Xia Ekavira"
+    },
+    "UCahgMxSIQ2zIRrPKhM6Mjvg": {
+        "id": "nijisanjiid",
+        "name": "Mika Melatika",
+        "upload_path": "Nijisanji/.Nijisanji ID/Mika Melatika"
     },
     "UC_aB_-PHLFHiP61djM0oOiQ": {
         "id": "nijisanjiin",
