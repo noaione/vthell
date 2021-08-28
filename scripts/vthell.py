@@ -4,8 +4,8 @@ import logging
 import subprocess as sp
 import sys
 from datetime import datetime
-from os import getenv, remove, makedirs
-from os.path import getsize, isfile, exists
+from os import getenv, remove
+from os.path import getsize, isfile
 from os.path import join as pjoin
 
 from discord_webhook import DiscordEmbed, DiscordWebhook
@@ -175,23 +175,15 @@ if not vthell_jobs:
     exit(0)
 
 
-def parallel_run_chat_archive(youtube_url, output_name):
-    folder_path = pjoin(BASE_VTHELL_PATH, "chatarchive")
-    real_output = output_name + ".chat.json"
+def parallel_run_chat_archive(youtube_id, output_name):
     full_cmd = [
-        pjoin(BASE_VENV_BIN, "chat_downloader"),
-        youtube_url,
-        "-o",
-        pjoin(folder_path, real_output),
-        "-q"
+        pjoin(BASE_VENV_BIN, "python3"),
+        pjoin(BASE_VTHELL_PATH, "scripts", "vtchat_archive.py"),
+        pjoin(BASE_VTHELL_PATH, "jobs", youtube_id + ".json")
     ]
     if FORCE_COOKIES:
-        full_cmd.extend(["--cookies", pjoin(BASE_VTHELL_PATH, COOKIES_NAME)])
-    if not exists(folder_path):
-        makedirs(folder_path)
-    vtlog.info("Spawning chat downloader for {}".format(youtube_url))
-    vtlog.warning("Sadly, you need to manually upload the chat logs")
-    vtlog.info("Outputing to chatarchive/{}".format(real_output))
+        full_cmd.extend(["--cookie", pjoin(BASE_VTHELL_PATH, COOKIES_NAME)])
+    vtlog.info("Spawning chat downloader for {}".format(youtube_id))
     sp.Popen(full_cmd, stdout=sp.PIPE, stderr=sp.STDOUT)
 
 
@@ -236,7 +228,7 @@ def run_streamlink_proc(STL_CMD, vt, reload_mode=False):
             if not reload_mode:
                 announce_shit("Job " + vt["id"] + " started recording!")
                 if DOWNLOAD_CHAT:
-                    parallel_run_chat_archive(vt["streamUrl"], vt["filename"])
+                    parallel_run_chat_archive(vt["id"], vt["filename"])
             else:
                 announce_shit("Job " + vt["id"] + " re-recording stream!")
 
