@@ -439,6 +439,31 @@
         "name": "Omaru Polka",
         "upload_path": "Hololive/Omaru Polka"
     },
+    "UCENwRMx5Yh42zWpzURebzTw": {
+        "id": "hololive",
+        "name": "Laplus Darkness",
+        "upload_path": "Hololive/Laplus Darkness"
+    },
+    "UCs9_O1tRPMQTHQ-N_L6FU2g": {
+        "id": "hololive",
+        "name": "Takane Lui",
+        "upload_path": "Hololive/Takane Lui"
+    },
+    "UC6eWCld0KwmyHFbAqK3V-Rw": {
+        "id": "hololive",
+        "name": "Hakui Koyori",
+        "upload_path": "Hololive/Hakui Koyori"
+    },
+    "UCIBY1ollUsauvVi4hW4cumw": {
+        "id": "hololive",
+        "name": "Sakamata Chloe",
+        "upload_path": "Hololive/Sakamata Chloe"
+    },
+    "UC_vMYWcDjmfdpH6r4TTn1MQ": {
+        "id": "hololive",
+        "name": "Kazama Iroha",
+        "upload_path": "Hololive/Kazama Iroha"
+    },
     "UCgNVXGlZIFK96XdEY20sVjg": {
         "id": "hololivecn",
         "name": "Civia",
@@ -1343,6 +1368,26 @@
         "id": "nijisanjien",
         "name": "Petra Gurin",
         "upload_path": "Nijisanji/.Nijisanji EN/Petra Gurin"
+    },
+    "UCR6qhsLpn62WVxCBK1dkLow": {
+        "id": "nijisanjien",
+        "name": "Enna Alouette",
+        "upload_path": "Nijisanji/.Nijisanji EN/Enna Alouette"
+    },
+    "UCkieJGn3pgJikVW8gmMXE2w": {
+        "id": "nijisanjien",
+        "name": "Nina Kosaka",
+        "upload_path": "Nijisanji/.Nijisanji EN/Nina Kosaka"
+    },
+    "UC47rNmkDcNgbOcM-2BwzJTQ": {
+        "id": "nijisanjien",
+        "name": "Millie Parfait",
+        "upload_path": "Nijisanji/.Nijisanji EN/Millie Parfait"
+    },
+    "UCBURM8S4LH7cRZ0Clea9RDA": {
+        "id": "nijisanjien",
+        "name": "Reimu Endou",
+        "upload_path": "Nijisanji/.Nijisanji EN/Reimu Endou"
     },
     "UCpJtk0myFr5WnyfsmnInP-w": {
         "id": "nijisanjiid",
