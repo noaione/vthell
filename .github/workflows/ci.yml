@@ -35,4 +35,5 @@ jobs:
 
       - name: Lint Everything
         run: |
+          source .venv/bin/activate
           python3 pipelines/multilint.py --skip-install --skip-venv-enter
