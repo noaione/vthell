@@ -227,7 +227,14 @@ class SanicVTHell(Sanic):
             self.config["VTHELL_LOOP_SCHEDULER"] = 180
 
         try:
-            self.config["VTHELL_GRACE_PERIOD"]
+            check = self.config["VTHELL_GRACE_PERIOD"]
+            if not isinstance(check, (int, float)):
+                try:
+                    check = float(check)
+                except ValueError:
+                    check = 120
+                    logger.error("VTHELL_GRACE_PERIOD must be a number, not %s (fallback to 120s)", check)
+            self.config["VTHELL_GRACE_PERIOD"] = check
         except KeyError:
             # Default to start waiting 2 minutes before scheduled start
             self.config["VTHELL_GRACE_PERIOD"] = 120
