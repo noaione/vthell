@@ -137,7 +137,7 @@ class DownloaderTasks(InternalTaskBase):
 
         # Spawn mkvmerge
         mux_output = STREAMDUMP_PATH / f"{data.filename} [{quality_res} AAC].mkv"
-        mkvmerge_args = ["mkvmerge", "-o", str(mux_output), str(temp_output_file) + ".mp4"]
+        mkvmerge_args = [app.config.MKVMERGE_PATH, "-o", str(mux_output), str(temp_output_file) + ".mp4"]
 
         logger.debug(f"[{data.id}] Starting mkvmerge with args: {mkvmerge_args}")
         mkvmerge_process = await asyncio.create_subprocess_exec(
