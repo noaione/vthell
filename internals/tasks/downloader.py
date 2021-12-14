@@ -222,6 +222,7 @@ class DownloaderTasks(InternalTaskBase):
     async def main_loop(cls: Type[DownloaderTasks], app: SanicVTHell):
         loop = app.loop
         config = app.config
+        await app.wait_until_ready()
         try:
             while True:
                 ctime = pendulum.now("UTC").int_timestamp

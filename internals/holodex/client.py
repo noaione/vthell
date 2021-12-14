@@ -25,6 +25,7 @@ SOFTWARE.
 from __future__ import annotations
 
 import asyncio
+import logging
 from typing import TYPE_CHECKING, List, Optional, Type
 
 import aiohttp
@@ -39,6 +40,8 @@ if TYPE_CHECKING:
     from internals.vth import SanicVTHell
 
 __all__ = ("HolodexAPI",)
+
+logger = logging.getLogger("internals.holodex")
 
 
 class HolodexAPI:
@@ -111,7 +114,7 @@ class HolodexAPI:
         return coerced_data
 
     async def close(self):
-        if self.client:
+        if self.client and not self.client.closed:
             await self.client.close()
 
     async def _get_videos_paginated(self, status: HolodexVideoStatus, endpoint: str):
@@ -228,9 +231,12 @@ class HolodexAPI:
     def attach(cls: Type[HolodexAPI], app: SanicVTHell):
         config = app.config.get("HOLODEX_API_KEY")
 
-        async def attach_task(app: SanicVTHell):
+        async def init_holodex_api(app: SanicVTHell):
             holodex = cls(config, loop=app.loop)
+            logger.info("Initializing Holodex API")
             await holodex.create()
             app.holodex = holodex
+            app._holodex_ready.set()
+            logger.info("Holodex API initialized")
 
-        app.add_task(attach_task)
+        app.add_task(init_holodex_api)

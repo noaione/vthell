@@ -22,11 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import asyncio
 import os
 from pathlib import Path
 
 import socketio
 from dotenv import load_dotenv
+from tortoise import Tortoise
 from sanic.config import DEFAULT_CONFIG
 from sanic.response import text
 from sanic_cors import CORS
@@ -55,6 +57,15 @@ if PORT is None:
     PORT = 12790
 else:
     PORT = int(PORT)
+
+
+async def after_server_closing(app: SanicVTHell, loop: asyncio.AbstractEventLoop):
+    logger.info("Closing DB client")
+    await Tortoise.close_connections()
+    logger.info("Closing Holodex API")
+    if app.holodex:
+        await app.holodex.close()
+    logger.info("Extras are all cleanup!")
 
 
 def load_config():
@@ -131,6 +142,7 @@ def setup_app():
         sanic_app.sio = sio
         logger.info("Attaching Holodex to Sanic")
         HolodexAPI.attach(sanic_app)
+        sanic_app.after_server_stop(after_server_closing)
         logger.info("Registering DB client")
         register_db(sanic_app, modules={"models": ["internals.db.models"]}, generate_schemas=True)
         logger.info("Trying to auto-discover routes, tasks, and more...")
@@ -150,6 +162,7 @@ def setup_app():
         app.sio = sio
         logger.info("Attaching Holodex to Sanic")
         HolodexAPI.attach(app)
+        app.after_server_stop(after_server_closing)
 
         logger.info("Registering DB client")
         register_db(app, modules={"models": ["internals.db.models"]}, generate_schemas=True)

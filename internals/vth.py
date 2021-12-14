@@ -24,6 +24,7 @@ SOFTWARE.
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import os
 from dataclasses import dataclass
@@ -191,6 +192,10 @@ class SanicVTHell(Sanic):
 
         self.sio: socketio.AsyncServer = None
         self.holodex: HolodexAPI = None
+        self.db: SqliteClient = None
+
+        self._db_ready = asyncio.Event()
+        self._holodex_ready = asyncio.Event()
 
         try:
             db_path = self.config["VTHELL_DB"]
@@ -252,6 +257,13 @@ class SanicVTHell(Sanic):
             raise RuntimeError("WEBSERVER_PASSWORD is empty")
 
         self.startup_vthell_dataset()
+
+    async def wait_until_ready(self) -> None:
+        """
+        Block until all the asyncio tasks are ready
+        """
+        await self._db_ready.wait()
+        await self._holodex_ready.wait()
 
     def startup_vthell_dataset(self):
         self.vtdataset = {}

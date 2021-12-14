@@ -24,7 +24,6 @@ SOFTWARE.
 
 from __future__ import annotations
 
-import asyncio
 import logging
 from os.path import realpath
 from pathlib import Path
@@ -50,8 +49,7 @@ def register_db(
     modules: Optional[Dict[str, Iterable[str, ModuleType]]] = None,
     generate_schemas: bool = False,
 ):
-    @app.listener("before_server_start")
-    async def init_orm(app: SanicVTHell, loop: asyncio.AbstractEventLoop):
+    async def init_orm(app: SanicVTHell):
         db_name = app.config["VTHELL_DB"]
         db_path = realpath(DB_PATH / db_name)
         await Tortoise.init(
@@ -66,9 +64,6 @@ def register_db(
         if generate_schemas:
             logger.info("Generating schemas")
             await Tortoise.generate_schemas()
+        app._db_ready.set()
 
-    @app.listener("after_server_stop")
-    async def close_orm(app: SanicVTHell, loop: asyncio.AbstractEventLoop):
-        logger.info("Closing Tortoise-ORM")
-        await Tortoise.close_connections()
-        logger.info("Tortoise-ORM closed")
+    app.add_task(init_orm)
