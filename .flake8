@@ -1,0 +1,15 @@
+[flake8]
+ignore = E203,W503,F405,F403,W0621,W0703,W1203,F722
+max-line-length = 120
+exclude =
+    # Auto-generated stuff.
+    .git
+    .mypy_cache
+    .vscode
+    __pycache__
+    venv
+    env
+    .venv
+    _data_test
+per-file-ignores =
+    __init__.py: F401,F403
