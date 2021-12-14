@@ -143,6 +143,10 @@ class SanicVTHellConfig(Config):
     YTARCHIVE_PATH: str
     MKVMERGE_PATH: str
 
+    WEBSERVER_REVERSE_PROXY: bool
+    WEBSERVER_REVERSE_PROXY_SECRET: str
+    WEBSERVER_PASSWORD: str
+
 
 class SanicVTHell(Sanic):
     db: SqliteClient
@@ -227,6 +231,18 @@ class SanicVTHell(Sanic):
         except KeyError:
             # Default to start waiting 2 minutes before scheduled start
             self.config["VTHELL_GRACE_PERIOD"] = 120
+
+        if self.config.get("WEBSERVER_REVERSE_PROXY", False):
+            secret_reverse = self.config.get("WEBSERVER_REVERSE_PROXY_SECRET", "").strip()
+            if secret_reverse == "":
+                logger.error("WEBSERVER_REVERSE_PROXY_SECRET is empty while reverse proxy is enabled")
+                raise RuntimeError("WEBSERVER_REVERSE_PROXY_SECRET is empty while reverse proxy is enabled")
+
+            self.config.FORWARDED_SECRET = secret_reverse
+
+        if self.config.get("WEBSERVER_PASSWORD", "").strip() == "":
+            logger.error("WEBSERVER_PASSWORD is empty")
+            raise RuntimeError("WEBSERVER_PASSWORD is empty")
 
         self.startup_vthell_dataset()
 

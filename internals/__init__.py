@@ -8,6 +8,7 @@ All of VTHell internals module being used.
 """
 
 from . import db, holodex, routes, tasks
+from .decorator import *
 from .discover import *
 from .logme import *
 from .utils import *

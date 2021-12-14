@@ -31,6 +31,7 @@ from sanic.request import Request
 from sanic.response import json
 
 from internals.db import models
+from internals.decorator import secure_access
 from internals.utils import secure_filename
 
 if TYPE_CHECKING:
@@ -41,6 +42,7 @@ logger = logging.getLogger("Routes.API.Add")
 
 
 @bp_add.route("/add", methods=["POST"])
+@secure_access
 async def add_new_jobs(request: Request):
     app: SanicVTHell = request.app
     try:

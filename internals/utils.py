@@ -26,6 +26,7 @@ import os
 import re
 import subprocess
 from pathlib import Path
+from typing import Any
 
 import aiofiles.ospath
 
@@ -41,6 +42,7 @@ __all__ = (
     "build_rclone_path",
     "find_cookies_file",
     "find_cookies_file_sync",
+    "map_to_boolean",
 )
 
 
@@ -187,3 +189,20 @@ async def find_cookies_file():
             if file_exists:
                 return cookie_file
     return None
+
+
+def map_to_boolean(value: Any) -> bool:
+    if value is None:
+        return False
+    if isinstance(value, str):
+        return value.lower() in ["true", "yes", "1", "y"]
+    elif isinstance(value, int):
+        return value > 0
+    elif isinstance(value, bool):
+        return value
+    elif isinstance(value, (list, dict, tuple, set)):
+        return len(value) > 0
+    try:
+        return bool(value)
+    except Exception:
+        return False

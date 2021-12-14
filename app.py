@@ -39,6 +39,7 @@ from internals.utils import (
     find_mkvmerge_binary,
     find_rclone_binary,
     find_ytarchive_binary,
+    map_to_boolean,
     test_mkvmerge_binary,
     test_rclone_binary,
     test_ytarchive_binary,
@@ -90,6 +91,10 @@ def load_config():
                 "VTHELL_GRACE_PERIOD must be a number, not %s (fallback to 120s)",
                 config["VTHELL_GRACE_PERIOD"],
             )
+
+    config["WEBSERVER_REVERSE_PROXY"] = map_to_boolean(os.getenv("WEBSERVER_REVERSE_PROXY", "false"))
+    config["WEBSERVER_REVERSE_PROXY_SECRET"] = os.getenv("WEBSERVER_REVERSE_PROXY_SECRET", "")
+    config["WEBSERVER_PASSWORD"] = os.getenv("WEBSERVER_PASSWORD", "")
 
     ytarchive_path = os.getenv("YTARCHIVE_BINARY", "") or find_ytarchive_binary()
     rclone_path = os.getenv("RCLONE_BINARY", "") or find_rclone_binary()
