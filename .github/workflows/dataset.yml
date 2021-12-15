@@ -1,7 +1,8 @@
 name: Dataset
 on:
   push:
-    - master
+    branches:
+      - master
 
 jobs:
   Deploy:
