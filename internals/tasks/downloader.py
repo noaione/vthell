@@ -99,7 +99,6 @@ class DownloaderTasks(InternalTaskBase):
             try:
                 async for line in ytarchive_process.stdout:
                     line = line.decode("utf-8").rstrip()
-                    logger.info(f"[{data.id}] {line}")
                     lower_line = line.lower()
                     if "selected quality" in lower_line:
                         actual_quality = line.split(": ")[1].split()[0]
@@ -138,8 +137,14 @@ class DownloaderTasks(InternalTaskBase):
                             already_announced = True
                             data.status = models.VTHellJobStatus.downloading
                             await data.save()
+                            await app.dispatch(
+                                "internals.notifier.discord",
+                                context={"app": app, "data": data, "emit_type": "update"},
+                            )
                             await app.sio.emit(
-                                "job_update", {"id": data.id, "status": data.status.value}, namespace="/vthell"
+                                "job_update",
+                                {"id": data.id, "status": data.status.value},
+                                namespace="/vthell",
                             )
                     else:
                         logger.info(f"[{data.id}] {line}")
@@ -193,6 +198,10 @@ class DownloaderTasks(InternalTaskBase):
         logger.info(f"Job {data.id} finished muxing, uploading to drive target...")
         data.status = models.VTHellJobStatus.uploading
         await data.save()
+        await app.dispatch(
+            "internals.notifier.discord",
+            context={"app": app, "data": data, "emit_type": "update"},
+        )
         await app.sio.emit("job_update", {"id": data.id, "status": data.status.value}, namespace="/vthell")
         joined_target = []
         if dataset_info is None:
@@ -235,6 +244,10 @@ class DownloaderTasks(InternalTaskBase):
         logger.info(f"Job {data.id} finished uploading, deleting temp files...")
         data.status = models.VTHellJobStatus.cleaning
         await data.save()
+        await app.dispatch(
+            "internals.notifier.discord",
+            context={"app": app, "data": data, "emit_type": "update"},
+        )
         await app.sio.emit("job_update", {"id": data.id, "status": "DONE"}, namespace="/vthell")
 
         try:
