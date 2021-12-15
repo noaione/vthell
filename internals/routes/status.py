@@ -30,6 +30,7 @@ from sanic.request import Request
 from sanic.response import json
 
 from internals.db import models
+from internals.utils import map_to_boolean
 
 if TYPE_CHECKING:
     from internals.vth import SanicVTHell
@@ -41,9 +42,20 @@ logger = logging.getLogger("Routes.API.Status")
 @bp_status.get("/status")
 async def existing_jobs(request: Request):
     app: SanicVTHell = request.app
+    include_done = False
+    try:
+        should_include = request.args["include_done"]
+        if isinstance(should_include, list):
+            should_include = should_include[0]
+        include_done = map_to_boolean(should_include)
+    except KeyError:
+        pass
     await app.wait_until_ready()
 
-    jobs = await models.VTHellJob.all()
+    if include_done:
+        jobs = await models.VTHellJob.all()
+    else:
+        jobs = await models.VTHellJob.exclude(status=models.VTHellJobStatus.done)
 
     as_json_fmt = []
     for job in jobs:
