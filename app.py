@@ -25,13 +25,14 @@ SOFTWARE.
 import asyncio
 import os
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import socketio
 from dotenv import load_dotenv
-from tortoise import Tortoise
 from sanic.config import DEFAULT_CONFIG
 from sanic.response import text
 from sanic_cors import CORS
+from tortoise import Tortoise
 
 from internals.db.client import register_db
 from internals.discover import autodiscover
@@ -47,6 +48,9 @@ from internals.utils import (
     test_ytarchive_binary,
 )
 from internals.vth import SanicVTHell, SanicVTHellConfig
+
+if TYPE_CHECKING:
+    from sanic.request import Request
 
 CURRENT_PATH = Path(__file__).absolute().parent
 logger = setup_logger(CURRENT_PATH / "logs")
@@ -135,50 +139,44 @@ def load_config():
 
 
 def setup_app():
+    DISCOVERY_MODULES = ["internals.routes", "internals.tasks", "internals.notifier"]
     config = SanicVTHellConfig(defaults=DEFAULT_CONFIG, load_env=False)
     config.update_config(load_config())
     asgi_mode = os.getenv("SERVER_GATEWAY_INTERFACE") == "ASGI_MODE"
     db_modules = {"models": ["internals.db.models", "aerich.models"]}
     sio = socketio.AsyncServer(async_mode="sanic" if not asgi_mode else "asgi", cors_allowed_origins="*")
+
+    app = SanicVTHell("VTHell", config=config)
+    CORS(app, origins=["*"])
+    config._app = app
+    logger.info("Registering DB client")
+    register_db(app, modules=db_modules, generate_schemas=True)
+    logger.info("Attaching Holodex to Sanic")
+    HolodexAPI.attach(app)
+    logger.info("Registering Sanic middlewares and extra routes")
+    app.after_server_stop(after_server_closing)
+
+    @app.route("/", methods=["GET", "HEAD"])
+    async def index(request: Request):
+        if request.method == "HEAD":
+            return text("")
+        return text("</>")
+
     if asgi_mode:
-        sanic_app = SanicVTHell("VTHell", config=config)
-        CORS(sanic_app, origins=["*"])
-        logger.info("Attaching Socket.IO to Sanic")
+        logger.info("Running Sanic in ASGI mode, replacing app with Socket.IO ASGIApp...")
+        sanic_app = app
         app = socketio.ASGIApp(sio, sanic_app)
-        config._app = sanic_app
         sanic_app.sio = sio
-        logger.info("Attaching Holodex to Sanic")
-        HolodexAPI.attach(sanic_app)
-        sanic_app.after_server_stop(after_server_closing)
-        logger.info("Registering DB client")
-        register_db(sanic_app, modules=db_modules, generate_schemas=True)
-        logger.info("Trying to auto-discover routes, tasks, and more...")
-        autodiscover(sanic_app, "internals.routes", "internals.tasks", "internals.notifier", recursive=True)
 
-        @sanic_app.route("/")
-        async def index(request):
-            return text("</>")
-
+        logger.info("Auto discovering routes, tasks, and more...")
+        autodiscover(sanic_app, *DISCOVERY_MODULES, recursive=True)
     else:
-        config["CORS_SUPPORTS_CREDENTIALS"] = True
-        app = SanicVTHell("VTHell", config=config)
-        CORS(app, origins=["*"])
-        config._app = app
-        logger.info("Attaching Socket.IO to Sanic")
+        logger.info("Running Sanic in direct mode, attaching Socket.IO...")
         sio.attach(app)
         app.sio = sio
-        logger.info("Attaching Holodex to Sanic")
-        HolodexAPI.attach(app)
-        app.after_server_stop(after_server_closing)
 
-        logger.info("Registering DB client")
-        register_db(app, modules=db_modules, generate_schemas=True)
-        logger.info("Trying to auto-discover routes, tasks, and more...")
-        autodiscover(app, "internals.routes", "internals.tasks", "internals.notifier", recursive=True)
-
-        @app.route("/")
-        async def index(request):
-            return text("</>")
+        logger.info("Auto discovering routes, tasks, and more...")
+        autodiscover(app, *DISCOVERY_MODULES, recursive=True)
 
     return app
 
