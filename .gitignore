@@ -186,3 +186,5 @@ dataset/_unused/
 dataset/*.py
 !requirements.txt
 chatarchive/*
+
+dataset/currentversion
