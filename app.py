@@ -121,6 +121,7 @@ def load_config():
             "YTArchive binary not found, please download here: https://github.com/Kethsar/ytarchive/releases"
         )
         raise FileNotFoundError("YTArchive binary not found")
+    config["YTARCHIVE_PATH"] = ytarchive_path
     if not test_mkvmerge_binary(mkvmerge_path):
         logger.error("MKVMerge binary not found, please install mkvtoolnix (windows) or mkvmerge first!")
         raise FileNotFoundError("MKVMerge binary not found")
@@ -132,6 +133,7 @@ def setup_app():
     config = SanicVTHellConfig(defaults=DEFAULT_CONFIG, load_env=False)
     config.update_config(load_config())
     asgi_mode = os.getenv("SERVER_GATEWAY_INTERFACE") == "ASGI_MODE"
+    db_modules = {"models": ["internals.db.models", "aerich.models"]}
     sio = socketio.AsyncServer(async_mode="sanic" if not asgi_mode else "asgi", cors_allowed_origins="*")
     if asgi_mode:
         sanic_app = SanicVTHell("VTHell", config=config)
@@ -144,7 +146,7 @@ def setup_app():
         HolodexAPI.attach(sanic_app)
         sanic_app.after_server_stop(after_server_closing)
         logger.info("Registering DB client")
-        register_db(sanic_app, modules={"models": ["internals.db.models"]}, generate_schemas=True)
+        register_db(sanic_app, modules=db_modules, generate_schemas=True)
         logger.info("Trying to auto-discover routes, tasks, and more...")
         autodiscover(sanic_app, "internals.routes", "internals.tasks", recursive=True)
 
@@ -165,7 +167,7 @@ def setup_app():
         app.after_server_stop(after_server_closing)
 
         logger.info("Registering DB client")
-        register_db(app, modules={"models": ["internals.db.models"]}, generate_schemas=True)
+        register_db(app, modules=db_modules, generate_schemas=True)
         logger.info("Trying to auto-discover routes, tasks, and more...")
         autodiscover(app, "internals.routes", "internals.tasks", recursive=True)
 
