@@ -22,8 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Union
 
 from ._types import HolodexVideoStatus
 
@@ -36,9 +38,17 @@ class HolodexVideo:
     title: str
     start_time: Optional[int]
     channel_id: str
+    org: Optional[str]
     status: HolodexVideoStatus
     url: str
     is_member: bool
+
+    def __eq__(self, other: Union[str, HolodexVideo]) -> bool:
+        if isinstance(other, str):
+            return self.id == other
+        elif isinstance(other, HolodexVideo):
+            return self.id == other.id
+        return False
 
     def to_json(self) -> dict:
         return {

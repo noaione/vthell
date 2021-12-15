@@ -26,7 +26,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import TYPE_CHECKING, List, Optional, Type
+from typing import TYPE_CHECKING, List, Optional, Type, Union
 
 import aiohttp
 import pendulum
@@ -97,6 +97,7 @@ class HolodexAPI:
             if channel_id is None:
                 continue
 
+            org_group = video.get("channel", {}).get("org")
             video_url = f"https://youtube.com/watch?v={video['id']}"
             is_member = "member" in video.get("topic_id", "").lower()
             coerced_data.append(
@@ -105,6 +106,7 @@ class HolodexAPI:
                     video["title"],
                     start_time,
                     channel_id,
+                    org_group,
                     video["status"],
                     video_url,
                     is_member,
@@ -116,6 +118,12 @@ class HolodexAPI:
     async def close(self):
         if self.client and not self.client.closed:
             await self.client.close()
+
+    @staticmethod
+    def to_int(number: Union[str, int]):
+        if isinstance(number, str):
+            return int(number)
+        return number
 
     async def _get_videos_paginated(self, status: HolodexVideoStatus, endpoint: str):
         sort_by = "available_at"
@@ -144,11 +152,11 @@ class HolodexAPI:
                     break
                 response_json: List[HolodexPaginatedVideo] = await response.json()
 
-            total_item = response_json.get("total", 0)
+            total_item = self.to_int(response_json.get("total", "0"))
             if total_item < 1:
                 break
 
-            collected_videos.extend(response_json["data"])
+            collected_videos.extend(response_json["items"])
             offset += limitation + 1
             if len(collected_videos) >= total_item:
                 break
@@ -170,6 +178,8 @@ class HolodexAPI:
             if channel_id is None:
                 continue
 
+            org_group = video.get("channel", {}).get("org")
+
             video_url = f"https://youtube.com/watch?v={video['id']}"
             is_member = "member" in video.get("topic_id", "").lower()
             coerced_data.append(
@@ -178,6 +188,7 @@ class HolodexAPI:
                     video["title"],
                     start_time,
                     channel_id,
+                    org_group,
                     video["status"],
                     video_url,
                     is_member,
@@ -214,6 +225,7 @@ class HolodexAPI:
         channel_id = video.get("channel_id") or selected_video.get("channel", {}).get("id")
         if channel_id is None:
             return None
+        org_group = video.get("channel", {}).get("org")
 
         video_url = f"https://youtube.com/watch?v={selected_video['id']}"
         is_member = "member" in selected_video.get("topic_id", "").lower()
@@ -222,6 +234,7 @@ class HolodexAPI:
             selected_video["title"],
             start_time,
             channel_id,
+            org_group,
             selected_video["status"],
             video_url,
             is_member,
