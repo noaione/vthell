@@ -196,7 +196,7 @@ class AutoSchedulerTasks(InternalTaskBase):
         logger.info(f"Adding {len(double_filtered_videos)} videos to the jobs scheduler")
         executed_videos = []
         for video in double_filtered_videos:
-            if video.id in executed_videos:
+            if video.id in executed_videos or video.id in existing_jobs_ids:
                 logger.warning(f"Video <{video.id}> already scheduled, skipping")
                 continue
             title_safe = secure_filename(video.title)
