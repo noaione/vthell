@@ -126,6 +126,9 @@ def load_config():
         logger.error("MKVMerge binary not found, please install mkvtoolnix (windows) or mkvmerge first!")
         raise FileNotFoundError("MKVMerge binary not found")
     config["MKVMERGE_PATH"] = mkvmerge_path
+
+    # Notification
+    config["NOTIFICATION_DISCORD_WEBHOOK"] = os.getenv("NOTIFICATION_DISCORD_WEBHOOK")
     return config
 
 
@@ -148,7 +151,7 @@ def setup_app():
         logger.info("Registering DB client")
         register_db(sanic_app, modules=db_modules, generate_schemas=True)
         logger.info("Trying to auto-discover routes, tasks, and more...")
-        autodiscover(sanic_app, "internals.routes", "internals.tasks", recursive=True)
+        autodiscover(sanic_app, "internals.routes", "internals.tasks", "internals.notifier", recursive=True)
 
         @sanic_app.route("/")
         async def index(request):
@@ -169,7 +172,7 @@ def setup_app():
         logger.info("Registering DB client")
         register_db(app, modules=db_modules, generate_schemas=True)
         logger.info("Trying to auto-discover routes, tasks, and more...")
-        autodiscover(app, "internals.routes", "internals.tasks", recursive=True)
+        autodiscover(app, "internals.routes", "internals.tasks", "internals.notifier", recursive=True)
 
         @app.route("/")
         async def index(request):

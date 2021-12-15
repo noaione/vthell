@@ -148,6 +148,8 @@ class SanicVTHellConfig(Config):
     WEBSERVER_REVERSE_PROXY_SECRET: str
     WEBSERVER_PASSWORD: str
 
+    NOTIFICATION_DISCORD_WEBHOOK: str
+
 
 class SanicVTHell(Sanic):
     db: SqliteClient

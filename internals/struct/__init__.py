@@ -7,5 +7,6 @@ A collection of base struct and model for many classes.
 :license: MIT, see LICENSE for more details.
 """
 
+from .signal import *
 from .socket import *
 from .tasks import *

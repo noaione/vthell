@@ -20,6 +20,7 @@ coloredlogs = "^15.0.1"
 Sanic-Cors = "^1.0.1"
 aiofiles = "^0.8.0"
 watchgod = "^0.7"
+discord-webhook = "^0.14.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.1"
