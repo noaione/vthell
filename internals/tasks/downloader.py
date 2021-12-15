@@ -263,6 +263,7 @@ class DownloaderTasks(InternalTaskBase):
         )
         is_error = False
         already_announced = False
+        should_cancel = False
         error_line = None
         while True:
             try:
@@ -299,6 +300,11 @@ class DownloaderTasks(InternalTaskBase):
                         await DownloaderTasks.update_state(
                             data, app, models.VTHellJobStatus.downloading, True
                         )
+                    elif "livestream" in lower_line and "process" in lower_line:
+                        is_error = True
+                        logger.error(f"[{data.id}] {line}")
+                        error_line = line
+                        should_cancel = True
                     if "total downloaded" in lower_line:
                         logger.debug(f"[{data.id}] {line}")
                         if not already_announced:
@@ -321,6 +327,8 @@ class DownloaderTasks(InternalTaskBase):
             logger.error(f"[{data.id}] ytarchive exited with code {ret_code}")
             data.last_status = models.VTHellJobStatus.downloading
             data.status = models.VTHellJobStatus.error
+            if should_cancel:
+                data.status = models.VTHellJobStatus.done
             data.error = f"ytarchive exited with code {ret_code} ({error_line})"
             await data.save()
             await app.sio.emit(
