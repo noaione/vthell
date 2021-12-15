@@ -163,6 +163,8 @@ class DownloaderTasks(InternalTaskBase):
             await DownloaderTasks.cleanup_files(data, app)
             logger.info(f"[{data.id}] Cleanup job done, marking job as finished!")
             data.status = models.VTHellJobStatus.done
+            data.error = None
+            data.last_status = None
             await data.save()
         elif data.last_status == models.VTHellJobStatus.uploading:
             logger.info(f"[{data.id}] Last status was upload job, trying to redo from upload point.")
@@ -176,12 +178,16 @@ class DownloaderTasks(InternalTaskBase):
             await DownloaderTasks.cleanup_files(data, app)
             logger.info(f"[{data.id}] Cleanup job done, marking job as finished!")
             data.status = models.VTHellJobStatus.done
+            data.error = None
+            data.last_status = None
             await data.save()
         elif data.last_status == models.VTHellJobStatus.cleaning:
             logger.info(f"[{data.id}] Last status was cleanup job, trying to redo from cleanup point.")
             await DownloaderTasks.cleanup_files(data, app)
             logger.info(f"[{data.id}] Cleanup job redone, marking job as finished!")
             data.status = models.VTHellJobStatus.done
+            data.error = None
+            data.last_status = None
             await data.save()
 
     @staticmethod
@@ -189,6 +195,8 @@ class DownloaderTasks(InternalTaskBase):
         data: models.VTHellJob, app: SanicVTHell, status: models.VTHellJobStatus, notify: bool = False
     ):
         data.status = status
+        data.error = None
+        data.last_status = None
         await data.save()
         await app.sio.emit("job_update", {"id": data.id, "status": status.value}, namespace="/vthell")
         if notify:
@@ -328,6 +336,8 @@ class DownloaderTasks(InternalTaskBase):
         await DownloaderTasks.cleanup_files(data, app)
         logger.info(f"Job {data.id} finished cleaning up, setting job as finished...")
         data.status = models.VTHellJobStatus.done
+        data.error = None
+        data.last_status = None
         await data.save()
 
     @classmethod
