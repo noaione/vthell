@@ -135,8 +135,6 @@ class DownloaderTasks(InternalTaskBase):
     @staticmethod
     async def cleanup_files(data: models.VTHellJob, app: SanicVTHell):
         mux_output = STREAMDUMP_PATH / f"{data.filename} [{data.resolution} AAC].mkv"
-        if mux_output.exists():
-            mux_output.unlink()
         temp_output = STREAMDUMP_PATH / f"{data.filename} [temp].mp4"
         try:
             logger.info(f"[{data.id}] Trying to delete temporary mp4 files...")
