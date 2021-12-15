@@ -18,6 +18,7 @@
   - [Auto Scheduler](#auto-scheduler)
     - [Migration](#migration)
   - [Accessing Protected Routes](#accessing-protected-routes)
+  - [Socket.IO](#socketio)
 - [Improvements](#improvements)
 - [License](#license)
 
@@ -419,6 +420,46 @@ curl -X POST -H "X-Password: SecretPassword123" http://localhost:12790/api/add
 ```sh
 curl -X POST -H "X-Auth-Token: SecretPassword123" http://localhost:12790/api/add
 ```
+
+### Socket.IO
+
+This program also support watching the data over Socket.IO client. You can connect to the `/vthell` namespace to listen to all the emitter.
+
+Here are the event:
+> `job_update`
+
+Will be emitted everytime there is an update on the job status. It will broadcast the following data:
+
+```json
+{
+  "id": "123",
+  "status": "DOWNLOADING",
+  "error": "An error if possible"
+}
+```
+
+The `error` field might be not available if the `status` is not `ERROR`.
+
+> `job_scheduled`
+
+This will be emitted everytime autoscheduler added a new scheduled job automatically. It will contains the following data as an example:
+
+```json
+{
+  "id": "bFNvQFyTBx0",
+  "title": "【ウマ娘】本気の謝罪ガチャをさせてください…【潤羽るしあ/ホロライブ】",
+  "start_time": 1639559148,
+  "channel_id": "UCl_gCybOJRIgOXw6Qb4qJzQ",
+  "is_member": false,
+  "status": "DOWNLOADING"
+}
+```
+
+> `connect_job_init`
+
+This will be called as soon as you established connection with the Socket.IO server. It will be used so you can store the current state without needing to use the API.
+
+The data will be the same as requesting to the `/api/status` (without the job with `DONE` status)
 
 ## Improvements
 

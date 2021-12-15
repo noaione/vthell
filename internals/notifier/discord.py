@@ -102,7 +102,7 @@ class DiscordNotificationHandler(InternalSignalHandler):
         if data is None:
             logger.error("data context is missing!")
             return
-        emit_type = context.get("type", "update")
+        emit_type = context.get("emit_type", "update")
         webhook_url: str = app.config.get("NOTIFICATION_DISCORD_WEBHOOK", "").strip()
         if webhook_url == "":
             logger.error("Discord webhook URL is empty, skipping notification")

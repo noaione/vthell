@@ -188,10 +188,6 @@ class AutoSchedulerTasks(InternalTaskBase):
                 continue
             deduplicated_videos.append(video)
 
-        import pprint
-
-        pprint.pprint(deduplicated_videos)
-
         # Add to database/schedule it
         logger.info(f"Adding {len(double_filtered_videos)} videos to the jobs scheduler")
         executed_videos = []

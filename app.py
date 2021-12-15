@@ -36,7 +36,7 @@ from sanic.response import text
 from sanic_cors import CORS
 from tortoise import Tortoise
 
-from internals.db.client import register_db
+from internals.db import register_db, models
 from internals.discover import autodiscover
 from internals.holodex import HolodexAPI
 from internals.logme import setup_logger
@@ -163,6 +163,26 @@ def setup_app():
         if request.method == "HEAD":
             return text("")
         return text("</>")
+
+    @sio.event
+    async def connect(sid: str, environ, auth):
+        logger.info("Client connected: %s", sid)
+        await app.wait_until_ready()
+        active_jobs = await models.VTHellJob.exclude(status=models.VTHellJobStatus.done)
+        as_json_fmt = []
+        for job in active_jobs:
+            as_json_fmt.append(
+                {
+                    "id": job.id,
+                    "title": job.title,
+                    "start_time": job.start_time,
+                    "channel_id": job.channel_id,
+                    "is_member": job.member_only,
+                    "status": job.status.value,
+                    "error": job.error,
+                }
+            )
+        await sio.emit("connect_job_init", as_json_fmt, to=sid, namespace="/vthell")
 
     if asgi_mode:
         logger.info("Running Sanic in ASGI mode, replacing app with Socket.IO ASGIApp...")

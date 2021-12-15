@@ -78,7 +78,7 @@ class DownloaderTasks(InternalTaskBase):
             data.last_status = models.VTHellJobStatus.muxing
             data.error = f"mkvmerge exited with code {ret_code}:\n{stderr}"
             await app.sio.emit(
-                "job_update", {"id": data.id, "status": "DONE", "error": "MKV_MUX_FAIL"}, namespace="/vthell"
+                "job_update", {"id": data.id, "status": "ERROR", "error": "MKV_MUX_FAIL"}, namespace="/vthell"
             )
             return True
         return False
@@ -102,24 +102,31 @@ class DownloaderTasks(InternalTaskBase):
         rclone_process = await asyncio.create_subprocess_exec(
             *rclone_args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
         )
+        error_line = ""
+        while True:
+            try:
+                async for line in rclone_process.stdout:
+                    line = line.decode("utf-8").rstrip()
+                    logger.debug(f"[{data.id}] rclone: {line}")
+            except Exception:
+                logger.debug(f"[{data.id}] rclone buffer exceeded, silently ignoring...")
+                continue
+            else:
+                break
+
         await rclone_process.wait()
         ret_code = rclone_process.returncode
         if ret_code != 0:
             logger.error(
                 f"[{data.id}] rclone exited with code {ret_code}, aborting uploading please do manual upload later!"
             )
-            stderr = await rclone_process.stderr.read()
-            stdout = await rclone_process.stdout.read()
-            if not stderr:
-                stderr = stdout
-            stderr = stderr.decode("utf-8").rstrip()
             data.status = models.VTHellJobStatus.error
             data.last_status = models.VTHellJobStatus.uploading
-            data.error = f"rclone exited with code {ret_code}:\n{stderr}"
+            data.error = f"rclone exited with code {ret_code}:\n{error_line}"
             await data.save()
             await app.sio.emit(
                 "job_update",
-                {"id": data.id, "status": "DONE", "error": "RCLONE_UPLOAD_FAIL"},
+                {"id": data.id, "status": "ERROR", "error": "RCLONE_UPLOAD_FAIL"},
                 namespace="/vthell",
             )
             return True
@@ -229,11 +236,8 @@ class DownloaderTasks(InternalTaskBase):
                 logger.info(f"Job {data.id} skipped since it's being processed")
             return
 
-        data.status = models.VTHellJobStatus.preparing
-        await data.save()
-
         logger.info(f"Trying to start job {data.id}")
-        await app.sio.emit("job_update", {"id": data.id, "status": data.status.value}, namespace="/vthell")
+        await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.preparing)
         temp_output_file = STREAMDUMP_PATH / f"{data.filename} [temp]"
         cookies_file = await find_cookies_file()
 
@@ -319,7 +323,9 @@ class DownloaderTasks(InternalTaskBase):
             data.status = models.VTHellJobStatus.error
             data.error = f"ytarchive exited with code {ret_code} ({error_line})"
             await data.save()
-            await app.sio.emit("job_failed", {"id": data.id}, namespace="/vthell")
+            await app.sio.emit(
+                "job_update", {"id": data.id, "status": "ERROR", "error": data.error}, namespace="/vthell"
+            )
             return
 
         await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.muxing, True)
