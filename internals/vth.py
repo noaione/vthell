@@ -130,6 +130,16 @@ class VTHellDataset:
             "vliver": [v.to_dict() for v in self.vliver],
         }
 
+    def build_path(self, vtuber: VTHellDatasetVTuber):
+        paths = []
+        main_target = self.upload_base.replace("\\", "/").split("/")
+        paths.extend(main_target)
+        if vtuber is None:
+            paths.append("Unknown")
+        else:
+            paths.append(vtuber.name)
+        return paths
+
 
 class SanicVTHellConfig(Config):
     VTHELL_DB: str
@@ -298,6 +308,12 @@ class SanicVTHell(Sanic):
                 if getattr(v, platform, None) == id:
                     return dataset, v
         return None, None
+
+    def create_rclone_path(self, id: str, platform: str) -> List[str]:
+        dataset, vtuber = self.find_id_on_dataset(id, platform)
+        if not dataset:
+            return ["Unknown"]
+        return dataset.build_path(vtuber)
 
     async def watch_vthell_dataset_folder(self, app: SanicVTHell):
         dataset_path = CURRENT_PATH / "dataset"

@@ -64,10 +64,12 @@ class VTHellJob(Model):
     id = fields.CharField(pk=True, unique=True, index=True, max_length=128)
     title = fields.TextField(null=False)
     filename = fields.TextField(null=False)
+    resolution = fields.CharField(null=True, max_length=24)
     start_time = fields.BigIntField(null=False)
     channel_id = fields.TextField(null=False)
     member_only = fields.BooleanField(null=False, default=False)
     status = fields.CharEnumField(VTHellJobStatus, null=False, default=VTHellJobStatus.waiting, max_length=24)
+    last_status = fields.CharEnumField(VTHellJobStatus, null=True, max_length=24)
     error = fields.TextField(null=True)
 
 

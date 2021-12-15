@@ -143,6 +143,8 @@ def test_mkvmerge_binary(path: str):
 def build_rclone_path(drive_base: str, *targets: str):
     merge_target = "/"
     for target in targets:
+        if not isinstance(target, str):
+            target = str(target)
         merge_target += target + "/"
     if merge_target.endswith("/"):
         merge_target = merge_target[:-1]
