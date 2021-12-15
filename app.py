@@ -111,11 +111,13 @@ def load_config():
     rclone_path = os.getenv("RCLONE_BINARY", "") or find_rclone_binary()
     mkvmerge_path = os.getenv("MKVMERGE_BINARY", "") or find_mkvmerge_binary()
     rclone_drive_target = os.getenv("RCLONE_DRIVE_TARGET", "")
-    if not test_rclone_binary(rclone_path, rclone_drive_target):
+    rclone_disable = map_to_boolean(os.getenv("RCLONE_DISABLE", "0"))
+    if not rclone_disable and not test_rclone_binary(rclone_path, rclone_drive_target):
         logger.error("Either RClone binary or the drive target is not valid")
         raise FileNotFoundError("Rclone binary not found")
     config["RCLONE_PATH"] = rclone_path
     config["RCLONE_DRIVE_TARGET"] = rclone_drive_target
+    config["RCLONE_DISABLE"] = rclone_disable
     if not test_ytarchive_binary(ytarchive_path):
         logger.error(
             "YTArchive binary not found, please download here: https://github.com/Kethsar/ytarchive/releases"

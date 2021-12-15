@@ -137,6 +137,9 @@ class DownloaderTasks(InternalTaskBase):
         except Exception:
             logger.exception(f"[{data.id}] Failed to delete temporary mp4 files, silently skipping")
 
+        if app.config.RCLONE_DISABLE:
+            logger.info(f"[{data.id}] Rclone is disabled, skipping muxed mkv deletion...")
+            return
         try:
             logger.info(f"[{data.id}] Trying to delete muxed mkv files...")
             await aiofiles.os.remove(str(mux_output))
@@ -153,12 +156,15 @@ class DownloaderTasks(InternalTaskBase):
                 logger.error(f"[{data.id}][m] Failed to redo mux job, aborting.")
                 return
             logger.info(f"[{data.id}][m] Mux job redone, continuing with upload files...")
-            await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.uploading, True)
-            is_error = await DownloaderTasks.upload_files(data, app)
-            if is_error:
-                logger.error(f"[{data.id}][m] Failed to do upload job, aborting.")
-                return
-            logger.info(f"[{data.id}][m] Upload job done, cleaning files...")
+            if not app.config.RCLONE_DISABLE:
+                await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.uploading, True)
+                is_error = await DownloaderTasks.upload_files(data, app)
+                if is_error:
+                    logger.error(f"[{data.id}][m] Failed to do upload job, aborting.")
+                    return
+                logger.info(f"[{data.id}][m] Upload job done, cleaning files...")
+            else:
+                logger.info(f"[{data.id}][m] Upload step skipped since Rclone is disabled...")
             await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.cleaning, True)
             await DownloaderTasks.cleanup_files(data, app)
             logger.info(f"[{data.id}] Cleanup job done, marking job as finished!")
@@ -168,23 +174,26 @@ class DownloaderTasks(InternalTaskBase):
             await data.save()
         elif data.last_status == models.VTHellJobStatus.uploading:
             logger.info(f"[{data.id}] Last status was upload job, trying to redo from upload point.")
-            await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.uploading, True)
-            is_error = await DownloaderTasks.upload_files(data, app)
-            if is_error:
-                logger.error(f"[{data.id}][m] Failed to redo upload job, aborting.")
-                return
-            logger.info(f"[{data.id}][u] Upload job redone, cleaning files...")
+            if not app.config.RCLONE_DISABLE:
+                await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.uploading, True)
+                is_error = await DownloaderTasks.upload_files(data, app)
+                if is_error:
+                    logger.error(f"[{data.id}][u] Failed to redo upload job, aborting.")
+                    return
+                logger.info(f"[{data.id}][u] Upload job redone, cleaning files...")
+            else:
+                logger.info(f"[{data.id}][u] Upload restep skipped since Rclone is disabled...")
             await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.cleaning, True)
             await DownloaderTasks.cleanup_files(data, app)
-            logger.info(f"[{data.id}] Cleanup job done, marking job as finished!")
+            logger.info(f"[{data.id}][u] Cleanup job done, marking job as finished!")
             data.status = models.VTHellJobStatus.done
             data.error = None
             data.last_status = None
             await data.save()
         elif data.last_status == models.VTHellJobStatus.cleaning:
-            logger.info(f"[{data.id}] Last status was cleanup job, trying to redo from cleanup point.")
+            logger.info(f"[{data.id}][c] Last status was cleanup job, trying to redo from cleanup point.")
             await DownloaderTasks.cleanup_files(data, app)
-            logger.info(f"[{data.id}] Cleanup job redone, marking job as finished!")
+            logger.info(f"[{data.id}][c] Cleanup job redone, marking job as finished!")
             data.status = models.VTHellJobStatus.done
             data.error = None
             data.last_status = None
@@ -319,13 +328,19 @@ class DownloaderTasks(InternalTaskBase):
         if is_error:
             return
 
-        await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.uploading, True)
-        logger.info(f"Job {data.id} finished muxing, uploading to drive target...")
-        is_error = await DownloaderTasks.upload_files(data, app)
-        if is_error:
-            return
-        logger.info(f"Job {data.id} finished uploading, deleting temp files...")
+        if not app.config.RCLONE_DISABLE:
+            await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.uploading, True)
+            logger.info(f"Job {data.id} finished muxing, uploading to drive target...")
+            is_error = await DownloaderTasks.upload_files(data, app)
+            if is_error:
+                return
+            logger.info(f"Job {data.id} finished uploading, deleting temp files...")
+        else:
+            logger.info(f"Job {data.id} finished muxing, skipping upload since rclone is disabled...")
+
         data.status = models.VTHellJobStatus.cleaning
+        data.error = None
+        data.last_status = None
         await data.save()
         await app.dispatch(
             "internals.notifier.discord",

@@ -150,6 +150,7 @@ class SanicVTHellConfig(Config):
     HOLODEX_API_KEY: str
 
     RCLONE_PATH: str
+    RCLONE_DISABLE: bool
     RCLONE_DRIVE_TARGET: str
     YTARCHIVE_PATH: str
     MKVMERGE_PATH: str
