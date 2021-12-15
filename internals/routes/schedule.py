@@ -41,7 +41,7 @@ bp_sched = Blueprint("api_scheduler", url_prefix="/api")
 logger = logging.getLogger("Routes.API.Schedule")
 
 
-@bp_sched.route("/schedule", methods=["POST"])
+@bp_sched.post("/schedule")
 @secure_access
 async def add_new_jobs(request: Request):
     app: SanicVTHell = request.app
@@ -93,3 +93,35 @@ async def add_new_jobs(request: Request):
         await job_request.save()
     logger.info(f"APIAdd: Video {video_id} added to queue, sending back request")
     return json(video_res.to_json())
+
+
+@bp_sched.delete("/schedule/<video_id>")
+@secure_access
+async def delete_job(request: Request, video_id: str):
+    app: SanicVTHell = request.app
+    await app.wait_until_ready()
+    logger.info("ScheduleDelete: Received request for video <%s>", video_id)
+    job = await models.VTHellJob.get_or_none(id=video_id)
+    if job is None:
+        logger.error("ScheduleDelete: Video <%s> not found", video_id)
+        return json({"error": "Video not found"}, status=404)
+    if job.status not in [
+        models.VTHellJobStatus.cleaning,
+        models.VTHellJobStatus.done,
+        models.VTHellJobStatus.waiting,
+    ]:
+        return json({"error": "Current video status does not allow you to delete video"}, status=406)
+
+    await job.delete()
+    return json(
+        {
+            "id": job.id,
+            "title": job.title,
+            "filename": job.filename,
+            "start_time": job.start_time,
+            "channel_id": job.channel_id,
+            "is_member": job.member_only,
+            "status": job.status,
+            "error": job.error,
+        }
+    )

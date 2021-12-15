@@ -239,6 +239,33 @@ This route accept JSON data with this format:
 
 `id` is the youtube video ID that will be fetched to Holodex API to check if it's still live/upcoming.
 
+> **DELETE `/api/schedule`**, delete single scheduled video.
+
+**Returns 200** with deleted video on success.<br>
+**Authentication needed**<br>
+**On fail** it will return a JSON with `error` field.
+
+This route will delete a specific video and return the deleted video if found, the data is the following:
+
+```json
+{
+  "id": "bFNvQFyTBx0",
+  "title": "【ウマ娘】本気の謝罪ガチャをさせてください…【潤羽るしあ/ホロライブ】",
+  "start_time": 1639559148,
+  "channel_id": "UCl_gCybOJRIgOXw6Qb4qJzQ",
+  "is_member": false,
+  "status": "DOWNLOADING",
+  "error": null
+}
+```
+
+The deletion only work if the status is either:
+- `WAITING`
+- `DONE`
+- `CLEANUP`
+
+If it's anything else, it will return **406 Not Acceptable** status code.
+
 > **GET `/api/status`**, get the status of all scheduled video.
 
 **Returns 200** with a list scheduled video on success.
@@ -422,6 +449,8 @@ curl -X POST -H "X-Auth-Token: SecretPassword123" http://localhost:12790/api/add
 ```
 
 ### Socket.IO
+
+**You need Socket.IO 4.x for JS Client**
 
 This program also support watching the data over Socket.IO client. You can connect to the `/vthell` namespace to listen to all the emitter.
 
