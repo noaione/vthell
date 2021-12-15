@@ -188,3 +188,4 @@ dataset/*.py
 chatarchive/*
 
 dataset/currentversion
+dataset/archive.zip
