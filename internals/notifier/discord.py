@@ -58,6 +58,7 @@ def make_update_discord_embed(data: models.VTHellJob):
         return None
 
     embed.set_image(url=f"https://i.ytimg.com/vi/{data.id}/maxresdefault.jpg")
+    embed.set_timestamp()
     webhook = DiscordWebhook(url="")
     webhook.add_embed(embed)
     return webhook.get_embeds()[0]
