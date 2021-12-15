@@ -134,6 +134,7 @@ class DownloaderTasks(InternalTaskBase):
                     if "total downloaded" in lower_line:
                         logger.debug(f"[{data.id}] {line}")
                         if not already_announced:
+                            logger.info(f"[{data.id}] Download started for both video and audio")
                             already_announced = True
                             data.status = models.VTHellJobStatus.downloading
                             await data.save()
