@@ -13,9 +13,11 @@
   - [Setup Rclone](#setup-rclone)
   - [Setup YTArchive](#setup-ytarchive)
 - [Configuration](#configuration)
-- [Running](#running)
-  - [Accessing Protected Routes](#accessing-protected-routes)
+- [Running and Routes](#running-and-routes)
+  - [Routes](#routes)
   - [Auto Scheduler](#auto-scheduler)
+    - [Migration](#migration)
+  - [Accessing Protected Routes](#accessing-protected-routes)
 - [Improvements](#improvements)
 - [License](#license)
 
@@ -170,9 +172,13 @@ HOLODEX_API_KEY=
 
 # Binary path location and more
 RCLONE_BINARY=rclone
+RCLONE_DISABLE=0
 RCLONE_DRIVE_TARGET=
 MKVMERGE_BINARY=mkvmerge
 YTARCHIVE_BINARY=ytarchive
+
+# Notification helper
+NOTIFICATION_DISCORD_WEBHOOK=
 ```
 
 - `PORT` just means what port it will run on (if you run the app file directly)
@@ -188,11 +194,13 @@ YTARCHIVE_BINARY=ytarchive
 - `VTHELL_GRACE_PERIOD` how long should the program waits before start trying to download the stream (in seconds, default 2 minutes)
 - `HOLODEX_API_KEY` will be your Holodex API key which you can get from your profile page
 - `RCLONE_BINARY` will be the full path to your rclone (or you can add it to your system PATH)
+- `RCLONE_DISABLE` if you set it to `1`, it will disable rclone/upload step and will save the data to your local disk at `streamdump/`
 - `RCLONE_DRIVE_TARGET` will be your target drive or your remote name that you setup in [Setup Rclone](#setup-rclone)
 - `MKVMERGE_BINARY` will be your mkvmerge path
 - `YTARCHIVE_BINARY` will be your ytarchve path, you can follow the [Setup YTArchive](#setup-ytarchive) to get your ytarchive up and running.
+- `NOTIFICATION_DISCORD_WEBHOOK` will be used to announce any update to your scheduling. Must be a valid Discord Webhook link.
 
-## Running
+## Running and Routes
 
 After you configure it properly, you can start running with Uvicorn or invoking the app.py file directly.
 
@@ -209,6 +217,180 @@ You can see more information [here](https://www.uvicorn.org/deployment/)
 1. Make sure you're in the virtualenv
 2. Modify the port you want in the `.env` file
 3. Run with `python3 app.py` to start the webserver
+
+### Routes
+
+- **POST `/api/schedule`**, schedule a single video.
+
+**Returns 200** with the added video on success.<br />
+**Authentication needed**<br />
+**On fail** it will return a JSON with `error` field.
+
+This route allows you to schedule a video manually. If video already scheduled, it will replace some stuff but not everything.
+
+This route accept JSON data with this format:
+
+```json
+{
+  "id": "abcdef12345"
+}
+```
+
+`id` is the youtube video ID that will be fetched to Holodex API to check if it's still live/upcoming.
+
+- **GET `/api/status`**, get the status of all scheduled video.
+
+**Returns 200** with a list scheduled video on success.
+
+This routes accept the following query parameters:
+- `include_done`, adding this and setting it into `1` or `true` will include all scheduled video including the one that are already finished.
+
+```json
+[
+  {
+    "id": "bFNvQFyTBx0",
+    "title": "【ウマ娘】本気の謝罪ガチャをさせてください…【潤羽るしあ/ホロライブ】",
+    "start_time": 1639559148,
+    "channel_id": "UCl_gCybOJRIgOXw6Qb4qJzQ",
+    "is_member": false,
+    "status": "DOWNLOADING",
+    "error": null
+  }
+]
+```
+
+All the data is self-explanatory, the `status` is one of this enum:
+- `WAITING` means that it's not yet started
+- `PREPARING` means the recording process is started and now waiting for stream to start
+- `DOWNLOADING` means that the stream is being recorded
+- `MUXING` means that the stream has finished downloading and now being muxed into `.mkv` format
+- `UPLOAD` means that the stream is now being uploaded to the specified folder
+- `CLEANING` means that upload process is done and now the program is cleaning up downloaded files.
+- `DONE` means that the job is finished
+- `ERROR` means an error occured, see the `error` field to learn more.
+
+- **GET `/api/status/:id`**, get the status of a single job
+
+**Returns 200** with a requested video on success.
+**On fail** it will return a JSON with `error` key.
+
+It does the same thing as above route, but only for a single job and returns a dictionary instead of list.
+
+### Auto Scheduler
+
+The auto scheduler is a feature where the program will check every X seconds to the Holodex API for ongoing/upcoming live stream and will schedule anything that match the criteria.
+
+**Routes**
+
+The following are the routes available to add/remove/modify scheduler:
+
+- **GET `/api/auto-scheduler`**, fetch all the auto scheduler. Returns the following data:
+```json
+{
+  "include": [
+    {
+      "id": 1,
+      "type": "channel",
+      "data": "UC1uv2Oq6kNxgATlCiez59hw",
+      "chains": null
+    },
+    {
+      "id": 2,
+      "type": "word",
+      "data": "ASMR",
+      "chains": [
+        {
+          "type": "group",
+          "data": "hololive"
+        }
+      ]
+    }
+  ],
+  "exclude": [
+    {
+      "id": 3,
+      "type": "word",
+      "data": "(cover)",
+      "chains": null
+    },
+  ]
+}
+```
+
+The data format as seen above includes:
+- `type`, which is the type of the data. It must be the following enum:
+  - `word`: to check if specific word exist in the title. (case-insensitive)
+  - `regex_word`: same as above, but it use regex. (case-insensitive)
+  - `group`: check if it match the organization or group (case-insensitive)
+  - `channel`: check if channel ID match (case-sensitive)
+- `data`: a string following the format of specified `type`
+- `chains`: A list of data to be chained with the original data check. If chains are defined, all of them must be matching to be scheduled.
+  - This only works on the following type: `word`, `regex_word`
+  - This only works on `include` filters only right now.
+
+You can add new scheduler by sending a POST request to this following route:
+
+- **POST `/api/auto-scheduler`**, add new scheduler filter
+
+**Returns 201** on success<br />
+**Authentication needed**<br />
+**On fail** it will return a JSON with `error` field.
+
+This route accepts a JSON data with this format:
+
+```json
+{
+  "type": "string-or-type-enum",
+  "data": "string",
+  "chains": null,
+  "include": true
+}
+```
+
+`type` must be the enum specified above, `data` must be a string, and `include` means if it should be included or excluded when processing the filters later.
+
+Chains can be either, a dictionary/map for single chain, or a list for multiple chains. It can also be none if you dont need it.
+
+Chains will be ignored automatically if `type` is not `word` or `regex_word`.
+
+- **PATCH `/api/auto-scheduler/:id`**, modify specific scheduler filter.
+
+**Returns 204** on success<br />
+**Authentication needed**<br />
+**On fail** it will return a JSON with `error` field.
+
+This route accepts all of this JSON data:
+
+```json
+{
+  "type": "string-or-type-enum",
+  "data": "string",
+  "chains": null,
+  "include": true
+}
+```
+
+All of it are optional, but you must specify something if you want to modify it.
+
+`:id` can be found from using the `GET /api/auto-scheduler`.
+
+- **DELETE `/api/auto-scheduler/:id`**, delete specific scheduler filter.
+
+**Returns 200** on success with the deleted data<br />
+**Authentication needed**<br />
+**On fail** it will return a JSON with `error` field.
+
+`:id` can be found from using the `GET /api/auto-scheduler`.
+
+#### Migration
+
+The auto scheduler has now been rewritten, if you still have the old one you might want to run the migration scripts.
+
+```py
+$ python3 migrations/auto_scheduler.py
+```
+
+Make sure you have the `_auto_scheduler.json` in the dataset folder, and make sure the webserver is running.
 
 ### Accessing Protected Routes
 
@@ -234,12 +416,6 @@ curl -X POST -H "X-Password: SecretPassword123" http://localhost:12790/api/add
 ```sh
 curl -X POST -H "X-Auth-Token: SecretPassword123" http://localhost:12790/api/add
 ```
-
-### Auto Scheduler
-
-The auto scheduler has now been rewritten, if you still have the old one you might want to run the migration scripts.
-
-TBW
 
 ## Improvements
 
