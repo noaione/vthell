@@ -35,7 +35,7 @@ from typing import TYPE_CHECKING, Dict, Union
 
 from sanic.blueprints import Blueprint
 
-from .struct import InternalSocketHandler, InternalTaskBase
+from .struct import InternalSignalHandler, InternalSocketHandler, InternalTaskBase
 
 if TYPE_CHECKING:
     from .vth import SanicVTHell
@@ -51,6 +51,7 @@ def autodiscover(app: SanicVTHell, *module_names: Union[str, ModuleType], recurs
     blueprints: Dict[str, Blueprint] = {}
     socket_routes: Dict[str, InternalSocketHandler] = {}
     tasks: Dict[str, InternalTaskBase] = {}
+    signals: Dict[str, InternalSignalHandler] = {}
     _imported = set()
 
     def _find_bps(module):
@@ -74,6 +75,11 @@ def autodiscover(app: SanicVTHell, *module_names: Union[str, ModuleType], recurs
                     continue
                 logger.info("Found socket handler: %s", cls_name)
                 socket_routes[cls_name] = member
+            elif issubclass(member, InternalSignalHandler):
+                if cls_name == InternalSignalHandler.__name__:
+                    continue
+                logger.info("Found signal handler: %s", cls_name)
+                signals[cls_name] = member
 
     for module in module_names:
         if isinstance(module, str):
@@ -106,3 +112,6 @@ def autodiscover(app: SanicVTHell, *module_names: Union[str, ModuleType], recurs
     for eio_n, eio_v in socket_routes.items():
         logger.info("Registering socket handler: %s", eio_n)
         eio_v.attach(app)
+    for sig_n, sig_val in signals.items():
+        logger.info("Registering signal handler: %s", sig_n)
+        app.add_signal(sig_val, sig_val.signal_name)

@@ -214,6 +214,9 @@ class AutoSchedulerTasks(InternalTaskBase):
             logger.info(f"Scheduling <{video.id}> from Autoscheduler run {time}")
             await job.save()
             executed_videos.append(video.id)
+            await app.dispatch(
+                "internals.notifier.discord", context={"app": app, "data": job, "emit_type": "schedule"}
+            )
             await app.sio.emit(
                 "job_scheduled",
                 {
