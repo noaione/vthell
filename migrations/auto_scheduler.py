@@ -28,7 +28,7 @@ try:
         print(f"[!] Error connecting to server: {resp.text}")
         exit(1)
 except Exception:
-    print(f"[!] Error connecting to server")
+    print("[!] Error connecting to server")
     exit(1)
 
 print("[*] Trying to migrate old auto scheduler database...")
