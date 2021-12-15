@@ -210,11 +210,10 @@ class HolodexAPI:
                 return None
             json_resp: List[HolodexVideoPayload] = await resp.json()
 
-        selected_video: HolodexVideoPayload = None
-        for video in json_resp:
-            if video.get("id") == video_id:
-                selected_video = video
-                break
+        if len(json_resp) < 1:
+            return None
+
+        selected_video = json_resp[0]
 
         if selected_video is None:
             return None
@@ -225,10 +224,10 @@ class HolodexAPI:
         start_time = self._convert_date_to_unix(selected_video.get("start_actual"))
         if start_time is None:
             start_time = self._convert_date_to_unix(selected_video.get("start_scheduled"))
-        channel_id = video.get("channel_id") or selected_video.get("channel", {}).get("id")
+        channel_id = selected_video.get("channel_id") or selected_video.get("channel", {}).get("id")
         if channel_id is None:
             return None
-        org_group = video.get("channel", {}).get("org")
+        org_group = selected_video.get("channel", {}).get("org")
 
         video_url = f"https://youtube.com/watch?v={selected_video['id']}"
         is_member = "member" in selected_video.get("topic_id", "").lower()
