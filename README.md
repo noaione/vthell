@@ -220,10 +220,10 @@ You can see more information [here](https://www.uvicorn.org/deployment/)
 
 ### Routes
 
-- **POST `/api/schedule`**, schedule a single video.
+> **POST `/api/schedule`**, schedule a single video.
 
-**Returns 200** with the added video on success.<br />
-**Authentication needed**<br />
+**Returns 200** with the added video on success.<br>
+**Authentication needed**<br>
 **On fail** it will return a JSON with `error` field.
 
 This route allows you to schedule a video manually. If video already scheduled, it will replace some stuff but not everything.
@@ -238,7 +238,7 @@ This route accept JSON data with this format:
 
 `id` is the youtube video ID that will be fetched to Holodex API to check if it's still live/upcoming.
 
-- **GET `/api/status`**, get the status of all scheduled video.
+> **GET `/api/status`**, get the status of all scheduled video.
 
 **Returns 200** with a list scheduled video on success.
 
@@ -269,9 +269,9 @@ All the data is self-explanatory, the `status` is one of this enum:
 - `DONE` means that the job is finished
 - `ERROR` means an error occured, see the `error` field to learn more.
 
-- **GET `/api/status/:id`**, get the status of a single job
+> **GET `/api/status/:id`**, get the status of a single job
 
-**Returns 200** with a requested video on success.
+**Returns 200** with a requested video on success.<br>
 **On fail** it will return a JSON with `error` key.
 
 It does the same thing as above route, but only for a single job and returns a dictionary instead of list.
@@ -284,7 +284,10 @@ The auto scheduler is a feature where the program will check every X seconds to 
 
 The following are the routes available to add/remove/modify scheduler:
 
-- **GET `/api/auto-scheduler`**, fetch all the auto scheduler. Returns the following data:
+> **GET `/api/auto-scheduler`**, fetch all the auto scheduler.
+
+**Returns 200** on success with the following data:
+
 ```json
 {
   "include": [
@@ -330,7 +333,7 @@ The data format as seen above includes:
 
 You can add new scheduler by sending a POST request to this following route:
 
-- **POST `/api/auto-scheduler`**, add new scheduler filter
+> **POST `/api/auto-scheduler`**, add new scheduler filter
 
 **Returns 201** on success<br />
 **Authentication needed**<br />
@@ -353,7 +356,7 @@ Chains can be either, a dictionary/map for single chain, or a list for multiple 
 
 Chains will be ignored automatically if `type` is not `word` or `regex_word`.
 
-- **PATCH `/api/auto-scheduler/:id`**, modify specific scheduler filter.
+> **PATCH `/api/auto-scheduler/:id`**, modify specific scheduler filter.
 
 **Returns 204** on success<br />
 **Authentication needed**<br />
@@ -374,7 +377,7 @@ All of it are optional, but you must specify something if you want to modify it.
 
 `:id` can be found from using the `GET /api/auto-scheduler`.
 
-- **DELETE `/api/auto-scheduler/:id`**, delete specific scheduler filter.
+> **DELETE `/api/auto-scheduler/:id`**, delete specific scheduler filter.
 
 **Returns 200** on success with the deleted data<br />
 **Authentication needed**<br />
