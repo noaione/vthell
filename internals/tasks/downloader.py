@@ -72,7 +72,17 @@ class DownloaderTasks(InternalTaskBase):
         cookies_file = await find_cookies_file()
 
         # Spawn ytarchive
-        ytarchive_args = [app.config.YTARCHIVE_PATH, "-4", "--wait", "-r", "30", "-o", str(temp_output_file)]
+        ytarchive_args = [
+            app.config.YTARCHIVE_PATH,
+            "-4",
+            "--wait",
+            "-r",
+            "30",
+            "-v",
+            "--newline",
+            "-o",
+            str(temp_output_file),
+        ]
         if cookies_file is not None:
             ytarchive_args.extend(["-c", cookies_file])
         ytarchive_args.append(f"https://youtube.com/watch?v={data.id}")
@@ -122,7 +132,17 @@ class DownloaderTasks(InternalTaskBase):
                         await app.sio.emit(
                             "job_update", {"id": data.id, "status": data.status.value}, namespace="/vthell"
                         )
-                    logger.info(f"[{data.id}] {line}")
+                    if "total downloaded" in lower_line:
+                        logger.debug(f"[{data.id}] {line}")
+                        if not already_announced:
+                            already_announced = True
+                            data.status = models.VTHellJobStatus.downloading
+                            await data.save()
+                            await app.sio.emit(
+                                "job_update", {"id": data.id, "status": data.status.value}, namespace="/vthell"
+                            )
+                    else:
+                        logger.info(f"[{data.id}] {line}")
             except ValueError:
                 logger.debug(f"[{data.id}] ytarchive buffer exceeded, silently ignoring...")
                 continue
