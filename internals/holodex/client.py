@@ -61,7 +61,10 @@ class HolodexAPI:
     async def create(self):
         self.client = aiohttp.ClientSession(
             loop=self._loop,
-            headers={"Content-Type": "application/json", "User-Agent": "VTHell/3.0.0"},
+            headers={
+                "Content-Type": "application/json",
+                "User-Agent": "VTHell/3.0.0 (+https://github.com/noaione/vthell)",
+            },
         )
         if self.api_key:
             self.client.headers.update({"X-APIKEY": self.api_key})
