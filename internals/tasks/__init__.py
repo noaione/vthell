@@ -7,4 +7,6 @@ A collection of background tasks for the downloader and more!
 :license: MIT, see LICENSE for more details.
 """
 
+from .datasets import *
 from .downloader import *
+from .scheduler import *
