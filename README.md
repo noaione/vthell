@@ -249,6 +249,8 @@ It also now using Holodex API rather than Holotools API since it support many mo
 
 The other thing is moving from JSON file to SQLite3 database for all the job, this improve performance since we dont need to read/write multiple time to disk.
 
+Oh, and I guess now it support Windows since it does not rely on some linux only feature.
+
 ## License
 
 This project is licensed with MIT License, learn more [here](LICENSE)
