@@ -307,6 +307,8 @@ class SanicVTHell(Sanic):
                 action, path = change
                 path_f = Path(path)
                 path_fn, _ = os.path.splitext(path_f.name)
+                if path_fn.startswith("_"):
+                    continue
                 if action == wg.Change.deleted:
                     logger.info("[dataset-watch] Dataset %s got deleted, removing", path_fn)
                     self.vtdataset.pop(path_fn, None)
