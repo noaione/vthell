@@ -7,4 +7,5 @@ A collection of blueprint routes for the API.
 :license: MIT, see LICENSE for more details.
 """
 
-from .add import bp_add
+from .auto_scheduler import bp_autosched
+from .schedule import bp_sched

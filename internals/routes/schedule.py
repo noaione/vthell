@@ -37,14 +37,15 @@ from internals.utils import secure_filename
 if TYPE_CHECKING:
     from internals.vth import SanicVTHell
 
-bp_add = Blueprint("api_add", url_prefix="/api")
-logger = logging.getLogger("Routes.API.Add")
+bp_sched = Blueprint("api_scheduler", url_prefix="/api")
+logger = logging.getLogger("Routes.API.Schedule")
 
 
-@bp_add.route("/add", methods=["POST"])
+@bp_sched.route("/schedule", methods=["POST"])
 @secure_access
 async def add_new_jobs(request: Request):
     app: SanicVTHell = request.app
+    await app.wait_until_ready()
     try:
         json_request = request.json
     except Exception as cep:
@@ -75,8 +76,6 @@ async def add_new_jobs(request: Request):
     if existing_job is not None:
         logger.info(f"APIAdd: Video {video_id} already exists, merging data...")
         existing_job.title = video_res.title
-        existing_job.is_downloaded = False
-        existing_job.is_downloading = False
         existing_job.filename = filename
         existing_job.start_time = video_res.start_time
         existing_job.member_only = video_res.is_member
