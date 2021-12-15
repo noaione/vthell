@@ -164,10 +164,13 @@ def setup_app():
             return text("")
         return text("</>")
 
-    @sio.event
-    async def connect(sid: str, environ, auth):
+    @sio.on("connect", namespace="/vthell")
+    async def on_connect_sio(sid: str, environ, auth):
         logger.info("Client connected: %s", sid)
-        await app.wait_until_ready()
+        if isinstance(app, socketio.ASGIApp):
+            await app.other_asgi_app.wait_until_ready()
+        else:
+            await app.wait_until_ready()
         active_jobs = await models.VTHellJob.exclude(status=models.VTHellJobStatus.done)
         as_json_fmt = []
         for job in active_jobs:
@@ -182,6 +185,7 @@ def setup_app():
                     "error": job.error,
                 }
             )
+        logger.info("Sending active jobs to client %s", sid)
         await sio.emit("connect_job_init", as_json_fmt, to=sid, namespace="/vthell")
 
     if asgi_mode:
