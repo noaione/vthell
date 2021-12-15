@@ -39,7 +39,7 @@ from internals.utils import build_rclone_path, find_cookies_file
 if TYPE_CHECKING:
     from internals.vth import SanicVTHell
 
-logger = logging.getLogger("internals.tasks.Downloader")
+logger = logging.getLogger("Tasks.Downloader")
 STREAMDUMP_PATH = Path(__file__).absolute().parent.parent.parent / "streamdump"
 STREAMDUMP_PATH.mkdir(exist_ok=True, parents=True)
 
@@ -57,20 +57,17 @@ class DownloaderTasks(InternalTaskBase):
             logger.info(f"Job {data.id} skipped since it's still far away from grace period")
             return
 
-        if data.is_downloaded:
-            logger.info(f"Job {data.id} skipped since it's already downloaded")
-            return
-        if data.is_downloading:
-            logger.info(f"Job {data.id} skipped since it's already downloading")
+        if data.status != models.VTHellJobStatus.waiting:
+            logger.info(f"Job {data.id} skipped since it's being processed")
             return
 
-        data.is_downloading = True
+        data.status = models.VTHellJobStatus.preparing
         await data.save()
 
         dataset_info, vt_info = app.find_id_on_dataset(data.channel_id, "youtube")
 
         logger.info(f"Trying to start job {data.id}")
-        await app.sio.emit("job_update", {"id": data.id, "status": "DOWNLOADING"}, namespace="/vthell")
+        await app.sio.emit("job_update", {"id": data.id, "status": data.status.value}, namespace="/vthell")
         temp_output_file = STREAMDUMP_PATH / f"{data.filename} [temp]"
         cookies_file = await find_cookies_file()
 
@@ -86,6 +83,8 @@ class DownloaderTasks(InternalTaskBase):
         )
         quality_res = None
         is_error = False
+        already_announced = False
+        error_line = None
         while True:
             try:
                 async for line in ytarchive_process.stdout:
@@ -98,20 +97,31 @@ class DownloaderTasks(InternalTaskBase):
                         logger.info(f"Selected quality: {actual_quality}")
                     elif "error" in lower_line:
                         is_error = True
+                        error_line = line
                         logger.error(f"[{data.id}] {line}")
                         break
                     elif "unable to retrieve" in lower_line:
                         is_error = True
                         logger.error(f"[{data.id}] {line}")
+                        error_line = line
                         break
                     elif "could not find" in lower_line:
                         is_error = True
                         logger.error(f"[{data.id}] {line}")
+                        error_line = line
                         break
                     elif "unable to download" in lower_line:
                         is_error = True
                         logger.error(f"[{data.id}] {line}")
+                        error_line = line
                         break
+                    elif "starting download" in lower_line and not already_announced:
+                        already_announced = True
+                        data.status = models.VTHellJobStatus.downloading
+                        await data.save()
+                        await app.sio.emit(
+                            "job_update", {"id": data.id, "status": data.status.value}, namespace="/vthell"
+                        )
                     logger.info(f"[{data.id}] {line}")
             except ValueError:
                 logger.debug(f"[{data.id}] ytarchive buffer exceeded, silently ignoring...")
@@ -123,17 +133,16 @@ class DownloaderTasks(InternalTaskBase):
         ret_code = ytarchive_process.returncode
         if is_error or ret_code != 0:
             logger.error(f"[{data.id}] ytarchive exited with code {ret_code}")
-            data.is_downloading = False
-            data.is_downloaded = False
+            data.status = models.VTHellJobStatus.error
+            data.error = f"ytarchive exited with code {ret_code} ({error_line})"
             await data.save()
             await app.sio.emit("job_failed", {"id": data.id}, namespace="/vthell")
             return
 
-        data.is_downloading = False
-        data.is_downloaded = True
+        data.status = models.VTHellJobStatus.muxing
         await data.save()
         logger.info(f"Job {data.id} finished downloading, muxing into mkv files...")
-        await app.sio.emit("job_update", {"id": data.id, "status": "MUXING"}, namespace="/vthell")
+        await app.sio.emit("job_update", {"id": data.id, "status": data.status.value}, namespace="/vthell")
 
         # Spawn mkvmerge
         mux_output = STREAMDUMP_PATH / f"{data.filename} [{quality_res} AAC].mkv"
@@ -149,13 +158,22 @@ class DownloaderTasks(InternalTaskBase):
             logger.error(
                 f"[{data.id}] mkvmerge exited with code {ret_code}, aborting uploading please do manual upload later!"
             )
-            await data.delete()
+            stderr = await mkvmerge_process.stderr.read()
+            stdout = await mkvmerge_process.stdout.read()
+            if not stderr:
+                stderr = stdout
+            stderr = stderr.decode("utf-8").rstrip()
+            data.status = models.VTHellJobStatus.error
+            data.error = f"mkvmerge exited with code {ret_code}:\n{stderr}"
             await app.sio.emit(
                 "job_update", {"id": data.id, "status": "DONE", "error": "MKV_MUX_FAIL"}, namespace="/vthell"
             )
             return
 
         logger.info(f"Job {data.id} finished muxing, uploading to drive target...")
+        data.status = models.VTHellJobStatus.uploading
+        await data.save()
+        await app.sio.emit("job_update", {"id": data.id, "status": data.status.value}, namespace="/vthell")
         joined_target = []
         if dataset_info is None:
             joined_target.extend(["Unknown", mux_output])
@@ -179,7 +197,14 @@ class DownloaderTasks(InternalTaskBase):
             logger.error(
                 f"[{data.id}] rclone exited with code {ret_code}, aborting uploading please do manual upload later!"
             )
-            await data.delete()
+            stderr = await mkvmerge_process.stderr.read()
+            stdout = await mkvmerge_process.stdout.read()
+            if not stderr:
+                stderr = stdout
+            stderr = stderr.decode("utf-8").rstrip()
+            data.status = models.VTHellJobStatus.error
+            data.error = f"rclone exited with code {ret_code}:\n{stderr}"
+            await data.save()
             await app.sio.emit(
                 "job_update",
                 {"id": data.id, "status": "DONE", "error": "RCLONE_UPLOAD_FAIL"},
@@ -188,7 +213,8 @@ class DownloaderTasks(InternalTaskBase):
             return
 
         logger.info(f"Job {data.id} finished uploading, deleting temp files...")
-        await data.delete()
+        data.status = models.VTHellJobStatus.cleaning
+        await data.save()
         await app.sio.emit("job_update", {"id": data.id, "status": "DONE"}, namespace="/vthell")
 
         try:
@@ -199,6 +225,10 @@ class DownloaderTasks(InternalTaskBase):
             await aiofiles.os.remove(mux_output)
         except Exception:
             pass
+
+        logger.info(f"Job {data.id} finished cleaning up, setting job as finished...")
+        data.status = models.VTHellJobStatus.done
+        await data.save()
 
     @classmethod
     def executor_done(cls: Type[DownloaderTasks], task: asyncio.Task):
@@ -215,7 +245,7 @@ class DownloaderTasks(InternalTaskBase):
     @staticmethod
     async def get_scheduled_job():
         all_jobs = await models.VTHellJob.all()
-        all_jobs = list(filter(lambda job: not job.is_downloading and not job.is_downloaded, all_jobs))
+        all_jobs = list(filter(lambda job: job.status == models.VTHellJobStatus.waiting, all_jobs))
         return all_jobs
 
     @classmethod
