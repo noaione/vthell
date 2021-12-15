@@ -108,6 +108,10 @@ class DownloaderTasks(InternalTaskBase):
                 async for line in rclone_process.stdout:
                     line = line.decode("utf-8").rstrip()
                     logger.debug(f"[{data.id}] rclone: {line}")
+                    if "error" in line.lower():
+                        error_line = line
+                    elif "failed to copy" in line.lower():
+                        error_line = line
             except Exception:
                 logger.debug(f"[{data.id}] rclone buffer exceeded, silently ignoring...")
                 continue
