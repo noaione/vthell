@@ -1,4 +1,23 @@
 [[package]]
+name = "aerich"
+version = "0.6.0"
+description = "A database migrations tool for Tortoise ORM."
+category = "dev"
+optional = false
+python-versions = ">=3.7,<4.0"
+
+[package.dependencies]
+click = "*"
+ddlparse = "*"
+dictdiffer = "*"
+tomlkit = "*"
+tortoise-orm = ">=0.17.7,<0.18.0"
+
+[package.extras]
+asyncmy = ["asyncmy"]
+asyncpg = ["asyncpg"]
+
+[[package]]
 name = "aiofiles"
 version = "0.8.0"
 description = "File support for asyncio."
@@ -184,6 +203,31 @@ humanfriendly = ">=9.1"
 
 [package.extras]
 cron = ["capturer (>=2.4)"]
+
+[[package]]
+name = "ddlparse"
+version = "1.10.0"
+description = "DDL parase and Convert to BigQuery JSON schema"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+pyparsing = "*"
+
+[[package]]
+name = "dictdiffer"
+version = "0.9.0"
+description = "Dictdiffer is a library that helps you to diff and patch dictionaries."
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.extras]
+all = ["Sphinx (>=3)", "sphinx-rtd-theme (>=0.2)", "check-manifest (>=0.42)", "mock (>=1.3.0)", "pytest-cov (>=2.10.1)", "pytest-isort (>=1.2.0)", "sphinx (>=3)", "tox (>=3.7.0)", "numpy (>=1.13.0)", "numpy (>=1.15.0)", "numpy (>=1.18.0)", "pytest (==5.4.3)", "pytest-pycodestyle (>=2)", "pytest-pydocstyle (>=2)", "pytest (>=6)", "pytest-pycodestyle (>=2.2.0)", "pytest-pydocstyle (>=2.2.0)", "numpy (>=1.20.0)"]
+docs = ["Sphinx (>=3)", "sphinx-rtd-theme (>=0.2)"]
+numpy = ["numpy (>=1.13.0)", "numpy (>=1.15.0)", "numpy (>=1.18.0)", "numpy (>=1.20.0)"]
+tests = ["check-manifest (>=0.42)", "mock (>=1.3.0)", "pytest-cov (>=2.10.1)", "pytest-isort (>=1.2.0)", "sphinx (>=3)", "tox (>=3.7.0)", "pytest (==5.4.3)", "pytest-pycodestyle (>=2)", "pytest-pydocstyle (>=2)", "pytest (>=6)", "pytest-pycodestyle (>=2.2.0)", "pytest-pydocstyle (>=2.2.0)"]
 
 [[package]]
 name = "dparse"
@@ -611,6 +655,14 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
+name = "tomlkit"
+version = "0.7.2"
+description = "Style preserving TOML library"
+category = "dev"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+
+[[package]]
 name = "tortoise-orm"
 version = "0.17.8"
 description = "Easy async ORM for python, built with relations in mind"
@@ -741,9 +793,13 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "076cc9ef34f6ef2aad61aa8aafc317ac6ad28cf39a90d58698a209bd1e9b3ec7"
+content-hash = "309ed74696bc63eede68f395fa299b05a9eb6d0497bbce15dbb3d53a8b89243c"
 
 [metadata.files]
+aerich = [
+    {file = "aerich-0.6.0-py3-none-any.whl", hash = "sha256:e590cf7c172438e02c2f9c7f3cf7a533c4cab82a77be9a739851a89f48260d28"},
+    {file = "aerich-0.6.0.tar.gz", hash = "sha256:d8956a92205dab543be138ec4a41f1e56179fa9fac6f5f31fca13fc532efdeff"},
+]
 aiofiles = [
     {file = "aiofiles-0.8.0-py3-none-any.whl", hash = "sha256:7a973fc22b29e9962d0897805ace5856e6a566ab1f0c8e5c91ff6c866519c937"},
     {file = "aiofiles-0.8.0.tar.gz", hash = "sha256:8334f23235248a3b2e83b2c3a78a22674f39969b96397126cc93664d9a901e59"},
@@ -873,6 +929,14 @@ colorama = [
 coloredlogs = [
     {file = "coloredlogs-15.0.1-py2.py3-none-any.whl", hash = "sha256:612ee75c546f53e92e70049c9dbfcc18c935a2b9a53b66085ce9ef6a6e5c0934"},
     {file = "coloredlogs-15.0.1.tar.gz", hash = "sha256:7c991aa71a4577af2f82600d8f8f3a89f936baeaf9b50a9c197da014e5bf16b0"},
+]
+ddlparse = [
+    {file = "ddlparse-1.10.0-py3-none-any.whl", hash = "sha256:71761b3457c8720853af3aeef266e2da1b6edef50936969492d586d7046a2ac2"},
+    {file = "ddlparse-1.10.0.tar.gz", hash = "sha256:6418681baa848eb01251ab79eb3d0ad7e140e6ab1deaae5a019353ddb3a908da"},
+]
+dictdiffer = [
+    {file = "dictdiffer-0.9.0-py2.py3-none-any.whl", hash = "sha256:442bfc693cfcadaf46674575d2eba1c53b42f5e404218ca2c2ff549f2df56595"},
+    {file = "dictdiffer-0.9.0.tar.gz", hash = "sha256:17bacf5fbfe613ccf1b6d512bd766e6b21fb798822a133aa86098b8ac9997578"},
 ]
 dparse = [
     {file = "dparse-0.5.1-py3-none-any.whl", hash = "sha256:e953a25e44ebb60a5c6efc2add4420c177f1d8404509da88da9729202f306994"},
@@ -1268,6 +1332,10 @@ toml = [
 tomli = [
     {file = "tomli-1.2.3-py3-none-any.whl", hash = "sha256:e3069e4be3ead9668e21cb9b074cd948f7b3113fd9c8bba083f48247aab8b11c"},
     {file = "tomli-1.2.3.tar.gz", hash = "sha256:05b6166bff487dc068d322585c7ea4ef78deed501cc124060e0f238e89a9231f"},
+]
+tomlkit = [
+    {file = "tomlkit-0.7.2-py2.py3-none-any.whl", hash = "sha256:173ad840fa5d2aac140528ca1933c29791b79a374a0861a80347f42ec9328117"},
+    {file = "tomlkit-0.7.2.tar.gz", hash = "sha256:d7a454f319a7e9bd2e249f239168729327e4dd2d27b17dc68be264ad1ce36754"},
 ]
 tortoise-orm = [
     {file = "tortoise-orm-0.17.8.tar.gz", hash = "sha256:1f5020e9964d32a4d6ed685d466b5d7285de328a63ee92ee988c1e4baf8fefbf"},
