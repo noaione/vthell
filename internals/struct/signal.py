@@ -24,7 +24,7 @@ SOFTWARE.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Dict, Type
+from typing import TYPE_CHECKING, Any, Dict
 
 if TYPE_CHECKING:
     from ..vth import SanicVTHell
@@ -35,8 +35,8 @@ __all__ = ("InternalSignalHandler",)
 class InternalSignalHandler:
     signal_name: str = "internals.signal.base"
 
-    @classmethod
-    async def main_loop(cls: Type[InternalSignalHandler], **context: Dict[str, Any]):
+    @staticmethod
+    async def main_loop(**context: Dict[str, Any]):
         app: SanicVTHell = context.get("app")
         if app is None:
             return
