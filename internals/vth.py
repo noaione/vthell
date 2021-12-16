@@ -27,16 +27,19 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from glob import glob
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, AnyStr, Callable, Dict, List, Optional, Tuple, Type, Union
 
 import aiofiles
 import orjson
+import pendulum
 import watchgod as wg
 from sanic import Sanic
 from sanic.config import SANIC_PREFIX, Config
+
+from internals.struct import VTHellRecords
 
 if TYPE_CHECKING:
     import socketio
@@ -141,6 +144,28 @@ class VTHellDataset:
         return paths
 
 
+@dataclass
+class VTHellRecordedData:
+    data: Optional[VTHellRecords] = None
+    last_updated: int = field(default_factory=lambda: pendulum.now("UTC").int_timestamp)
+    total_size: int = 0
+
+    def update(self, data: VTHellRecords, size: int):
+        self.data = data
+        self.last_updated = pendulum.now("UTC").int_timestamp
+        self.total_size = size
+
+    def to_json(self) -> Dict[str, Any]:
+        actual_data = self.data
+        if actual_data is not None:
+            actual_data = actual_data.to_json()
+        return {
+            "data": actual_data,
+            "last_updated": self.last_updated,
+            "total_size": self.total_size,
+        }
+
+
 class SanicVTHellConfig(Config):
     VTHELL_DB: str
     VTHELL_LOOP_DOWNLOADER: int
@@ -168,6 +193,7 @@ class SanicVTHell(Sanic):
     holodex: HolodexAPI
     sio: socketio.AsyncServer
     vtdataset: Dict[str, VTHellDataset]
+    vtrecords: VTHellRecordedData
 
     def __init__(
         self,
@@ -206,6 +232,7 @@ class SanicVTHell(Sanic):
         self.sio: socketio.AsyncServer = None
         self.holodex: HolodexAPI = None
         self.db: SqliteClient = None
+        self.vtrecords = VTHellRecordedData()
 
         self._db_ready = asyncio.Event()
         self._holodex_ready = asyncio.Event()
