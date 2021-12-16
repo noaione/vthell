@@ -1,3 +1,4 @@
+"""
 MIT License
 
 Copyright (c) 2020-present noaione
@@ -19,3 +20,30 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+"""
+
+from __future__ import annotations
+
+import functools
+from typing import TYPE_CHECKING, Any, Optional, Type
+
+if TYPE_CHECKING:
+    from ..vth import SanicVTHell
+
+__all__ = ("InternalSocketHandler",)
+
+
+class InternalSocketHandler:
+    event_name: str = ""
+    namespace: Optional[str] = None
+
+    @staticmethod
+    async def handle(sid: str, data: Any, app: SanicVTHell):
+        return None
+
+    @classmethod
+    def attach(cls: Type[InternalSocketHandler], app: SanicVTHell):
+        if not cls.event_name:
+            raise ValueError("event_name must be set")
+        bounded_handle = functools.partial(cls.handle, app=app)
+        app.sio.on(cls.event_name, bounded_handle, namespace=cls.namespace)

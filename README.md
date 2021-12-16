@@ -2,80 +2,52 @@
     <img src="https://media.discordapp.net/attachments/558322816995426305/687238504190574598/CocoOkite.gif"><br>
     N4O VTuber Recording Tools
 </h1>
-<p align="center"><b>Version 2.1.1</b><br><i>A rabbit hole you shouldn't enter, once entered you can't get out.</i></p>
-<p align="center">Created by: <b>N4O</b><br/>Last Updated: <b>08/05/2020</b></p>
+<p align="center"><b>Version 3.0.0</b><br><i>A rabbit hole you shouldn't enter, once entered you can't get out.</i></p>
+<p align="center">Created by: <b>N4O</b><br/>Last Updated: <b>XX/XX/20XX</b></p>
 <p align="center"><a href="https://github.com/noaione/vthell/releases"><strong>Download</strong></a></p>
 
 **Table of Contents**:
 - [Information](#information)
 - [Requirements](#requirements)
 - [Setup](#setup)
-    - [Setup python virtualenv](#setup-virtualenv)
-    - [Setup rclone](#setup-rclone)
-    - [Get "YouTube Data API v3" API key.](#get-youtube-data-api-v3-api-key)
-    - **Optional** [Setup Discord Announcer](#setup-discord-announcer-optional)
-    - [Setup VTHell](#setup-vthell)
-    - [Configuring auto-scheduler](#configuring-auto-scheduler)
-    - [Configuring twitcasting](#configuring-twitcasting)
-- [Running](#running)
-    - [addjob.sh](#addjobsh)
-    - [runjob.sh](#runjobsh)
-    - [runauto.sh](#runautosh)
-    - [runtwit.sh](#runtwitsh)
-    - [vtrip.sh](#vtripsh)
-    - [vtup.sh](#vtupsh)
-- [Troubleshooting](#troubleshooting)
-- [Helpful `alias`](#helpful-bashrc-or-alias)
+  - [Setup Rclone](#setup-rclone)
+  - [Setup YTArchive](#setup-ytarchive)
+- [Configuration](#configuration)
+- [Running and Routes](#running-and-routes)
+  - [Routes](#routes)
+  - [Auto Scheduler](#auto-scheduler)
+    - [Migration](#migration)
+  - [Accessing Protected Routes](#accessing-protected-routes)
+  - [Socket.IO](#socketio)
+- [Improvements](#improvements)
+- [Dataset](#dataset)
+- [License](#license)
 
 ## Information
-~~This tools currently doesn't support anyone else beside HoloLive.~~
-<br>
-~~You are able to use it but it will not work 100% or the upload mapping will be kinda fucked.~~
-<br>
-~~To be honest, this tools works for every livestream in YouTube. It will only be broken when the stream is recorded and will be uploaded.~~
 
-**This program now support Agency outside Hololive, you can check it on [dataset](https://github.com/noaione/vthell/tree/master/dataset) folder.**
+The v3 version of VTHell is a big rewrite from previous version, while previous version use multiple scripts now this version includes a single webserver with other stuff that will automatically download/upload/archive your stuff.
 
-I only fully support Linux for now because Windows is annoying to make this fully automatic and I'm lazy to write up the tutorial.
+This program utilize the [Holodex](https://holodex.net) API to fetch Youtube stream and information about it.
 
-This tools also utilize [HoloLive Tools](https://hololive.jetri.co/) API and YouTube Data API v3 for YouTube streams.<br>
-And utilize twitcasting API for the twitcasting streams.
-
-If you want to see other VLiver to be added to this list, you can contact me at **Discord: N4O#8868**<br>
-I'll try to add it to this program.
-
-This tools is not modular yet, but once it setup you can just use it easily.
+The program also use a specific dataset to map upload path, if its need to be improved feel free to open a new pull request.
 
 ## Requirements
-- Linux Server
-- Python 3.5+
-- screen
-- mkvmerge
+- Python 3.7+
+- mkvmerge (mkvtoolnix)
 - rclone
-
-**Python module:**
-- requests
-- pytz
-- youtube-dl
-- streamlink
-- discord_webhook
-
-Optional:
-- chat-downloader
-
+- ytarchive
 
 ## Setup
-### Setup virtualenv
-1. Install Python 3.5+ and `virtualenv`
-2. Make a python virtualenv and install all the python module
-    ```bash
-    $ virtualenv vthellenv
-    $ source vthellenv/bin/activate
-    $ pip3 install -U requests pytz youtube-dl streamlink discord_webhook chat-downloader
-    $ deactivate
-    ```
-    
-### Setup rclone
+
+This project utilize [Poetry](https://python-poetry.org/) to manage its project, please follow [this](https://github.com/python-poetry/poetry#installation) instruction to install [Poetry](https://python-poetry.org/).
+
+After you have installed poetry run all of this command:
+1. `poetry install`
+2. `cp .env.example .env`
+
+This will install all the requirements and copy the example environment into a proper env file.
+
+### Setup Rclone
 1. Install `rclone`: https://rclone.org/install/
 2. Setup `rclone` by refering to their [documentation](https://rclone.org/docs/)
 
@@ -153,391 +125,390 @@ y/e/d>
 - Press `y` to complete the setup or `e` if you want to edit it again.<br>
 - You can exit by typing `q` and enter after this.
 
-### Get "YouTube Data API v3" API key.
-1. Go to: https://console.developers.google.com/
-2. Create a new project
-3. Go to: `APIs & Services` ~> `Library`
-4. Search: `YouTube Data API v3` and click it
-5. Enable the API, and wait
-6. Click `Manage` on the same page after your API is enabled, if you can't see it, try refreshing it.
-7. Go to `Credentials`
-8. Click `+ Create Credentials` ~> `API key`
-9. Copy and save it somewhere save for now.
-10. Click `Close`
-11. From the API key you saved before, create a new ENV key on your linux machine, titled: `VTHELL_YT_API_KEY`<br>
-    You can edit your `${HOME}/.profile` file and add this:
-    ```
-    VTHELL_YT_API_KEY="YOUR_API_KEY"; export VTHELL_YT_API_KEY
-    ```
+### Setup YTArchive
 
-### Setup Discord Announcer (OPTIONAL)
-1. Setup a new channel in your discord server
-2. Click the gear icon (Edit channel) beside the channel name
-3. Click `Webhooks` then `Create Webhook`
-4. Name it whatever you want and copy the webhook URL
-5. With the same step as `Step 11` from [Get “YouTube Data API v3” API key.](#get-youtube-data-api-v3-api-key), you need to made a ENV key<br>
-    You can edit your `${HOME}/.profile` file and add this:
-    ```
-    VTHELL_DISCORD_WEBHOOK="DISCORD_WEBHOOK_URL"; export VTHELL_DISCORD_WEBHOOK
-    ```
+[YTArchive](https://github.com/Kethsar/ytarchive) is a tool to download a youtube stream from the very beginning of the stream. This tools works much better rather than Streamlink for now.
 
-### Setup VTHell
-1. [Download](https://github.com/noaione/vthell/releases) or [clone](https://api.github.com/repos/noaione/vthell/zipball/master) this repository
-2. Create `jobs` and `streamdump` folder inside vthell folder<br>
-    Example:
-    ```
-    $ ls -alh ~/vthell/
-    drwxr-xr-x  6 mizore mizore 4.0K Apr 12 04:27 .
-    drwx------ 27 mizore mizore 4.0K Apr 12 08:57 ..
-    -rwxr--r--  1 mizore mizore  176 Apr  9 03:51 addjob.sh
-    drwxr-xr-x  2 mizore mizore 4.0K Apr 12 10:12 jobs
-    -rwxr--r--  1 mizore mizore  102 Apr 12 04:27 runauto.sh
-    -rwxr--r--  1 mizore mizore  113 Apr  9 03:51 runjob.sh
-    drwxr-xr-x  2 mizore mizore 4.0K Apr 12 08:59 scripts
-    drwxr-xr-x  2 mizore mizore 4.0K Apr 12 09:00 streamdump
-    -rwxr--r--  1 mizore mizore  982 Apr 11 08:39 vtrip.sh
-    -rwxr--r--  1 mizore mizore 4.0K Apr  8 02:21 vtup.sh
-    ```
-3. Change all of this part
+1. Download the latest version of ytarchive: https://github.com/Kethsar/ytarchive/releases/latest
+2. Select the correct distribution
+3. Extract the file
+4. Create a new folder called `bin` in the root folder of vthell
+5. Copy the extracted file into there, it should now look like this:
 
-**In `scripts/schedule.py`**<br>
+```bash
+[agrius ~/vthell/bin] ls -alh
+total 7.3M
+drwx------  2 mizore mizore 4.0K Dec 14 21:57 .
+drwxr-xr-x 11 mizore mizore 4.0K Dec 14 21:57 ..
+-rwxr-xr-x  1 mizore mizore 7.3M Oct 20 23:58 ytarchive
+```
+
+## Configuration
+
+VTHell v3 have this following configuration needed:
+
+```yml
+# -- Web Server Config --
+# THe port to run the web server on
+PORT=12790
+# Enable if you're planning to use Reverse Proxy like Nginx
+WEBSERVER_REVERSE_PROXY=false
+# Set the secret key here if you want to use reverse proxy
+WEBSERVER_REVERSE_PROXY_SECRET=this-is-a-very-secure-reverse-proxy-secret
+# Set the web password, will be use for authentication
+WEBSERVER_PASSWORD=this-is-a-very-secure-web-password
+
+# -- VTHell Config --
+# Database name
+VTHELL_DB=vth.db
+# The waiting time for each download check in seconds
+VTHELL_LOOP_DOWNLOADER=60
+# The waiting time for each auto scheduler check in seconds
+VTHELL_LOOP_SCHEDULER=180
+# The grace period for the downloader before starting the download
+# waiting process in seconds
+VTHELL_GRACE_PERIOD=120
+
+# Your Holodex API Key, you can get it from your profile section
+HOLODEX_API_KEY=
+
+# Binary path location and more
+RCLONE_BINARY=rclone
+RCLONE_DISABLE=0
+RCLONE_DRIVE_TARGET=
+MKVMERGE_BINARY=mkvmerge
+YTARCHIVE_BINARY=ytarchive
+
+# Notification helper
+NOTIFICATION_DISCORD_WEBHOOK=
+```
+
+- `PORT` just means what port it will run on (if you run the app file directly)
+- `WEBSERVER_REVERSE_PROXY` enable if you need reverse proxy feature
+- `WEBSERVER_REVERSE_PROXY_SECRET` this need to be set if you enable reverse proxy, learn more [here](https://sanicframework.org/en/guide/deployment/nginx.html#proxied-sanic-app).
+  You can generate a random one with: `openssl rand -hex 32`
+- `WEBSERVER_PASSWORD` this will be your password to access protected resources.
+
+- `VTHELL_DB` is your database filename
+- `VTHELL_LOOP_DOWNLOADER` will be your downloader timer, which means the scheduler will run every x seconds that are specified (default 60 seconds)
+- `VTHELL_LOOP_SCHEDULER` will be your auto scheduler timer, which means the scheduler will run every x seconds that are specified (default 180 seconds).
+  This one will run the auto scheduler that will fetch and automatically add the new job to the database
+- `VTHELL_GRACE_PERIOD` how long should the program waits before start trying to download the stream (in seconds, default 2 minutes)
+- `HOLODEX_API_KEY` will be your Holodex API key which you can get from your profile page
+- `RCLONE_BINARY` will be the full path to your rclone (or you can add it to your system PATH)
+- `RCLONE_DISABLE` if you set it to `1`, it will disable rclone/upload step and will save the data to your local disk at `streamdump/`
+- `RCLONE_DRIVE_TARGET` will be your target drive or your remote name that you setup in [Setup Rclone](#setup-rclone)
+- `MKVMERGE_BINARY` will be your mkvmerge path
+- `YTARCHIVE_BINARY` will be your ytarchve path, you can follow the [Setup YTArchive](#setup-ytarchive) to get your ytarchive up and running.
+- `NOTIFICATION_DISCORD_WEBHOOK` will be used to announce any update to your scheduling. Must be a valid Discord Webhook link.
+
+## Running and Routes
+
+After you configure it properly, you can start running with Uvicorn or invoking the app.py file directly.
+
+**Via Uvicorn**
+
 ```py
-BASE_VTHELL_PATH = (
-    "/media/sdac/mizore/vthell/"  # Absoule path to vthell folder
-)
-```
-Change `BASE_VTHELL_PATH` to the absolute path of your vthell folder
-
-**In `scripts/vtauto_schedule.py`**<br>
-```py
-BASE_VTHELL_PATH = "/media/sdac/mizore/vthell/"  # Absoule path to vthell folder
-```
-Change `BASE_VTHELL_PATH` to the absolute path of your vthell folder
-
-**In `scripts/vthell.py` AND In `scripts/twitcast.py`**<br>
-```py
-BASE_VTHELL_PATH = (
-    "/media/sdac/mizore/vthell/"  # Absoule path to vthell folder
-)
-RCLONE_PATH = "/media/sdac/mizore/bin/rclone"  # path to rclone executable
-RCLONE_TARGET_BASE = (
-    "naomeme:Backup/VTuberHell/"  # base target upload drive and folder
-)
-BASE_VENV_BIN = (
-    "/media/sdac/mizore/pip3/bin/"  # path to created python3 virtualenv bin
-)
-
-[...]
-
-"""
-Cookies must be Netscape format or the one that can be opened with CURL.
-
-Netscape format:
-URL  INCLUDE_SUBDOMAINS  PATH  HTTPS_ONLY  EXPIRES  COOKIES_NAME  COOKIES_VALUE
-.youtube.com  TRUE  /  TRUE  0  SAMPLES  SAMPLEVALUES
-"""
-COOKIES_NAME = "cookies.txt"  # Your cookies file name
+poetry run uvicorn asgi:app
 ```
 
-**Update 1.9**<br>
-This update introduce cookies support to be able to record member-only stream.<br>
-Change `COOKIES_NAME` to your cookies that you put on the main vthell folder.
+You can see more information [here](https://www.uvicorn.org/deployment/)
 
-**WARNING**<br>
-I only support Netscape format as seen on that top sample.
+**Invoking directly**
 
-Change `BASE_VTHELL_PATH` to the absolute path of your vthell folder<br><br>
-Change `RCLONE_PATH` to where you put your rclone file, you can find it with
-```bash
-$ which rclone
-```
-if you install it systemwide<br><br>
-Change `RCLONE_TARGET_BASE` to what you configured before with `rclone config`<br>
-`naomeme` is your drive name that you use<br>
-`Backup/VTuberHell/` is your folder you want to use.<br>
-So if you want to change it to drive `foo` and folder `VTuberBackup`: `foo:VTuberBackup/`<br><br>
-Change `BASE_VENV_BIN` to where you setup your `virtualenv` folder, target it to the `bin` folder that contain stuff like this:
-```bash
-$ ls -alh ~/pip3/bin/
-total 4.7M
-drwx------ 3 REDACTED REDACTED 4.0K Apr  8 13:59 .
-drwx------ 7 REDACTED REDACTED 4.0K Apr  4 23:26 ..
--rw------- 1 REDACTED REDACTED 2.2K Apr  4 10:03 activate
--rw------- 1 REDACTED REDACTED 1.4K Apr  4 10:03 activate.csh
--rw------- 1 REDACTED REDACTED 3.1K Apr  4 10:03 activate.fish
--rw------- 1 REDACTED REDACTED 1.8K Apr  4 10:03 activate.ps1
--rw------- 1 REDACTED REDACTED 1.5K Apr  4 10:03 activate_this.py
--rw------- 1 REDACTED REDACTED 1.2K Apr  4 10:03 activate.xsh
--rwxr-xr-x 1 REDACTED REDACTED  240 Apr  4 10:04 chardetect
--rwxr-xr-x 1 REDACTED REDACTED  242 Apr  8 13:59 discord_webhook
--rwxr-xr-x 1 REDACTED REDACTED  249 Apr  4 10:03 easy_install
--rwxr-xr-x 1 REDACTED REDACTED  249 Apr  4 10:03 easy_install-3.5
--rwxr-xr-x 1 REDACTED REDACTED  240 Apr  4 10:03 pip
--rwxr-xr-x 1 REDACTED REDACTED  240 Apr  4 10:03 pip3
--rwxr-xr-x 1 REDACTED REDACTED  240 Apr  4 10:03 pip3.5
-lrwxrwxrwx 1 REDACTED REDACTED    7 Apr  4 10:02 python -> python3
--rwxr-xr-x 1 REDACTED REDACTED 4.6M Apr  4 10:02 python3
-lrwxrwxrwx 1 REDACTED REDACTED    7 Apr  4 10:02 python3.5 -> python3
--rwxr-xr-x 1 REDACTED REDACTED 2.3K Apr  4 10:03 python-config
--rwxr-xr-x 1 REDACTED REDACTED  237 Apr  4 10:05 streamlink
--rwxr-xr-x 1 REDACTED REDACTED  227 Apr  4 10:03 wheel
--rwx--x--x 1 REDACTED REDACTED 6.3K Apr  4 10:05 wsdump.py
--rwxr-xr-x 1 REDACTED REDACTED  228 Apr  4 23:26 youtube-dl
-```
+1. Make sure you're in the virtualenv
+2. Modify the port you want in the `.env` file
+3. Run with `python3 app.py` to start the webserver
 
-**In most of the bash file**<br>
-Change `/media/sdac/mizore/pip3/bin/python3` to your virtualenv python
-Change `/media/sdac/mizore/vthell/scripts` to your absolute path of your vthell scripts folder
+### Routes
 
-**In `vtrip.sh`**<br>
-Change this:
-```bash
-YTDL_PATH="/media/sdac/mizore/pip3/bin/youtube-dl"
-PY3_PATH="/media/sdac/mizore/pip3/bin/python3"
-VTHELL_PATH="/media/sdac/mizore/vthell"
-```
-Set the `YTDL_PATH` to your `youtube-dl` in virtualenv `bin` folder
-Set the `PY3_PATH` to your `python3` in virtualenv `bin` folder
-Set the `VTHELL_PATH` to your absolute path of your vthell folder
+> **POST `/api/schedule`**, schedule a single video.
 
-**In `vtup.sh`**<br>
-Change this:
-```bash
-BASE_TARGET="naomeme:Backup/VTuberHell"
-RCLONE_PATH="/media/sdac/mizore/bin/rclone"
-```
-Set the `RCLONE_PATH` to where you put your rclone file, you can find it with
-```bash
-$ which rclone
-```
-if you install it systemwide<br><br>
-Change `BASE_TARGET` to what you configured before with `rclone config`<br>
-`naomeme` is your drive name that you use<br>
-`Backup/VTuberHell/` is your folder you want to use.<br>
-So if you want to change it to drive `foo` and folder `VTuberBackup`: `foo:VTuberBackup/`
+**Returns 200** with the added video on success.<br>
+**Authentication needed**<br>
+**On fail** it will return a JSON with `error` field.
 
-3. You're mostly ready to use this """program"""
+This route allows you to schedule a video manually. If video already scheduled, it will replace some stuff but not everything.
 
-
-### Configuring auto-scheduler
-**Main file: [scripts/vtauto_schedule.py](https://github.com/noaione/vthell/blob/master/scripts/vtauto_schedule.py)**<br>
-**[dataset/_auto_scheduler.json](https://github.com/noaione/vthell/blob/master/dataset/_auto_scheduler.json)**
-
-**Update 2.0**
-<br>
-This update separate the mapping to it's own file, to edit if you want to enable Nijisanji or Hololive<br>
-you can refer to the `vtauto_schedule.py` file.
-
-While the `dataset/_auto_scheduler.json` contain what you want to allowed (enabled) or ignored (disabled).<br>
-The format are still the same as before, you can still follow the instructions below.
-
-**Update 1.9**
-<br>
-This update introduce Nijisanji to the auto uploader, you can enable/disable it on the main file.
-```py
-"""
-Set to True or False if you want it to be processed/scheduled automatically
-
-Default:
-- Enable Hololive
-- Disable Nijisanji
-So, it will process Hololive but skip Nijisanji completely.
-"""
-PROCESS_HOLOLIVE = True
-PROCESS_NIJISANJI = False
-```
-
-There's 2 main part to edit, `enabled` and `disabled`<br>
-`enabled` are streams that will be scheduled if it match one of the defined conditions.<br>
-While `IGNORED_MAP` will remove anything that match the conditions.
-
-The default one for `enabled` are:
-- Towa ch.
-- Korone ch.
-- Any title containing: `歌う`
-- Any title containing: `歌枠`
-- Any title containing: `歌雑談`
-- Any title containing: `ASMR`
-- Any title containing: `うたうよ`
-
-The default one for `disabled` are:
-- All HoloStars Channel
-- Any title containing: `(cover)`
-- Any title containing: `あさココ`
-
-There's only 2 supported `type` now:
-- `channel`
-- `word`
-
-`channel` will record/ignore any upcoming live from the `channel`<br>
-`word` will record/ignore any upcoming live when the title have the certain `word`
-
-Example:
-```json
-{"type": "word", "data": "歌う"}
-```
-Record anything that have `歌う` (utau) in the title
+This route accept JSON data with this format:
 
 ```json
-{"type": "channel", "data": "UC1uv2Oq6kNxgATlCiez59hw"}
-```
-Record anything from `channel`: `UC1uv2Oq6kNxgATlCiez59hw` (`UC1uv2Oq6kNxgATlCiez59hw` are channel ID)<br>
-Channel ID are provided in dataset folder.
-
-You can add more by just creating a new line after the last one.<br>
-You also can remove any predefined one if you want.
-
-### Configuring Twitcasting
-**Main file: [scripts/twitcast.py](https://github.com/noaione/vthell/blob/master/scripts/twitcast.py)**
-
-**NOTE**<br>
-I need help expanding the twitcast user ID, please contact me at Discord: N4O#8868
-
-There's only 1 part you need to edit: `ENABLED_USERS` variable<br>
-
-The default one enabled are:
-- natsuiromatsuri
-
-You only need to add the user ID to the `ENABLED_USERS` lists<br>
-You can check the User ID on `upload_mapping` variable.
-
-## Running
-#### [addjob.sh](https://github.com/noaione/vthell/blob/master/addjob.sh)
-**./addjob.sh** [youtube_link1] [youtube_link2] [youtube_link_etc]
-
-Supported youtube link format are:
-- https://www.youtube.com/watch?v=VIDEOID
-- https://youtu.be/VIDEOID
-
-It will create a .json files containing some info that will be parsed by `runjob.sh` or `vthell.py`
-
-Using **Youtube Data API v3** to determine output filename.<br>
-**Output filename format**: `[YYYY.MM.DD] TITLE [RESOLUTIONp AAC].mkv`
-
-#### [runjob.sh](https://github.com/noaione/vthell/blob/master/runjob.sh)
-**./runjob.sh**
-
-You can use **`cronjob`** to run every minute or whatever interval you want or run it manually.
-
-It will check all `.json` in `jobs` folder and process the one that are not processed yet.
-
-***What will be checked?*** the .json file<br>
-The json file contains 3 keys that will be used to check:
-- **`startTime`** if the `startTime` not less than 2 minutes left, it will be skipped completely
-- **`isDownloaded`** stream `finished`, and file is being muxed and will be uploaded.
-- **`isDownloading`** will skip if True to `prevent double recording`.
-
-After **1 minutes left before stream**, it will use **streamlink** to check if stream online or not.<br>
-If not continue, if yes start recording.
-
-After stream finished, file will be muxed into .mkv and will be uploaded, .ts file will be deleted and also the .json files.
-
-**Recommended cron schedule:**
-```sh
-*/1 * * * * /path/to/vthell/runjob.sh
+{
+  "id": "abcdef12345"
+}
 ```
 
-#### [runauto.sh](https://github.com/noaione/vthell/blob/master/runauto.sh)
-**./runauto.sh**
+`id` is the youtube video ID that will be fetched to Holodex API to check if it's still live/upcoming.
 
-You can use **`cronjob`** to run every 3 minute or whatever interval you want or run it manually.
+> **DELETE `/api/schedule`**, delete single scheduled video.
 
-It will fetch to [HoloLive Jetri](https://hololive.jetri.co/) endpoint to get upcoming live and ongoing live.<br>
-It will add whatever in `ENABLED_MAP` variable, like channel or certain words in a title.<br>
-You can add what you don't want to `IGNORED_MAP` variable.<br>
-After that, it will check all `.json` in `jobs` folder and add the one that are not exist yet.
+**Returns 200** with deleted video on success.<br>
+**Authentication needed**<br>
+**On fail** it will return a JSON with `error` field.
 
-**To customize refer to: [Configuring auto-scheduler](#configuring-auto-scheduler)**
+This route will delete a specific video and return the deleted video if found, the data is the following:
 
-**Recommended cron schedule:**
-```sh
-*/3 * * * * /path/to/vthell/runauto.sh
+```json
+{
+  "id": "bFNvQFyTBx0",
+  "title": "【ウマ娘】本気の謝罪ガチャをさせてください…【潤羽るしあ/ホロライブ】",
+  "start_time": 1639559148,
+  "channel_id": "UCl_gCybOJRIgOXw6Qb4qJzQ",
+  "is_member": false,
+  "status": "DOWNLOADING",
+  "error": null
+}
 ```
 
-#### [runtwit.sh](https://github.com/noaione/vthell/blob/master/runtwit.sh)
-**./runtwit.sh**
+The deletion only work if the status is either:
+- `WAITING`
+- `DONE`
+- `CLEANUP`
 
-You can use **`cronjob`** to run every 2 minute or whatever interval you want or run it manually.
+If it's anything else, it will return **406 Not Acceptable** status code.
 
-It will fetch to Twitcasting frontend API endpoint to check if `ENABLED_USERS` are live or not.<br>
-If it's it will add a "LOCK" file to jobs folder to ensure that no duplicate will be added.<br>
-After it finish, it will unlock again the file and the final file will be uploaded.<br>
+> **GET `/api/status`**, get the status of all scheduled video.
 
-**To customize refer to: [Configuring auto-scheduler](#configuring-twitcasting)**
+**Returns 200** with a list scheduled video on success.
 
-**Recommended cron schedule:**
-```sh
-*/2 * * * * /path/to/vthell/runtwit.sh
+This routes accept the following query parameters:
+- `include_done`, adding this and setting it into `1` or `true` will include all scheduled video including the one that are already finished.
+
+```json
+[
+  {
+    "id": "bFNvQFyTBx0",
+    "title": "【ウマ娘】本気の謝罪ガチャをさせてください…【潤羽るしあ/ホロライブ】",
+    "start_time": 1639559148,
+    "channel_id": "UCl_gCybOJRIgOXw6Qb4qJzQ",
+    "is_member": false,
+    "status": "DOWNLOADING",
+    "error": null
+  }
+]
 ```
 
-#### [vtrip.sh](https://github.com/noaione/vthell/blob/master/vtrip.sh)
-**./vtrip.sh** [url]
+All the data is self-explanatory, the `status` is one of this enum:
+- `WAITING` means that it's not yet started
+- `PREPARING` means the recording process is started and now waiting for stream to start
+- `DOWNLOADING` means that the stream is being recorded
+- `MUXING` means that the stream has finished downloading and now being muxed into `.mkv` format
+- `UPLOAD` means that the stream is now being uploaded to the specified folder
+- `CLEANING` means that upload process is done and now the program is cleaning up downloaded files.
+- `DONE` means that the job is finished
+- `ERROR` means an error occured, see the `error` field to learn more.
 
-Download your vtuber (mainly holo) video from youtube.<br>
-Doesn't support playlist.<br>
-Output format are: `[YYYY.MM.DD] TITLE [RESOLUTION AAC].mkv`<br>
-YYYY.MM.DD are Date uploaded or streamed.<br>
-Combine with `vtup.sh` later
+> **GET `/api/status/:id`**, get the status of a single job
 
-[vtrip_helper.py](https://github.com/noaione/vthell/blob/master/scripts/vtrip_helper.py) are helper to determine the output name using Youtube Data API v3.
+**Returns 200** with a requested video on success.<br>
+**On fail** it will return a JSON with `error` key.
 
-**Don't use this if you're ripping currently live streamed video, use addjob.sh for that**
+It does the same thing as above route, but only for a single job and returns a dictionary instead of list.
 
-#### vtup.sh
-**REMOVED**
+### Auto Scheduler
 
-`vtup.sh` are now removed since version 1.9 since it's support more Agency.
+The auto scheduler is a feature where the program will check every X seconds to the Holodex API for ongoing/upcoming live stream and will schedule anything that match the criteria.
 
+**Routes**
 
-## Troubleshooting
-> Stream xxxxxx are paused
+The following are the routes available to add/remove/modify scheduler:
 
-Enable it again when the VTuber start streaming by using `./addjob.sh [youtube_link]`
+> **GET `/api/auto-scheduler`**, fetch all the auto scheduler.
 
-> Error 429
+**Returns 200** on success with the following data:
 
-You're being rate limited by YouTube there's nothing you can do except using proxy temporarily
+```json
+{
+  "include": [
+    {
+      "id": 1,
+      "type": "channel",
+      "data": "UC1uv2Oq6kNxgATlCiez59hw",
+      "chains": null
+    },
+    {
+      "id": 2,
+      "type": "word",
+      "data": "ASMR",
+      "chains": [
+        {
+          "type": "group",
+          "data": "hololive"
+        }
+      ]
+    }
+  ],
+  "exclude": [
+    {
+      "id": 3,
+      "type": "word",
+      "data": "(cover)",
+      "chains": null
+    },
+  ]
+}
+```
 
-> "Please add VTuber from xxx."
+The data format as seen above includes:
+- `type`, which is the type of the data. It must be the following enum:
+  - `word`: to check if specific word exist in the title. (case-insensitive)
+  - `regex_word`: same as above, but it use regex. (case-insensitive)
+  - `group`: check if it match the organization or group (case-insensitive)
+  - `channel`: check if channel ID match (case-sensitive)
+- `data`: a string following the format of specified `type`
+- `chains`: A list of data to be chained with the original data check. If chains are defined, all of them must be matching to be scheduled.
+  - This only works on the following type: `word`, `regex_word`
+  - This only works on `include` filters only right now.
 
-If you want me to add that VTuber into the list, please help me compile them with the same format as most `dataset` list.<br>
-**You can contact me at Discord: N4O#8868**
+You can add new scheduler by sending a POST request to this following route:
 
-> "I added DISCORD_WEBHOOK to my ENV key but I'm not getting any announcement"
+> **POST `/api/auto-scheduler`**, add new scheduler filter
 
-Replace the `DISCORD_WEBHOOK_URL = os.getenv("VTHELL_DISCORD_WEBHOOK", "")` with<br>
+**Returns 201** on success<br />
+**Authentication needed**<br />
+**On fail** it will return a JSON with `error` field.
+
+This route accepts a JSON data with this format:
+
+```json
+{
+  "type": "string-or-type-enum",
+  "data": "string",
+  "chains": null,
+  "include": true
+}
+```
+
+`type` must be the enum specified above, `data` must be a string, and `include` means if it should be included or excluded when processing the filters later.
+
+Chains can be either, a dictionary/map for single chain, or a list for multiple chains. It can also be none if you dont need it.
+
+Chains will be ignored automatically if `type` is not `word` or `regex_word`.
+
+> **PATCH `/api/auto-scheduler/:id`**, modify specific scheduler filter.
+
+**Returns 204** on success<br />
+**Authentication needed**<br />
+**On fail** it will return a JSON with `error` field.
+
+This route accepts all of this JSON data:
+
+```json
+{
+  "type": "string-or-type-enum",
+  "data": "string",
+  "chains": null,
+  "include": true
+}
+```
+
+All of it are optional, but you must specify something if you want to modify it.
+
+`:id` can be found from using the `GET /api/auto-scheduler`.
+
+> **DELETE `/api/auto-scheduler/:id`**, delete specific scheduler filter.
+
+**Returns 200** on success with the deleted data<br />
+**Authentication needed**<br />
+**On fail** it will return a JSON with `error` field.
+
+`:id` can be found from using the `GET /api/auto-scheduler`.
+
+#### Migration
+
+The auto scheduler has now been rewritten, if you still have the old one you might want to run the migration scripts.
+
 ```py
-DISCORD_WEBHOOK_URL = "YOUR_WEBHOOK_URL"
+$ python3 migrations/auto_scheduler.py
 ```
 
-## Helpful `.bashrc` or `alias`
-> Shortcut for `addjob.sh`
-```bash
-alias vta="/path/to/vthell/addjob.sh"
+Make sure you have the `_auto_scheduler.json` in the `dataset` folder, and make sure the webserver is running.
+
+### Accessing Protected Routes
+
+Some routes are protected with password to make sure not everyone can use it. To access it, you need to set the `WEBSERVER_PASSWORD` and copy te value elsewhere.
+
+After that to access it, you need to set either of following header:
+- `Authorization`: You also need to prefix it with `Password ` (ex: `Password 123`)
+- `X-Auth-Token`: *No extra prefix*
+- `X-Password`: *No extra prefix*
+
+The program will first check it in `Authorization` header then the both `X-*` header.
+
+**Sample request**
+
+```sh
+curl -X POST -H "Authorization: Password SecretPassword123" http://localhost:12790/api/add
 ```
 
-> Shortcut for `runjob.sh`
-```bash
-alias vtr="/path/to/vthell/runjob.sh"
+```sh
+curl -X POST -H "X-Password: SecretPassword123" http://localhost:12790/api/add
 ```
 
-> Shortcut for `runauto.sh`
-```bash
-alias vtar="/path/to/vthell/runauto.sh"
+```sh
+curl -X POST -H "X-Auth-Token: SecretPassword123" http://localhost:12790/api/add
 ```
 
-> Shortcut for `vtrip.sh`
-```bash
-alias vtd="/path/to/vthell/vtrip.sh"
+### Socket.IO
+
+**You need Socket.IO 4.x for JS Client**
+
+This program also support watching the data over Socket.IO client. You can connect to the `/vthell` namespace to listen to all the emitter.
+
+Here are the event:
+> `job_update`
+
+Will be emitted everytime there is an update on the job status. It will broadcast the following data:
+
+```json
+{
+  "id": "123",
+  "status": "DOWNLOADING",
+  "error": "An error if possible"
+}
 ```
 
-> Follow logfile
-```bash
-alias vtl="tail -f -n 80 /path/to/vthell/nvthell.log"
+The `error` field might be not available if the `status` is not `ERROR`.
+
+> `job_scheduled`
+
+This will be emitted everytime autoscheduler added a new scheduled job automatically. It will contains the following data as an example:
+
+```json
+{
+  "id": "bFNvQFyTBx0",
+  "title": "【ウマ娘】本気の謝罪ガチャをさせてください…【潤羽るしあ/ホロライブ】",
+  "start_time": 1639559148,
+  "channel_id": "UCl_gCybOJRIgOXw6Qb4qJzQ",
+  "is_member": false,
+  "status": "DOWNLOADING"
+}
 ```
 
-> See all the jobs<br>
-**WARNING**: You need `jq` in your PATH
-```bash
-alias vtj='for jobs in /path/to/vthell/jobs/*.json; do jname=`cat $jobs | jq -r '.filename'`; jsurl=`cat $jobs | jq -r '.streamUrl'`; jsdling=`cat $jobs | jq '.isDownloading'`; jsdled=`cat $jobs | jq '.isDownloaded'`; jdtime=`cat $jobs | jq '.startTime'`; jdtime="$(($jdtime + 32400))"; jdtime=`date -d @$jdtime`; printf "Title: ${jname}\nLink: ${jsurl}\nStart Time: ${jdtime/UTC/JST}\Recording? ${jsdling^}   Recorded? ${jsdled^}\n\n"; done'
-```
+> `connect_job_init`
+
+This will be called as soon as you established connection with the Socket.IO server. It will be used so you can store the current state without needing to use the API.
+
+The data will be the same as requesting to the `/api/status` (without the job with `DONE` status)
+
+## Improvements
+
+Version 3.0 of VTHell is very much different to the original 2.x or 1.x version of it. It includes a full web server to monitor your recording externally, a better task management to allow you to fire multiple download at once, Socket.IO feature to better monitor your data via websocket.
+
+It also now using Holodex API rather than Holotools API since it support many more VTuber.
+
+The other thing is moving from JSON file to SQLite3 database for all the job, this improve performance since we dont need to read/write multiple time to disk.
+
+Oh, and I guess now it support Windows since it does not rely on some linux only feature.
+
+## Dataset
+
+With v3, the dataset is now on its own repository, you can access it here: https://github.com/noaione/vthell-dataset
+
+The dataset repo will be fetched every 1 hour to see if the deployed hash changes.
+
+If you have suggestion for new dataset, removal, and more. Please visit the repo and open a PR or Issue there!
+
+## License
+
+This project is licensed with MIT License, learn more [here](LICENSE)

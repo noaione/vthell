@@ -1,3 +1,4 @@
+"""
 MIT License
 
 Copyright (c) 2020-present noaione
@@ -19,3 +20,24 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+"""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Dict
+
+if TYPE_CHECKING:
+    from ..vth import SanicVTHell
+
+__all__ = ("InternalSignalHandler",)
+
+
+class InternalSignalHandler:
+    signal_name: str = "internals.signal.base"
+
+    @staticmethod
+    async def main_loop(**context: Dict[str, Any]):
+        app: SanicVTHell = context.get("app")
+        if app is None:
+            return
+        return

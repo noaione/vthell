@@ -1,3 +1,4 @@
+"""
 MIT License
 
 Copyright (c) 2020-present noaione
@@ -19,3 +20,22 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+"""
+
+from __future__ import annotations
+
+import asyncio
+from typing import TYPE_CHECKING, Dict, Type
+
+if TYPE_CHECKING:
+    from ..vth import SanicVTHell
+
+__all__ = ("InternalTaskBase",)
+
+
+class InternalTaskBase:
+    _tasks: Dict[str, asyncio.Task] = {}
+
+    @classmethod
+    async def main_loop(cls: Type[InternalTaskBase], app: SanicVTHell):
+        return

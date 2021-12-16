@@ -1,3 +1,4 @@
+"""
 MIT License
 
 Copyright (c) 2020-present noaione
@@ -19,3 +20,43 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Optional, Union
+
+from ._types import HolodexVideoStatus
+
+__all__ = ("HolodexVideo",)
+
+
+@dataclass
+class HolodexVideo:
+    id: str
+    title: str
+    start_time: Optional[int]
+    channel_id: str
+    org: Optional[str]
+    status: HolodexVideoStatus
+    url: str
+    is_member: bool
+
+    def __eq__(self, other: Union[str, HolodexVideo]) -> bool:
+        if isinstance(other, str):
+            return self.id == other
+        elif isinstance(other, HolodexVideo):
+            return self.id == other.id
+        return False
+
+    def to_json(self) -> dict:
+        return {
+            "id": self.id,
+            "title": self.title,
+            "start_time": self.start_time,
+            "channel_id": self.channel_id,
+            "status": self.status,
+            "url": self.url,
+            "is_member": self.is_member,
+        }

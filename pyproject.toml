@@ -1,0 +1,51 @@
+[tool.poetry]
+name = "vthell"
+version = "3.0.0"
+description = "An API endpoint to manage your VTuber recording"
+authors = ["noaione <noaione0809@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+aiohttp = "^3.8.1"
+python-dotenv = "^0.19.2"
+pendulum = "^2.1.2"
+orjson = "^3.6.5"
+uvicorn = "^0.16.0"
+tortoise-orm = "^0.17.8"
+aiosqlite = "^0.17.0"
+sanic = "^21.9.3"
+python-socketio = "^5.5.0"
+coloredlogs = "^15.0.1"
+Sanic-Cors = "^1.0.1"
+aiofiles = "^0.8.0"
+watchgod = "^0.7"
+discord-webhook = "^0.14.0"
+requests = "^2.26.0"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^4.0.1"
+isort = "^5.10.1"
+black = "^21.12b0"
+safety = "^1.10.3"
+aerich = "^0.6.0"
+
+[tool.aerich]
+tortoise_orm = "internals.db.config.TORTOISE_ORM"
+location = "./migrations"
+src_folder = "./."
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
+target-version = ["py37", "py38", "py39"]
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+extend_skip = ["env/**", "venv/**", ".pytest_cache/**", ".venv/**", "__pycache__/**"]
+line_length = 120
+skip_gitignore = true

@@ -1,3 +1,4 @@
+"""
 MIT License
 
 Copyright (c) 2020-present noaione
@@ -19,3 +20,19 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+"""
+
+import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+from app import setup_app
+from internals.logme import setup_logger
+
+CURRENT_PATH = Path(__file__).absolute().parent
+logger = setup_logger(CURRENT_PATH)
+load_dotenv(str(CURRENT_PATH / ".env"))
+os.environ.setdefault("SERVER_GATEWAY_INTERFACE", "ASGI_MODE")
+
+app = setup_app()
