@@ -213,6 +213,10 @@ class RecordedStreamTasks(InternalTaskBase):
                 task = app.loop.create_task(cls.executor(task_name, app), name=task_name)
                 task.add_done_callback(cls.executor_done)
                 cls._tasks[task_name] = task
+                try:
+                    await task
+                except Exception as exc:
+                    logger.error(f"Records update {task_name} failed: {exc}", exc_info=exc)
         except asyncio.CancelledError:
             logger.warning("Got cancel signal, cleaning up all running tasks")
             for name, task in cls._tasks.items():

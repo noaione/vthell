@@ -250,6 +250,7 @@ class AutoSchedulerTasks(InternalTaskBase):
                     )
                     task.add_done_callback(cls.executor_done)
                     cls._tasks[task_name] = task
+                    await task
                 except Exception as e:
                     logger.error(f"Failed to create task {task_name}", exc_info=e)
                 await asyncio.sleep(config.VTHELL_LOOP_SCHEDULER)

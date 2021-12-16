@@ -113,7 +113,10 @@ class DatasetUpdaterTasks(InternalTaskBase):
                 task = app.loop.create_task(cls.executor(ctime, task_name), name=task_name)
                 task.add_done_callback(cls.executor_done)
                 cls._tasks[task_name] = task
-                await cls.executor(ctime, f"DatasetUpdater-{ctime}")
+                try:
+                    await task
+                except Exception as e:
+                    logger.error(f"Dataset updater task {task_name} failed: {e}", exc_info=e)
                 await asyncio.sleep(1 * 60 * 60)
         except asyncio.CancelledError:
             logger.warning("Got cancel signal, cleaning up all running tasks")
