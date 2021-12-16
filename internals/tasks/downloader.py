@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from os import getenv
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, Type
 
@@ -34,7 +35,7 @@ import pendulum
 
 from internals.db import models
 from internals.struct import InternalTaskBase
-from internals.utils import build_rclone_path, find_cookies_file
+from internals.utils import build_rclone_path, find_cookies_file, map_to_boolean
 
 if TYPE_CHECKING:
     from internals.vth import SanicVTHell
@@ -396,6 +397,9 @@ class DownloaderTasks(InternalTaskBase):
         await app.wait_until_ready()
         try:
             while True:
+                if map_to_boolean(getenv("SKIP_MAIN_TASK", "0")):
+                    logger.info("Skipping main task loop")
+                    return
                 ctime = pendulum.now("UTC").int_timestamp
                 logger.info(f"Checking for scheduled jobs at {ctime}")
                 all_tasks = []

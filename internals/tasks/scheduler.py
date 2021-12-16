@@ -27,6 +27,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import re
+from os import getenv
 from typing import TYPE_CHECKING, Dict, List, Type
 
 import pendulum
@@ -34,7 +35,7 @@ import pendulum
 from internals.db import models
 from internals.holodex import HolodexVideo
 from internals.struct import InternalTaskBase
-from internals.utils import secure_filename
+from internals.utils import map_to_boolean, secure_filename
 
 if TYPE_CHECKING:
     from internals.vth import SanicVTHell
@@ -249,6 +250,9 @@ class AutoSchedulerTasks(InternalTaskBase):
         await app.wait_until_ready()
         try:
             while True:
+                if map_to_boolean(getenv("SKIP_MAIN_TASK", "0")):
+                    logger.info("Skipping main task loop")
+                    return
                 ctime = pendulum.now("UTC").int_timestamp
                 logger.info(f"Checking for auto scheduler at {ctime}")
                 all_tasks = []
