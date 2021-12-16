@@ -28,7 +28,7 @@ import asyncio
 import logging
 from os import getenv
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Type
+from typing import TYPE_CHECKING, Type
 
 import aiofiles.os
 import pendulum
@@ -48,8 +48,6 @@ __all__ = ("DownloaderTasks",)
 
 
 class DownloaderTasks(InternalTaskBase):
-    _tasks: Dict[str, asyncio.Task] = {}
-
     @staticmethod
     async def mux_files(data: models.VTHellJob, app: SanicVTHell):
         # Spawn mkvmerge
@@ -232,6 +230,10 @@ class DownloaderTasks(InternalTaskBase):
             logger.info(f"Job {data.id} skipped since it's still far away from grace period")
             return
 
+        if True:
+            print(f"CALLED BY {task_name}")
+            return
+
         if data.status != models.VTHellJobStatus.waiting:
             if data.status == models.VTHellJobStatus.error:
                 await DownloaderTasks.propagate_error(data, app)
@@ -372,22 +374,14 @@ class DownloaderTasks(InternalTaskBase):
         data.last_status = None
         await data.save()
 
-    @classmethod
-    def executor_done(cls: Type[DownloaderTasks], task: asyncio.Task):
-        task_name = task.get_name()
-        try:
-            exception = task.exception()
-            if exception is not None:
-                logger.error(f"Task {task_name} failed with exception: {exception}", exc_info=exception)
-        except asyncio.exceptions.InvalidStateError:
-            pass
-        logger.info(f"Task {task_name} finished")
-        cls._tasks.pop(task_name, None)
-
     @staticmethod
     async def get_scheduled_job():
-        all_jobs = await models.VTHellJob.all()
-        all_jobs = list(filter(lambda job: job.status != models.VTHellJobStatus.done, all_jobs))
+        try:
+            all_jobs = await models.VTHellJob.all()
+            all_jobs = list(filter(lambda job: job.status != models.VTHellJobStatus.done, all_jobs))
+        except Exception as e:
+            logger.error(f"Failed to get scheduled jobs: {e}", exc_info=e)
+            return []
         return all_jobs
 
     @classmethod
@@ -402,17 +396,20 @@ class DownloaderTasks(InternalTaskBase):
                     return
                 ctime = pendulum.now("UTC").int_timestamp
                 logger.info(f"Checking for scheduled jobs at {ctime}")
-                all_tasks = []
-                for job in await cls.get_scheduled_job():
+                scheduled_jobs = await cls.get_scheduled_job()
+                for job in scheduled_jobs:
                     task_name = f"downloader-{job.id}-{ctime}"
-                    task = loop.create_task(cls.executor(job, ctime, task_name, app), name=task_name)
-                    task.add_done_callback(cls.executor_done)
-                    all_tasks.append(task)
-                if not all_tasks:
+                    try:
+                        task = loop.create_task(cls.executor(job, ctime, task_name, app), name=task_name)
+                        task.add_done_callback(cls.executor_done)
+                        cls._tasks[task_name] = task
+                    except Exception as e:
+                        logger.error(f"Failed to create task {task_name}: {e}", exc_info=e)
+                if not scheduled_jobs:
                     logger.info("No scheduled jobs found")
-                await asyncio.gather(*all_tasks)
                 await asyncio.sleep(config.VTHELL_LOOP_DOWNLOADER)
         except asyncio.CancelledError:
             logger.warning("Got cancel signal, cleaning up all running tasks")
-            for task in cls._tasks.values():
-                task.cancel()
+            for name, task in cls._tasks.items():
+                if name.startswith("downloader-"):
+                    task.cancel()

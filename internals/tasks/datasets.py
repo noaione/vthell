@@ -109,7 +109,14 @@ class DatasetUpdaterTasks(InternalTaskBase):
         try:
             while True:
                 ctime = pendulum.now("UTC").int_timestamp
+                task_name = f"DatasetUpdaterTask-{ctime}"
+                task = app.loop.create_task(cls.executor(ctime, task_name), name=task_name)
+                task.add_done_callback(cls.executor_done)
+                cls._tasks[task_name] = task
                 await cls.executor(ctime, f"DatasetUpdater-{ctime}")
                 await asyncio.sleep(1 * 60 * 60)
         except asyncio.CancelledError:
             logger.warning("Got cancel signal, cleaning up all running tasks")
+            for name, task in cls._tasks.items():
+                if name.startswith("DatasetUpdaterTask"):
+                    task.cancel()

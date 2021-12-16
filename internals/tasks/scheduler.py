@@ -227,18 +227,6 @@ class AutoSchedulerTasks(InternalTaskBase):
                 namespace="/vthell",
             )
 
-    @classmethod
-    def executor_done(cls: Type[AutoSchedulerTasks], task: asyncio.Task):
-        task_name = task.get_name()
-        try:
-            exception = task.exception()
-            if exception is not None:
-                logger.error(f"Task {task_name} failed with exception: {exception}", exc_info=exception)
-        except asyncio.exceptions.InvalidStateError:
-            pass
-        logger.info(f"Task {task_name} finished")
-        cls._tasks.pop(task_name, None)
-
     @staticmethod
     async def get_auto_schedulers():
         return await models.VTHellAutoScheduler.all()
@@ -255,18 +243,18 @@ class AutoSchedulerTasks(InternalTaskBase):
                     return
                 ctime = pendulum.now("UTC").int_timestamp
                 logger.info(f"Checking for auto scheduler at {ctime}")
-                all_tasks = []
                 task_name = f"auto-scheduler-{ctime}"
-                task = loop.create_task(
-                    cls.executor(await cls.get_auto_schedulers(), ctime, task_name, app), name=task_name
-                )
-                task.add_done_callback(cls.executor_done)
-                all_tasks.append(task)
-                if not all_tasks:
-                    logger.info("No auto scheduler found")
-                await asyncio.gather(*all_tasks)
+                try:
+                    task = loop.create_task(
+                        cls.executor(await cls.get_auto_schedulers(), ctime, task_name, app), name=task_name
+                    )
+                    task.add_done_callback(cls.executor_done)
+                    cls._tasks[task_name] = task
+                except Exception as e:
+                    logger.error(f"Failed to create task {task_name}", exc_info=e)
                 await asyncio.sleep(config.VTHELL_LOOP_SCHEDULER)
         except asyncio.CancelledError:
             logger.warning("Got cancel signal, cleaning up all running tasks")
-            for task in cls._tasks.values():
-                task.cancel()
+            for name, task in cls._tasks.items():
+                if name.startswith("auto-scheduler-"):
+                    task.cancel()

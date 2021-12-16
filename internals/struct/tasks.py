@@ -25,6 +25,7 @@ SOFTWARE.
 from __future__ import annotations
 
 import asyncio
+import logging
 from typing import TYPE_CHECKING, Dict, Type
 
 if TYPE_CHECKING:
@@ -32,9 +33,23 @@ if TYPE_CHECKING:
 
 __all__ = ("InternalTaskBase",)
 
+logger = logging.getLogger("Tasks.Internal")
+
 
 class InternalTaskBase:
     _tasks: Dict[str, asyncio.Task] = {}
+
+    @classmethod
+    def executor_done(cls: Type[InternalTaskBase], task: asyncio.Task):
+        task_name = task.get_name()
+        try:
+            exception = task.exception()
+            if exception is not None:
+                logger.error(f"Task {task_name} failed with exception: {exception}", exc_info=exception)
+        except asyncio.exceptions.InvalidStateError:
+            pass
+        logger.info(f"Task {task_name} finished")
+        cls._tasks.pop(task_name, None)
 
     @classmethod
     async def main_loop(cls: Type[InternalTaskBase], app: SanicVTHell):

@@ -209,6 +209,12 @@ class RecordedStreamTasks(InternalTaskBase):
             while True:
                 await wait_next_run()
                 ctime = pendulum.now("UTC").int_timestamp
-                await cls.executor(f"RecordsUpdater-{ctime}", app)
+                task_name = f"RecordsUpdater-{ctime}"
+                task = app.loop.create_task(cls.executor(task_name, app), name=task_name)
+                task.add_done_callback(cls.executor_done)
+                cls._tasks[task_name] = task
         except asyncio.CancelledError:
             logger.warning("Got cancel signal, cleaning up all running tasks")
+            for name, task in cls._tasks.items():
+                if name.startswith("RecordsUpdater"):
+                    task.cancel()
