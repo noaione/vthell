@@ -25,7 +25,7 @@ headers = {
 }
 print(f"[*] Trying to schedule {args.video}")
 resp = requests.post(
-    f"http://localhost:{args.port}/api/add", json={"id": extract_video_id(args.video)}, headers=headers
+    f"http://localhost:{args.port}/api/schedule", json={"id": extract_video_id(args.video)}, headers=headers
 )
 
 if resp.status_code != 200:
