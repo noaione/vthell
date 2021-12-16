@@ -90,7 +90,7 @@ class DatasetUpdaterTasks(InternalTaskBase):
             return
 
         async with aiofiles.open(str(dataset_hash), "r") as fp:
-            old_hash = await fp.readlines()[0].strip()
+            old_hash = (await fp.readlines())[0].strip()
 
         logger.info("Old hash are %s", old_hash)
         if old_hash == current_hash:
