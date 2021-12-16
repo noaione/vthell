@@ -20,6 +20,7 @@
   - [Accessing Protected Routes](#accessing-protected-routes)
   - [Socket.IO](#socketio)
 - [Improvements](#improvements)
+- [Dataset](#dataset)
 - [License](#license)
 
 ## Information
@@ -421,7 +422,7 @@ The auto scheduler has now been rewritten, if you still have the old one you mig
 $ python3 migrations/auto_scheduler.py
 ```
 
-Make sure you have the `_auto_scheduler.json` in the dataset folder, and make sure the webserver is running.
+Make sure you have the `_auto_scheduler.json` in the `dataset` folder, and make sure the webserver is running.
 
 ### Accessing Protected Routes
 
@@ -499,6 +500,14 @@ It also now using Holodex API rather than Holotools API since it support many mo
 The other thing is moving from JSON file to SQLite3 database for all the job, this improve performance since we dont need to read/write multiple time to disk.
 
 Oh, and I guess now it support Windows since it does not rely on some linux only feature.
+
+## Dataset
+
+With v3, the dataset is now on its own repository, you can access it here: https://github.com/noaione/vthell-dataset
+
+The dataset repo will be fetched every 1 hour to see if the deployed hash changes.
+
+If you have suggestion for new dataset, removal, and more. Please visit the repo and open a PR or Issue there!
 
 ## License
 
