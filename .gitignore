@@ -177,16 +177,12 @@ membercookies.txt
 
 *.txt
 *.json
-!dataset/*.json
+dataset/
 
 jobs/*.json
 scraper/*
 _oldstuff/
-dataset/_unused/
-dataset/*.py
 !requirements.txt
 chatarchive/*
 
-dataset/currentversion
-dataset/archive.zip
 dl_temp/*
