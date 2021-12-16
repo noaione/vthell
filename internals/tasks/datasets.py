@@ -37,6 +37,7 @@ import aiofiles.ospath
 import aiohttp
 import pendulum
 
+from internals.constants import archive_gh, hash_gh
 from internals.struct import InternalTaskBase
 
 if TYPE_CHECKING:
@@ -46,8 +47,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger("Tasks.DatasetUpdater")
 BASE_PATH = Path(__file__).absolute().parent.parent.parent
 DATASET_PATH = BASE_PATH / "dataset"
-hash_gh = "https://raw.githubusercontent.com/noaione/vthell-dataset/master/currentversion"
-archive_gh = "https://raw.githubusercontent.com/noaione/vthell-dataset/master/archive.zip"
+
 __all__ = ("DatasetUpdaterTasks",)
 
 
@@ -80,8 +80,8 @@ class DatasetUpdaterTasks(InternalTaskBase):
         current_hash = current_hash.split("\n")[0].strip()
         logger.info("Latest hash are %s", current_hash)
 
-        dataset_hash = BASE_PATH / "dataset" / "currentversion"
-        if not aiofiles.ospath.isfile(dataset_hash):
+        dataset_hash = DATASET_PATH / "currentversion"
+        if not await aiofiles.ospath.isfile(dataset_hash):
             logger.info("No dataset hash file found, downloading...")
             await DatasetUpdaterTasks.dl_and_extract()
             async with aiofiles.open(str(dataset_hash), "w") as fp:
