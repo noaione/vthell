@@ -96,6 +96,17 @@ class DownloaderTasks(InternalTaskBase):
         joined_target = app.create_rclone_path(data.channel_id, "youtube")
 
         target_folder = build_rclone_path(app.config.RCLONE_DRIVE_TARGET, base_folder, *joined_target)
+        announce_folder = build_rclone_path("mock:", base_folder, *joined_target).split("mock:", 1)[1]
+        await DownloaderTasks.update_state(
+            data,
+            app,
+            models.VTHellJobStatus.uploading,
+            True,
+            {
+                "filename": f"{data.filename} [{data.resolution} AAC].mkv",
+                "path": announce_folder,
+            },
+        )
         rclone_args = [app.config.RCLONE_PATH, "-v", "-P", "copy", str(mux_output), target_folder]
         logger.debug(f"[{data.id}] Starting rclone with args: {rclone_args}")
         rclone_process = await asyncio.create_subprocess_exec(
@@ -165,7 +176,6 @@ class DownloaderTasks(InternalTaskBase):
                 return
             logger.info(f"[{data.id}][m] Mux job redone, continuing with upload files...")
             if not app.config.RCLONE_DISABLE:
-                await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.uploading, True)
                 is_error = await DownloaderTasks.upload_files(data, app)
                 if is_error:
                     logger.error(f"[{data.id}][m] Failed to do upload job, aborting.")
@@ -183,7 +193,6 @@ class DownloaderTasks(InternalTaskBase):
         elif data.last_status == models.VTHellJobStatus.uploading:
             logger.info(f"[{data.id}] Last status was upload job, trying to redo from upload point.")
             if not app.config.RCLONE_DISABLE:
-                await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.uploading, True)
                 is_error = await DownloaderTasks.upload_files(data, app)
                 if is_error:
                     logger.error(f"[{data.id}][u] Failed to redo upload job, aborting.")
@@ -360,7 +369,6 @@ class DownloaderTasks(InternalTaskBase):
             return
 
         if not app.config.RCLONE_DISABLE:
-            await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.uploading, True)
             logger.info(f"Job {data.id} finished muxing, uploading to drive target...")
             is_error = await DownloaderTasks.upload_files(data, app)
             if is_error:
