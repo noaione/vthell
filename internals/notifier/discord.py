@@ -78,6 +78,9 @@ async def one_time_shot(embed: Dict[str, Any], url: str):
     if embed is None or url is None:
         return
 
+    base_url, hook_token = url.rsplit("/", 1)
+    hook_redact = base_url + "/" + "*" * len(hook_token)
+
     params = {"wait": "true"}
     json_files = {"embeds": [embed], "username": "VTHell", "avatar_url": "https://p.n4o.xyz/i/cococlock.png"}
     header = {"User-Agent": "VTHell/3.0 (+https://github.com/noaione/vthell)"}
@@ -85,7 +88,8 @@ async def one_time_shot(embed: Dict[str, Any], url: str):
         async with session.post(url, json=json_files, params=params) as resp:
             if resp.status >= 400:
                 logger.error(f"Discord webhook returned {resp.status}")
-            logger.info(f"Sent discord webhook to {url}")
+            logger.debug(f"Sent discord webhook with {json_files}")
+            logger.info(f"Succesfully sent a Discord Webhook to {hook_redact}")
 
 
 class DiscordNotificationHandler(InternalSignalHandler):
