@@ -26,9 +26,12 @@ from __future__ import annotations
 
 import asyncio
 import os
+from io import BytesIO
 from pathlib import Path
 from typing import TYPE_CHECKING
+from zipfile import ZipFile
 
+import requests
 import socketio
 from dotenv import load_dotenv
 from sanic.config import DEFAULT_CONFIG
@@ -36,7 +39,8 @@ from sanic.response import text
 from sanic_cors import CORS
 from tortoise import Tortoise
 
-from internals.db import register_db, models
+from internals.constants import archive_gh, hash_gh
+from internals.db import models, register_db
 from internals.discover import autodiscover
 from internals.holodex import HolodexAPI
 from internals.logme import setup_logger
@@ -72,6 +76,39 @@ async def after_server_closing(app: SanicVTHell, loop: asyncio.AbstractEventLoop
     if app.holodex:
         await app.holodex.close()
     logger.info("Extras are all cleanup!")
+
+
+def init_dataset():
+    dataset_folder = CURRENT_PATH / "dataset"
+    hash_file = dataset_folder / "currentversion"
+    if dataset_folder.exists():
+        if hash_file.exists():
+            logger.info("Dataset folder exists, and hash file exists")
+            return
+        logger.info("Dataset folder exists, but hash file does not exist")
+
+    logger.info("Dataset folder does not exist, creating it")
+    dataset_folder.mkdir(parents=True, exist_ok=True)
+    logger.info("Dataset folder created, downloading archive...")
+
+    archives = requests.get(archive_gh)
+    archive_binary = BytesIO()
+    archive_binary.write(archives.content)
+    archive_binary.seek(0)
+
+    logger.info("Archive downloaded, extracting...")
+    with ZipFile(archive_binary) as zip:
+        for file in zip.filelist:
+            fp_path = dataset_folder / file.filename
+            with open(str(fp_path), "wb") as fp:
+                fp.write(zip.read(file))
+
+    logger.info("Extracted, writing hash file")
+    remote_hash = requests.get(hash_gh).text.splitlines()[0].strip()
+    with open(str(hash_file), "w") as fp:
+        fp.write(remote_hash)
+
+    logger.info("Hash file written, dataset initialized")
 
 
 def load_config():
@@ -141,6 +178,7 @@ def load_config():
 
 
 def setup_app():
+    init_dataset()
     DISCOVERY_MODULES = ["internals.routes", "internals.tasks", "internals.notifier"]
     config = SanicVTHellConfig(defaults=DEFAULT_CONFIG, load_env=False)
     config.update_config(load_config())
