@@ -66,8 +66,9 @@ def make_update_discord_embed(data: models.VTHellJob):
 
 def make_schedule_discord_embed(data: models.VTHellJob):
     embed = DiscordEmbed(title="VTHell Scheduler", color="cfdf69")
+    dis_ts = f"<t:{data.start_time}:F> (<t:{data.start_time}:R>)"
     url = f"https://youtu.be/{data.id}"
-    embed.set_description(f"**{data.filename}**\n[Link]({url})")
+    embed.set_description(f"**{data.filename}**\n[Link]({url})\nStart: {dis_ts}")
     embed.set_image(url=f"https://i.ytimg.com/vi/{data.id}/maxresdefault.jpg")
     webhook = DiscordWebhook(url="")
     webhook.add_embed(embed)
