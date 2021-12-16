@@ -108,10 +108,13 @@ async def add_new_jobs(request: Request):
             {
                 "id": job_request.id,
                 "title": job_request.title,
+                "filename": job_request.filename,
                 "start_time": job_request.start_time,
                 "channel_id": job_request.channel_id,
                 "is_member": job_request.member_only,
                 "status": job_request.status.value,
+                "resolution": job_request.resolution,
+                "error": job_request.error,
             },
             namespace="/vthell",
         )

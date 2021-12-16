@@ -219,10 +219,13 @@ class AutoSchedulerTasks(InternalTaskBase):
                 {
                     "id": job.id,
                     "title": job.title,
+                    "filename": job.filename,
                     "start_time": job.start_time,
                     "channel_id": job.channel_id,
                     "is_member": job.member_only,
                     "status": job.status.value,
+                    "resolution": job.resolution,
+                    "error": job.error,
                 },
                 namespace="/vthell",
             )
