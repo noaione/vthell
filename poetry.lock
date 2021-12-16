@@ -804,7 +804,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "97f6114c64ce96a02e321464acad1757ac23bc679772eb35e77970108584d527"
+content-hash = "9b45b246787dd785b9c967a0d590758bee18aa1b0fe14a34274ed04d5745cd8e"
 
 [metadata.files]
 aerich = [
