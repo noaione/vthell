@@ -230,10 +230,6 @@ class DownloaderTasks(InternalTaskBase):
             logger.info(f"Job {data.id} skipped since it's still far away from grace period")
             return
 
-        if True:
-            print(f"CALLED BY {task_name}")
-            return
-
         if data.status != models.VTHellJobStatus.waiting:
             if data.status == models.VTHellJobStatus.error:
                 await DownloaderTasks.propagate_error(data, app)
