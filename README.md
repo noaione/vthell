@@ -463,12 +463,28 @@ Will be emitted everytime there is an update on the job status. It will broadcas
 ```json
 {
   "id": "123",
+  "title": "optional",
+  "start_time": "optional",
+  "channel_id": "optional",
+  "is_member": "optional",
+  "status": "DOWNLOADING",
+  "error": "An error if possible"
+}
+```
+
+or
+
+```
+{
+  "id": "123",
   "status": "DOWNLOADING",
   "error": "An error if possible"
 }
 ```
 
 The `error` field might be not available if the `status` is not `ERROR`.
+
+The only data that will always be sent is `id` and `status`, if you got the extra field like `title`. It means someone called the `/api/schedule` API and the existing job data got replaced with some new data. Please maks sure you handle it properly! 
 
 > `job_scheduled`
 
@@ -482,6 +498,16 @@ This will be emitted everytime autoscheduler added a new scheduled job automatic
   "channel_id": "UCl_gCybOJRIgOXw6Qb4qJzQ",
   "is_member": false,
   "status": "DOWNLOADING"
+}
+```
+
+> `job_deleted`
+
+This will be emitted whenever a job was deleted from the database. It will contains the follwing data:
+
+```json
+{
+  "id": "bFNvQFyTBx0"
 }
 ```
 

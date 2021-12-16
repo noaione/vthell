@@ -61,12 +61,12 @@ async def add_new_jobs(request: Request):
         return json({"error": "Missing `id` in json request"}, status=400)
 
     video_id = json_request["id"]
-    logger.info(f"APIAdd: Received request for video {video_id}")
+    logger.info(f"ScheduleRequest: Received request for video {video_id}")
     existing_job = await models.VTHellJob.get_or_none(id=video_id)
 
     video_res = await holodex.get_video(video_id)
     if video_res is None:
-        logger.error(f"APIAdd: Video {video_id} not found")
+        logger.error(f"ScheduleRequest: Video {video_id} not found")
         return json({"error": "Video not found"}, status=404)
 
     title_safe = secure_filename(video_res.title)
@@ -74,14 +74,26 @@ async def add_new_jobs(request: Request):
     as_jst = utc_unix.in_timezone("Asia/Tokyo")
     filename = f"[{as_jst.year}.{as_jst.month}.{as_jst.day}.{video_res.id}] {title_safe}"
     if existing_job is not None:
-        logger.info(f"APIAdd: Video {video_id} already exists, merging data...")
+        logger.info(f"ScheduleRequest: Video {video_id} already exists, merging data...")
         existing_job.title = video_res.title
         existing_job.filename = filename
         existing_job.start_time = video_res.start_time
         existing_job.member_only = video_res.is_member
         await existing_job.save()
+        await app.sio.emit(
+            "job_update",
+            {
+                "id": existing_job.id,
+                "title": existing_job.title,
+                "start_time": existing_job.start_time,
+                "channel_id": existing_job.channel_id,
+                "is_member": existing_job.member_only,
+                "status": existing_job.status.value,
+            },
+            namespace="/vthell",
+        )
     else:
-        logger.info(f"APIAdd: Video {video_id} not found, creating new job...")
+        logger.info(f"ScheduleRequest: Video {video_id} not found, creating new job...")
         job_request = models.VTHellJob(
             id=video_res.id,
             title=video_res.title,
@@ -91,6 +103,18 @@ async def add_new_jobs(request: Request):
             member_only=video_res.is_member,
         )
         await job_request.save()
+        await app.sio.emit(
+            "job_scheduled",
+            {
+                "id": job_request.id,
+                "title": job_request.title,
+                "start_time": job_request.start_time,
+                "channel_id": job_request.channel_id,
+                "is_member": job_request.member_only,
+                "status": job_request.status.value,
+            },
+            namespace="/vthell",
+        )
     logger.info(f"APIAdd: Video {video_id} added to queue, sending back request")
     return json(video_res.to_json())
 
@@ -113,6 +137,7 @@ async def delete_job(request: Request, video_id: str):
         return json({"error": "Current video status does not allow you to delete video"}, status=406)
 
     await job.delete()
+    await app.sio.emit("job_delete", {"id": video_id}, namespace="/vthell")
     return json(
         {
             "id": job.id,
