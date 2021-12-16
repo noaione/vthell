@@ -3,7 +3,7 @@
     N4O VTuber Recording Tools
 </h1>
 <p align="center"><b>Version 3.0.0</b><br><i>A rabbit hole you shouldn't enter, once entered you can't get out.</i></p>
-<p align="center">Created by: <b>N4O</b><br/>Last Updated: <b>XX/XX/20XX</b></p>
+<p align="center">Created by: <b>N4O</b><br/>Last Updated: <b>16/12/2021</b></p>
 <p align="center"><a href="https://github.com/noaione/vthell/releases"><strong>Download</strong></a></p>
 
 **Table of Contents**:
