@@ -28,7 +28,7 @@ import asyncio
 import logging
 from os import getenv
 from pathlib import Path
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING, Any, Dict, Type
 
 import aiofiles.os
 import pendulum
@@ -209,13 +209,23 @@ class DownloaderTasks(InternalTaskBase):
 
     @staticmethod
     async def update_state(
-        data: models.VTHellJob, app: SanicVTHell, status: models.VTHellJobStatus, notify: bool = False
+        data: models.VTHellJob,
+        app: SanicVTHell,
+        status: models.VTHellJobStatus,
+        notify: bool = False,
+        extras: Dict[str, Any] = {},
     ):
         data.status = status
         data.error = None
         data.last_status = None
         await data.save()
-        await app.sio.emit("job_update", {"id": data.id, "status": status.value}, namespace="/vthell")
+        data_update = {"id": data.id, "status": status.value}
+        if extras:
+            extras.pop("id", None)
+            extras.pop("status", None)
+            if extras:
+                data_update.update(extras)
+        await app.sio.emit("job_update", data_update, namespace="/vthell")
         if notify:
             await app.dispatch(
                 "internals.notifier.discord",
@@ -312,7 +322,13 @@ class DownloaderTasks(InternalTaskBase):
                             logger.info(f"[{data.id}] Download started for both video and audio")
                             already_announced = True
                             await DownloaderTasks.update_state(
-                                data, app, models.VTHellJobStatus.downloading, True
+                                data,
+                                app,
+                                models.VTHellJobStatus.downloading,
+                                True,
+                                {
+                                    "resolution": data.resolution,
+                                },
                             )
                     else:
                         logger.info(f"[{data.id}] {line}")
