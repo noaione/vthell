@@ -73,7 +73,7 @@ else:
 parser = argparse.ArgumentParser()
 parser.add_argument("-P", "--port", type=int, help="Port to listen on", default=PORT)
 parser.add_argument("-D", "--debug", action="store_true", help="Enable debug mode")
-parser.add_argument("-h", "--host", help="Host to listen on", default="127.0.0.1")
+parser.add_argument("-H", "--host", help="Host to listen on", default="127.0.0.1")
 args = parser.parse_args()
 
 
