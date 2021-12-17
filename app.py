@@ -70,13 +70,6 @@ else:
     PORT = int(PORT)
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-P", "--port", type=int, help="Port to listen on", default=PORT)
-parser.add_argument("-D", "--debug", action="store_true", help="Enable debug mode")
-parser.add_argument("-H", "--host", help="Host to listen on", default="127.0.0.1")
-args = parser.parse_args()
-
-
 async def after_server_closing(app: SanicVTHell, loop: asyncio.AbstractEventLoop):
     logger.info("Closing DB client")
     await Tortoise.close_connections()
@@ -258,6 +251,12 @@ def setup_app():
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-P", "--port", type=int, help="Port to listen on", default=PORT)
+    parser.add_argument("-D", "--debug", action="store_true", help="Enable debug mode")
+    parser.add_argument("-H", "--host", help="Host to listen on", default="127.0.0.1")
+    args = parser.parse_args()
+
     logger.info(f"Starting VTHell server at port {args.port}...")
     os.environ.setdefault("SERVER_GATEWAY_INTERFACE", "PYTHON_APP")
     app = setup_app()
