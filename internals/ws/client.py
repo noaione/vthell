@@ -173,7 +173,7 @@ class WebsocketServer:
             if ws.ws is None:
                 logger.warning(f"Client {sid} not connected, dropping message")
                 return
-            await ws.send(self._encode_packet(packet))
+            await ws.ws.send(self._encode_packet(packet))
         except ConnectionClosed:
             logger.error("Connection closed, removing client %s", sid)
             await self._client_disconnected(sid)
