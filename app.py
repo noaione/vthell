@@ -229,6 +229,7 @@ def setup_app():
 
     logger.info("Auto discovering routes, tasks and more...")
     autodiscover(app, *DISCOVERY_MODULES, recursive=True)
+    app.enable_websocket()
 
     logger.info("Sanic is now ready to be fast!")
     return app

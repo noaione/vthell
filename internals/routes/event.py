@@ -38,7 +38,7 @@ if TYPE_CHECKING:
 bp_status = Blueprint("api_event", url_prefix="/api/event")
 
 
-@bp_status.websocket("/wsl")
+@bp_status.websocket("/")
 async def websocket_receiver(request: Request, ws: WebSocketConnection):
     app: SanicVTHell = request.app
     await app.wshandler.listen(ws)
