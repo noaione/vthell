@@ -40,9 +40,9 @@ from sanic import Sanic
 from sanic.config import SANIC_PREFIX, Config
 
 from internals.struct import VTHellRecords
+from internals.ws import WebsocketServer
 
 if TYPE_CHECKING:
-    import socketio
     from sanic.handlers import ErrorHandler
     from sanic.request import Request
     from sanic.router import Router
@@ -191,9 +191,9 @@ class SanicVTHell(Sanic):
     db: SqliteClient
     config: SanicVTHellConfig
     holodex: HolodexAPI
-    sio: socketio.AsyncServer
     vtdataset: Dict[str, VTHellDataset]
     vtrecords: VTHellRecordedData
+    wshandler: WebsocketServer
 
     def __init__(
         self,
@@ -229,7 +229,6 @@ class SanicVTHell(Sanic):
             dumps=dumps,
         )
 
-        self.sio: socketio.AsyncServer = None
         self.holodex: HolodexAPI = None
         self.db: SqliteClient = None
         self.vtrecords = VTHellRecordedData()
@@ -294,6 +293,8 @@ class SanicVTHell(Sanic):
             raise RuntimeError("WEBSERVER_PASSWORD is empty")
 
         self.startup_vthell_dataset()
+        self.wshandler = WebsocketServer(self)
+        self.wshandler.attach()
 
     async def wait_until_ready(self) -> None:
         """
@@ -301,10 +302,13 @@ class SanicVTHell(Sanic):
         """
         if not hasattr(self, "_db_ready"):
             self._db_ready = asyncio.Event()
-        elif not hasattr(self, "_holodex_ready"):
+        if not hasattr(self, "_holodex_ready"):
             self._holodex_ready = asyncio.Event()
+        if not hasattr(self, "_wshandler_ready"):
+            self._wshandler_ready = asyncio.Event()
         await self._db_ready.wait()
         await self._holodex_ready.wait()
+        await self._wshandler_ready.wait()
 
     def mark_db_ready(self):
         if not hasattr(self, "_db_ready"):
@@ -315,6 +319,11 @@ class SanicVTHell(Sanic):
         if not hasattr(self, "_holodex_ready"):
             self._holodex_ready = asyncio.Event()
         self._holodex_ready.set()
+
+    def mark_wshandler_ready(self):
+        if not hasattr(self, "_wshandler_ready"):
+            self._wshandler_ready = asyncio.Event()
+        self._wshandler_ready.set()
 
     def startup_vthell_dataset(self):
         self.vtdataset = {}
