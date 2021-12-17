@@ -234,9 +234,6 @@ class SanicVTHell(Sanic):
         self.db: SqliteClient = None
         self.vtrecords = VTHellRecordedData()
 
-        self._db_ready = asyncio.Event()
-        self._holodex_ready = asyncio.Event()
-
         try:
             db_path = self.config["VTHELL_DB"]
             if not db_path.endswith(".db"):
@@ -302,8 +299,22 @@ class SanicVTHell(Sanic):
         """
         Block until all the asyncio tasks are ready
         """
+        if not hasattr(self, "_db_ready"):
+            self._db_ready = asyncio.Event()
+        elif not hasattr(self, "_holodex_ready"):
+            self._holodex_ready = asyncio.Event()
         await self._db_ready.wait()
         await self._holodex_ready.wait()
+
+    def mark_db_ready(self):
+        if not hasattr(self, "_db_ready"):
+            self._db_ready = asyncio.Event()
+        self._db_ready.set()
+
+    def mark_holodex_ready(self):
+        if not hasattr(self, "_holodex_ready"):
+            self._holodex_ready = asyncio.Event()
+        self._holodex_ready.set()
 
     def startup_vthell_dataset(self):
         self.vtdataset = {}

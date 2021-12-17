@@ -251,7 +251,7 @@ class HolodexAPI:
             logger.info("Initializing Holodex API")
             await holodex.create()
             app.holodex = holodex
-            app._holodex_ready.set()
+            app.mark_holodex_ready()
             logger.info("Holodex API initialized")
 
         app.add_task(init_holodex_api)

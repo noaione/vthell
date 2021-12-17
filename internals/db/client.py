@@ -64,6 +64,6 @@ def register_db(
         if generate_schemas:
             logger.info("Generating schemas")
             await Tortoise.generate_schemas()
-        app._db_ready.set()
+        app.mark_db_ready()
 
     app.add_task(init_orm)
