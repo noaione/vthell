@@ -253,4 +253,4 @@ if __name__ == "__main__":
     logger.info(f"Starting VTHell server at port {PORT}...")
     os.environ.setdefault("SERVER_GATEWAY_INTERFACE", "PYTHON_APP")
     app = setup_app()
-    app.run(port=PORT)
+    app.run(port=PORT, workers=5, debug=True)
