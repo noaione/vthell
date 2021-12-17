@@ -184,7 +184,9 @@ def setup_app():
     config.update_config(load_config())
     asgi_mode = os.getenv("SERVER_GATEWAY_INTERFACE") == "ASGI_MODE"
     db_modules = {"models": ["internals.db.models", "aerich.models"]}
-    sio = socketio.AsyncServer(async_mode="sanic" if not asgi_mode else "asgi", cors_allowed_origins="*")
+    sio = socketio.AsyncServer(
+        async_mode="sanic" if not asgi_mode else "asgi", cors_allowed_origins="*", logger=True
+    )
 
     app = SanicVTHell("VTHell", config=config)
     CORS(app, origins=["*"])
@@ -231,14 +233,14 @@ def setup_app():
     if asgi_mode:
         logger.info("Running Sanic in ASGI mode, replacing app with Socket.IO ASGIApp...")
         sanic_app = app
-        app = socketio.ASGIApp(sio, sanic_app)
+        app = socketio.ASGIApp(sio, sanic_app, socketio_path="/api/event/ws")
         sanic_app.sio = sio
 
         logger.info("Auto discovering routes, tasks, and more...")
         autodiscover(sanic_app, *DISCOVERY_MODULES, recursive=True)
     else:
         logger.info("Running Sanic in direct mode, attaching Socket.IO...")
-        sio.attach(app)
+        sio.attach(app, "/api/event/ws")
         app.sio = sio
 
         logger.info("Auto discovering routes, tasks, and more...")
