@@ -453,15 +453,14 @@ curl -X POST -H "X-Auth-Token: SecretPassword123" http://localhost:12790/api/add
 
 **You need Socket.IO 4.x for JS Client**
 
-Thr URL or path of the Socket.IO server is moved from `/socket.io` to `/api/event/ws`, please adjust your path properly!
+This program also support watching the data over Socket.IO client. You can connect to the `/vthell` namespace to listen to all the emitter.<br>
+The URL or path of the Socket.IO server is moved from `/socket.io` to `/api/event/ws`, please adjust your path properly!
 
 ```js
 const socket = io("/vthell", {
   path: "/api/event/ws",
 });
 ```
-
-This program also support watching the data over Socket.IO client. You can connect to the `/vthell` namespace to listen to all the emitter.
 
 Here are the event:
 > `job_update`
