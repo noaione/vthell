@@ -256,10 +256,10 @@ class WebsocketServer:
                         "sid": sid,
                     }
                     ping_fut = ws.send(self._encode_packet(WebSocketPacket("ping", ping_data)))
-                    await asyncio.wait_for(ping_fut, timeout=10)
+                    await asyncio.wait_for(ping_fut, timeout=20)
                 except asyncio.TimeoutError:
                     logger.info(
-                        "Client %s failed to respond to ping request after 10s, servering connection!", sid
+                        "Server failed to sent ping request to %s after 20s, servering connection!", sid
                     )
                     await self._client_disconnected(sid)
                     break
@@ -282,6 +282,7 @@ class WebsocketServer:
             while True:
                 try:
                     message = await ws.recv()
+                    logger.debug(f"Received message from {sid}: {message}")
                     if message is None:
                         # Assume client disconnected.
                         await self._client_disconnected(sid)
@@ -289,7 +290,6 @@ class WebsocketServer:
                     parsed_message = self._decode_packet(message)
                     if parsed_message is None:
                         continue
-                    logger.debug(f"Received message from {sid}: {parsed_message}")
                     await self._listener_queue.put(WebSocketMessage(sid, parsed_message, ws))
                 except ConnectionClosed:
                     logger.warning("Connection closed, removing client %s", sid)
