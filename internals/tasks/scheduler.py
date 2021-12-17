@@ -214,7 +214,7 @@ class AutoSchedulerTasks(InternalTaskBase):
             await app.dispatch(
                 "internals.notifier.discord", context={"app": app, "data": job, "emit_type": "schedule"}
             )
-            await app.sio.emit(
+            await app.wshandler.emit(
                 "job_scheduled",
                 {
                     "id": job.id,
@@ -227,7 +227,6 @@ class AutoSchedulerTasks(InternalTaskBase):
                     "resolution": job.resolution,
                     "error": job.error,
                 },
-                namespace="/vthell",
             )
 
     @staticmethod

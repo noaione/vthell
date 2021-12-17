@@ -80,7 +80,7 @@ async def add_new_jobs(request: Request):
         existing_job.start_time = video_res.start_time
         existing_job.member_only = video_res.is_member
         await existing_job.save()
-        await app.sio.emit(
+        await app.wshandler.emit(
             "job_update",
             {
                 "id": existing_job.id,
@@ -90,7 +90,6 @@ async def add_new_jobs(request: Request):
                 "is_member": existing_job.member_only,
                 "status": existing_job.status.value,
             },
-            namespace="/vthell",
         )
     else:
         logger.info(f"ScheduleRequest: Video {video_id} not found, creating new job...")
@@ -103,7 +102,7 @@ async def add_new_jobs(request: Request):
             member_only=video_res.is_member,
         )
         await job_request.save()
-        await app.sio.emit(
+        await app.wshandler.emit(
             "job_scheduled",
             {
                 "id": job_request.id,
@@ -116,7 +115,6 @@ async def add_new_jobs(request: Request):
                 "resolution": job_request.resolution,
                 "error": job_request.error,
             },
-            namespace="/vthell",
         )
     logger.info(f"APIAdd: Video {video_id} added to queue, sending back request")
     return json(video_res.to_json())
@@ -140,7 +138,7 @@ async def delete_job(request: Request, video_id: str):
         return json({"error": "Current video status does not allow you to delete video"}, status=406)
 
     await job.delete()
-    await app.sio.emit("job_delete", {"id": video_id}, namespace="/vthell")
+    await app.wshandler.emit("job_delete", {"id": video_id})
     return json(
         {
             "id": job.id,

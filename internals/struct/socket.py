@@ -25,7 +25,7 @@ SOFTWARE.
 from __future__ import annotations
 
 import functools
-from typing import TYPE_CHECKING, Any, Optional, Type
+from typing import TYPE_CHECKING, Any, Type
 
 if TYPE_CHECKING:
     from ..vth import SanicVTHell
@@ -35,7 +35,6 @@ __all__ = ("InternalSocketHandler",)
 
 class InternalSocketHandler:
     event_name: str = ""
-    namespace: Optional[str] = None
 
     @staticmethod
     async def handle(sid: str, data: Any, app: SanicVTHell):
@@ -46,4 +45,4 @@ class InternalSocketHandler:
         if not cls.event_name:
             raise ValueError("event_name must be set")
         bounded_handle = functools.partial(cls.handle, app=app)
-        app.sio.on(cls.event_name, bounded_handle, namespace=cls.namespace)
+        app.wshandler.on(cls.event_name, bounded_handle)

@@ -76,8 +76,8 @@ class DownloaderTasks(InternalTaskBase):
             data.status = models.VTHellJobStatus.error
             data.last_status = models.VTHellJobStatus.muxing
             data.error = f"mkvmerge exited with code {ret_code}:\n{stderr}"
-            await app.sio.emit(
-                "job_update", {"id": data.id, "status": "ERROR", "error": "MKV_MUX_FAIL"}, namespace="/vthell"
+            await app.wshandler.emit(
+                "job_update", {"id": data.id, "status": "ERROR", "error": "MKV_MUX_FAIL"}
             )
             return True
         return False
@@ -138,10 +138,9 @@ class DownloaderTasks(InternalTaskBase):
             data.last_status = models.VTHellJobStatus.uploading
             data.error = f"rclone exited with code {ret_code}:\n{error_line}"
             await data.save()
-            await app.sio.emit(
+            await app.wshandler.emit(
                 "job_update",
                 {"id": data.id, "status": "ERROR", "error": "RCLONE_UPLOAD_FAIL"},
-                namespace="/vthell",
             )
             return True
         return False
@@ -234,7 +233,7 @@ class DownloaderTasks(InternalTaskBase):
             extras.pop("status", None)
             if extras:
                 data_update.update(extras)
-        await app.sio.emit("job_update", data_update, namespace="/vthell")
+        await app.wshandler.emit("job_update", data_update)
         if notify:
             await app.dispatch(
                 "internals.notifier.discord",
@@ -357,9 +356,7 @@ class DownloaderTasks(InternalTaskBase):
                 data.status = models.VTHellJobStatus.done
             data.error = f"ytarchive exited with code {ret_code} ({error_line})"
             await data.save()
-            await app.sio.emit(
-                "job_update", {"id": data.id, "status": "ERROR", "error": data.error}, namespace="/vthell"
-            )
+            await app.wshandler.emit("job_update", {"id": data.id, "status": "ERROR", "error": data.error})
             return
 
         await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.muxing, True)
@@ -385,7 +382,7 @@ class DownloaderTasks(InternalTaskBase):
             "internals.notifier.discord",
             context={"app": app, "data": data, "emit_type": "update"},
         )
-        await app.sio.emit("job_update", {"id": data.id, "status": "DONE"}, namespace="/vthell")
+        await app.wshandler.emit("job_update", {"id": data.id, "status": "DONE"})
 
         await DownloaderTasks.cleanup_files(data, app)
         logger.info(f"Job {data.id} finished cleaning up, setting job as finished...")
