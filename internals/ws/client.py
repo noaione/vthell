@@ -255,7 +255,7 @@ class WebsocketServer:
                         "t": pendulum.now("UTC").int_timestamp,
                         "sid": sid,
                     }
-                    ping_fut = ws.send(WebSocketPacket("ping", ping_data).to_ws())
+                    ping_fut = ws.send(self._encode_packet(WebSocketPacket("ping", ping_data)))
                     await asyncio.wait_for(ping_fut, timeout=10)
                 except asyncio.TimeoutError:
                     logger.info(
