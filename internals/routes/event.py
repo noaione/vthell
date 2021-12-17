@@ -24,25 +24,21 @@ SOFTWARE.
 
 from __future__ import annotations
 
-import functools
-from typing import TYPE_CHECKING, Any, Type
+from typing import TYPE_CHECKING
+
+from sanic import Blueprint
 
 if TYPE_CHECKING:
-    from ..vth import SanicVTHell
+    from sanic.request import Request
+    from sanic.server.websockets.connection import WebSocketConnection
 
-__all__ = ("InternalSocketHandler",)
+    from internals.vth import SanicVTHell
 
 
-class InternalSocketHandler:
-    event_name: str = ""
+bp_status = Blueprint("api_event", url_prefix="/api/event")
 
-    @staticmethod
-    async def handle(sid: str, data: Any, app: SanicVTHell):
-        return None
 
-    @classmethod
-    def attach(cls: Type[InternalSocketHandler], app: SanicVTHell):
-        if not cls.event_name:
-            raise ValueError("event_name must be set")
-        bounded_handle = functools.partial(cls.handle, app=app)
-        app.wshandler.on(cls.event_name, bounded_handle)
+@bp_status.websocket("/")
+async def websocket_receiver(request: Request, ws: WebSocketConnection):
+    app: SanicVTHell = request.app
+    await app.wshandler.listen(ws)

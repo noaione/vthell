@@ -85,12 +85,12 @@ class DatasetUpdaterTasks(InternalTaskBase):
             logger.info("No dataset hash file found, downloading...")
             await DatasetUpdaterTasks.dl_and_extract()
             async with aiofiles.open(str(dataset_hash), "w") as fp:
-                fp.write(current_hash)
+                await fp.write(current_hash)
             logger.info("Downloaded and saved hash")
             return
 
         async with aiofiles.open(str(dataset_hash), "r") as fp:
-            old_hash = (await fp.readlines())[0].strip()
+            old_hash = (await fp.read()).strip()
 
         logger.info("Old hash are %s", old_hash)
         if old_hash == current_hash:
@@ -100,7 +100,7 @@ class DatasetUpdaterTasks(InternalTaskBase):
         logger.info("Dataset is outdated, downloading...")
         await DatasetUpdaterTasks.dl_and_extract()
         async with aiofiles.open(str(dataset_hash), "w") as fp:
-            fp.write(current_hash)
+            await fp.write(current_hash)
         logger.info("Downloaded and saved hash")
 
     @classmethod

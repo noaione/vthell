@@ -24,25 +24,48 @@ SOFTWARE.
 
 from __future__ import annotations
 
-import functools
-from typing import TYPE_CHECKING, Any, Type
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any, Optional
 
 if TYPE_CHECKING:
-    from ..vth import SanicVTHell
+    from sanic.server.websockets.connection import WebSocketConnection
 
-__all__ = ("InternalSocketHandler",)
+__all__ = ("WebSocketPacket", "WebSocketMessage")
 
 
-class InternalSocketHandler:
-    event_name: str = ""
-
-    @staticmethod
-    async def handle(sid: str, data: Any, app: SanicVTHell):
-        return None
+@dataclass
+class WebSocketPacket:
+    event: str
+    data: Optional[Any] = None
+    to: Optional[str] = None
 
     @classmethod
-    def attach(cls: Type[InternalSocketHandler], app: SanicVTHell):
-        if not cls.event_name:
-            raise ValueError("event_name must be set")
-        bounded_handle = functools.partial(cls.handle, app=app)
-        app.wshandler.on(cls.event_name, bounded_handle)
+    def from_ws(cls, data: dict) -> WebSocketPacket:
+        if not isinstance(data, dict):
+            raise TypeError("data must be a dict")
+        event = data.get("event")
+        content = data.get("data")
+        if event is None:
+            raise ValueError("event is required")
+        target = data.get("to")
+        return cls(event, content, target)
+
+    def to_ws(self) -> dict:
+        return {
+            "event": self.event,
+            "data": self.data,
+        }
+
+    def to_dict(self) -> dict:
+        return {
+            "event": self.event,
+            "data": self.data,
+            "to": self.to,
+        }
+
+
+@dataclass
+class WebSocketMessage:
+    sid: str
+    packet: WebSocketPacket
+    ws: Optional[WebSocketConnection]

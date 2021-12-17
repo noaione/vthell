@@ -33,7 +33,6 @@ from typing import TYPE_CHECKING
 from zipfile import ZipFile
 
 import requests
-import socketio
 from dotenv import load_dotenv
 from sanic.config import DEFAULT_CONFIG
 from sanic.response import text
@@ -76,6 +75,8 @@ async def after_server_closing(app: SanicVTHell, loop: asyncio.AbstractEventLoop
     logger.info("Closing Holodex API")
     if app.holodex:
         await app.holodex.close()
+    logger.info("Closing WSHandler")
+    app.wshandler.close()
     logger.info("Extras are all cleanup!")
 
 
@@ -179,15 +180,12 @@ def load_config():
 
 
 def setup_app():
+    logger.info("Initializing Sanic app...")
     init_dataset()
     DISCOVERY_MODULES = ["internals.routes", "internals.tasks", "internals.notifier"]
     config = SanicVTHellConfig(defaults=DEFAULT_CONFIG, load_env=False)
     config.update_config(load_config())
-    asgi_mode = os.getenv("SERVER_GATEWAY_INTERFACE") == "ASGI_MODE"
-    async_mode = "sanic" if not asgi_mode else "asgi"
-    logger.info(f"Running Socket.IO server in {async_mode} mode")
     db_modules = {"models": ["internals.db.models", "aerich.models"]}
-    sio = socketio.AsyncServer(async_mode=async_mode, cors_allowed_origins="*", logger=True)
 
     app = SanicVTHell("VTHell", config=config)
     CORS(app, origins=["*"])
@@ -205,13 +203,9 @@ def setup_app():
             return text("")
         return text("</>")
 
-    @sio.on("connect", namespace="/vthell")
-    async def on_connect_sio(sid: str, environ, auth):
+    async def on_connect_ws(sid: str, ws):
         logger.info("Client connected: %s", sid)
-        if isinstance(app, socketio.ASGIApp):
-            await app.other_asgi_app.wait_until_ready()
-        else:
-            await app.wait_until_ready()
+        await app.wait_until_ready()
         active_jobs = await models.VTHellJob.exclude(status=models.VTHellJobStatus.done)
         as_json_fmt = []
         for job in active_jobs:
@@ -229,24 +223,15 @@ def setup_app():
                 }
             )
         logger.info("Sending active jobs to client %s", sid)
-        await sio.emit("connect_job_init", as_json_fmt, to=sid, namespace="/vthell")
+        await app.wshandler.emit("connect_job_init", as_json_fmt, to=sid)
 
-    if asgi_mode:
-        logger.info("Running Sanic in ASGI mode, replacing app with Socket.IO ASGIApp...")
-        sanic_app = app
-        app = socketio.ASGIApp(sio, sanic_app, socketio_path="/api/event/ws")
-        sanic_app.sio = sio
+    app.wshandler.on("connect", on_connect_ws)
 
-        logger.info("Auto discovering routes, tasks, and more...")
-        autodiscover(sanic_app, *DISCOVERY_MODULES, recursive=True)
-    else:
-        logger.info("Running Sanic in direct mode, attaching Socket.IO...")
-        sio.attach(app, "/api/event/ws")
-        app.sio = sio
+    logger.info("Auto discovering routes, tasks and more...")
+    autodiscover(app, *DISCOVERY_MODULES, recursive=True)
+    app.enable_websocket()
 
-        logger.info("Auto discovering routes, tasks, and more...")
-        autodiscover(app, *DISCOVERY_MODULES, recursive=True)
-
+    logger.info("Sanic is now ready to be fast!")
     return app
 
 
@@ -258,6 +243,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     logger.info(f"Starting VTHell server at port {args.port}...")
-    os.environ.setdefault("SERVER_GATEWAY_INTERFACE", "PYTHON_APP")
     app = setup_app()
     app.run(port=args.port, workers=1, debug=args.debug, host=args.host)

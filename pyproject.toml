@@ -14,7 +14,6 @@ orjson = "^3.6.5"
 tortoise-orm = "^0.17.8"
 aiosqlite = "^0.17.0"
 sanic = "^21.9.3"
-python-socketio = "^5.5.0"
 coloredlogs = "^15.0.1"
 Sanic-Cors = "^1.0.1"
 aiofiles = "^0.8.0"
@@ -22,6 +21,7 @@ watchgod = "^0.7"
 discord-webhook = "^0.14.0"
 requests = "^2.26.0"
 uvicorn = {extras = ["standard"], version = "^0.16.0"}
+websockets = "^10.1"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.1"

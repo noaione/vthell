@@ -23,7 +23,9 @@ SOFTWARE.
 """
 
 import os
+import random
 import re
+import string as pystring
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -43,6 +45,7 @@ __all__ = (
     "find_cookies_file",
     "find_cookies_file_sync",
     "map_to_boolean",
+    "rng_string",
 )
 
 
@@ -208,3 +211,9 @@ def map_to_boolean(value: Any) -> bool:
         return bool(value)
     except Exception:
         return False
+
+
+def rng_string(length: int) -> str:
+    all_strings = pystring.ascii_letters + pystring.digits
+    contents = [random.choice(all_strings) for _ in range(length)]
+    return "".join(contents)
