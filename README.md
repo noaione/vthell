@@ -18,7 +18,7 @@
   - [Auto Scheduler](#auto-scheduler)
     - [Migration](#migration)
   - [Accessing Protected Routes](#accessing-protected-routes)
-  - [Socket.IO](#socketio)
+  - [WebSockets](#websockets)
 - [Improvements](#improvements)
 - [Dataset](#dataset)
 - [License](#license)
@@ -449,21 +449,27 @@ curl -X POST -H "X-Password: SecretPassword123" http://localhost:12790/api/add
 curl -X POST -H "X-Auth-Token: SecretPassword123" http://localhost:12790/api/add
 ```
 
-### Socket.IO
+### WebSockets
 
-**You need Socket.IO 4.x for JS Client**
+The v3 of VTHell now have a Websocket server ready to be connected to. To start, connect to this following route: `/api/event`
 
-This program also support watching the data over Socket.IO client. You can connect to the `/vthell` namespace to listen to all the emitter.<br>
-The URL or path of the Socket.IO server is moved from `/socket.io` to `/api/event/ws`, please adjust your path properly!
-
+For example in JS:
 ```js
-const socket = io("/vthell", {
-  path: "/api/event/ws",
-});
+const ws = new WebSocket("ws://127.0.0.1:12790/api/event");
 ```
 
-Here are the event:
-> `job_update`
+The websocket have the following formatting that you can understand:
+```json
+{
+  "event": "event name",
+  "data": "can be anything"
+}
+```
+
+The raw data will be sent as string, so you need to parse it first to JSON format before parsing anything. The data can be a dictionary, list, string, or even null. So make sure you see this following section that will show all the event name with the data.
+
+**Event and Data**:
+> `job_update` event
 
 Will be emitted everytime there is an update on the job status. It will broadcast the following data:
 
@@ -493,7 +499,7 @@ The `error` field might be not available if the `status` is not `ERROR`.
 
 The only data that will always be sent is `id` and `status`, if you got the extra field like `title`. It means someone called the `/api/schedule` API and the existing job data got replaced with some new data. Please maks sure you handle it properly! 
 
-> `job_scheduled`
+> `job_scheduled` event
 
 This will be emitted everytime autoscheduler added a new scheduled job automatically. It will contains the following data as an example:
 
@@ -508,7 +514,7 @@ This will be emitted everytime autoscheduler added a new scheduled job automatic
 }
 ```
 
-> `job_deleted`
+> `job_deleted` event
 
 This will be emitted whenever a job was deleted from the database. It will contains the follwing data:
 
@@ -518,7 +524,7 @@ This will be emitted whenever a job was deleted from the database. It will conta
 }
 ```
 
-> `connect_job_init`
+> `connect_job_init` event
 
 This will be called as soon as you established connection with the Socket.IO server. It will be used so you can store the current state without needing to use the API.
 
