@@ -65,7 +65,7 @@ class DatasetUpdaterTasks(InternalTaskBase):
 
         with ZipFile(as_bytes_io) as zip:
             for file in zip.filelist:
-                fp_path = DATASET_PATH / file
+                fp_path = DATASET_PATH / file.filename
                 async with aiofiles.open(str(fp_path), "wb") as fp:
                     await fp.write(zip.read(file))
 
