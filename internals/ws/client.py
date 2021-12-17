@@ -26,10 +26,12 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Union
 
 import orjson
 import pendulum
+from sanic.server.websockets.connection import WebSocketConnection
 from websockets.exceptions import ConnectionClosed
 
 from internals.utils import rng_string
@@ -37,7 +39,6 @@ from internals.utils import rng_string
 from .models import WebSocketMessage, WebSocketPacket
 
 if TYPE_CHECKING:
-    from sanic.server.websockets.connection import WebSocketConnection
 
     from internals.vth import SanicVTHell
 
@@ -51,13 +52,35 @@ logger = logging.getLogger("Internals.WSServer")
 __all__ = ("WebsocketServer",)
 
 
+@dataclass
+class WebsocketClient:
+    ws: WebSocketConnection
+    terminated: asyncio.Event = None
+
+    def __post_init__(self):
+        self.terminated = asyncio.Event()
+
+    def terminate(self):
+        self.terminated.set()
+
+    async def poll(self):
+        await self.terminated.wait()
+
+
+class PongTimeoutException(Exception):
+    """So we can trigger it and make the connection stop"""
+
+    pass
+
+
 # Based on: https://stackoverflow.com/a/57483591
 class WebsocketServer:
     SPECIAL_EVENTS = ["connect", "disconnect"]
+    PING_TIMEOUT = 60
 
     def __init__(self, app: SanicVTHell):
         self.app = app
-        self._clients: Dict[str, WebSocketConnection] = {}
+        self._clients: Dict[str, WebsocketClient] = {}
         self._listener_callbacks: Dict[str, List[DataCallback]] = {}
 
         self._listener_queue: asyncio.Queue[WebSocketMessage] = asyncio.Queue()
@@ -67,6 +90,7 @@ class WebsocketServer:
         self._listener_task: asyncio.Task = None
 
         self._running_tasks: Dict[str, asyncio.Task] = {}
+        self.on("pong", self._pong)
 
     def create_id(self):
         ctime = pendulum.now("UTC").int_timestamp
@@ -84,7 +108,7 @@ class WebsocketServer:
 
     def _encode_packet(self, packet: WebSocketPacket):
         as_json = packet.to_ws()
-        return orjson.dumps(as_json)
+        return orjson.dumps(as_json).decode("utf-8")
 
     def _decode_packet(self, packet: Any):
         if packet is None:
@@ -110,6 +134,11 @@ class WebsocketServer:
         else:
             try:
                 await listener(message.packet.data)
+            except PongTimeoutException:
+                sid = message.sid
+                ws = self._clients.get(sid)
+                if ws is not None:
+                    ws.terminate()
             except Exception as e:
                 logger.error("Error while handling event", exc_info=e)
 
@@ -140,6 +169,9 @@ class WebsocketServer:
             ws = self._clients.get(sid)
             if ws is None:
                 logger.warning(f"Client {sid} not found, dropping message")
+                return
+            if ws.ws is None:
+                logger.warning(f"Client {sid} not connected, dropping message")
                 return
             await ws.send(self._encode_packet(packet))
         except ConnectionClosed:
@@ -181,12 +213,13 @@ class WebsocketServer:
 
     async def _client_connected(self, ws: WebSocketConnection):
         sid = self.create_id()
-        self._clients[sid] = ws
+        client = WebsocketClient(ws)
+        self._clients[sid] = client
         logger.info(f"Client {sid} connected")
         packet = WebSocketPacket(event="connect", data=None)
         message = WebSocketMessage(sid, packet, ws)
         await self._listener_queue.put(message)
-        return sid
+        return sid, client
 
     async def _client_disconnected(self, sid: str):
         ws = self._clients.pop(sid, None)
@@ -195,11 +228,34 @@ class WebsocketServer:
         message = WebSocketMessage(sid, packet, ws)
         await self._listener_queue.put(message)
 
+    async def _pong(self, packet: WebSocketPacket):
+        request_time = packet.data
+        if not isinstance(request_time, dict):
+            logger.warning("Invalid pong packet received, dropping")
+            return
+        t = request_time.get("t")
+        if t is None:
+            logger.warning("Empty t data on pong packet, dropping")
+            return
+        sid = request_time.get("sid")
+        if sid is None:
+            logger.warning("Empty sid data on pong packet, dropping")
+            return
+        distance = pendulum.now("UTC").int_timestamp - t
+        if distance > self.PING_TIMEOUT:
+            logger.warning("Pong packet has timed out, closing connection")
+            raise PongTimeoutException
+        logger.debug("Pong packet received after %d second(s)", distance)
+
     async def keep_alive(self, sid: str, ws: WebSocketConnection):
         try:
             while True:
                 try:
-                    ping_fut = ws.send(WebSocketPacket("ping", None).to_ws())
+                    ping_data = {
+                        "t": pendulum.now("UTC").int_timestamp,
+                        "sid": sid,
+                    }
+                    ping_fut = ws.send(WebSocketPacket("ping", ping_data).to_ws())
                     await asyncio.wait_for(ping_fut, timeout=10)
                 except asyncio.TimeoutError:
                     logger.info(
@@ -248,14 +304,34 @@ class WebsocketServer:
             logger.error("An error occured while trying to process for client %s", sid, exc_info=e)
             await self._client_disconnected(sid)
 
+    async def error_termination(self, sid: str, ws: WebsocketClient):
+        try:
+            logger.info(f"Started long polling {sid} for error termination")
+            await ws.poll()
+            logger.info("Client %s disconnected", sid)
+            await self._client_disconnected(sid)
+        except asyncio.CancelledError:
+            logger.warning("Receive cancel code from asyncio, stopping...")
+            await self._client_disconnected(sid)
+        except ConnectionClosed:
+            logger.warning("Connection closed, removing client %s", sid)
+            await self._client_disconnected(sid)
+        except PongTimeoutException:
+            logger.warning("Pong timeout, closing connection")
+            await self._client_disconnected(sid)
+        except Exception as e:
+            logger.error("An error occured while trying to process for client %s", sid, exc_info=e)
+            await self._client_disconnected(sid)
+
     async def listen(self, ws: WebSocketConnection):
         """Start listening for messages from the websocket connection"""
-        sid = await self._client_connected(ws)
+        sid, client = await self._client_connected(ws)
 
         keep_alive_task = asyncio.ensure_future(self.keep_alive(sid, ws), loop=self.app.loop)
         receive_task = asyncio.ensure_future(self.receive_message(sid, ws), loop=self.app.loop)
+        error_poll_task = asyncio.ensure_future(self.error_termination(sid, client), loop=self.app.loop)
         _, pending = await asyncio.wait(
-            [keep_alive_task, receive_task],
+            [keep_alive_task, receive_task, error_poll_task],
             return_when=asyncio.FIRST_COMPLETED,
         )
         for task in pending:
