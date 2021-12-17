@@ -77,7 +77,7 @@ class DatasetUpdaterTasks(InternalTaskBase):
             async with session.get(hash_gh) as resp:
                 current_hash = await resp.text()
 
-        current_hash = current_hash.split("\n")[0].strip()
+        current_hash = current_hash.strip()
         logger.info("Latest hash are %s", current_hash)
 
         dataset_hash = DATASET_PATH / "currentversion"
