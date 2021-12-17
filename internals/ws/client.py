@@ -226,6 +226,10 @@ class WebsocketServer:
             while True:
                 try:
                     message = await ws.recv()
+                    if message is None:
+                        # Assume client disconnected.
+                        await self._client_disconnected(sid)
+                        break
                     parsed_message = self._decode_packet(message)
                     if parsed_message is None:
                         continue
