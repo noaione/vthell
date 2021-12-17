@@ -191,10 +191,10 @@ def setup_app():
     config = SanicVTHellConfig(defaults=DEFAULT_CONFIG, load_env=False)
     config.update_config(load_config())
     asgi_mode = os.getenv("SERVER_GATEWAY_INTERFACE") == "ASGI_MODE"
+    async_mode = "sanic" if not asgi_mode else "asgi"
+    logger.info(f"Running Socket.IO server in {async_mode} mode")
     db_modules = {"models": ["internals.db.models", "aerich.models"]}
-    sio = socketio.AsyncServer(
-        async_mode="sanic" if not asgi_mode else "asgi", cors_allowed_origins="*", logger=True
-    )
+    sio = socketio.AsyncServer(async_mode=async_mode, cors_allowed_origins="*", logger=True)
 
     app = SanicVTHell("VTHell", config=config)
     CORS(app, origins=["*"])
