@@ -240,18 +240,18 @@ class WebsocketServer:
         if sid is None:
             logger.warning("Empty sid data on pong packet, dropping")
             return
-        distance = pendulum.now("UTC").int_timestamp - t
+        distance = int(round(pendulum.now("UTC").float_timestamp * 1000)) - t
         if distance > self.PING_TIMEOUT:
             logger.warning("Pong packet has timed out, closing connection")
             raise PongTimeoutException
-        logger.debug("Pong packet received after %d second(s)", distance)
+        logger.debug("Pong packet received after %d milisecond(s)", distance)
 
     async def keep_alive(self, sid: str, ws: WebSocketConnection):
         try:
             while True:
                 try:
                     ping_data = {
-                        "t": pendulum.now("UTC").int_timestamp,
+                        "t": int(round(pendulum.now("UTC").float_timestamp * 1000)),
                         "sid": sid,
                     }
                     ping_fut = ws.send(self._encode_packet(WebSocketPacket("ping", ping_data)))
