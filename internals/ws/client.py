@@ -26,24 +26,27 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Union
 
 import orjson
 import pendulum
 from sanic.server.websockets.connection import WebSocketConnection
+from sanic.server.websockets.impl import WebsocketImplProtocol
 from websockets.exceptions import ConnectionClosed
 
 from internals.utils import rng_string
 
 from .models import WebSocketMessage, WebSocketPacket
 
+WebsocketProto = Union[WebsocketImplProtocol, WebSocketConnection]
+
 if TYPE_CHECKING:
 
     from internals.vth import SanicVTHell
 
     NormalDataCallback = Callable[[Optional[Any]], None]
-    SpecialDataCallback = Callable[[str, Optional[WebSocketConnection]], None]
+    SpecialDataCallback = Callable[[str, Optional[WebsocketProto]], None]
     DataCallback = Union[NormalDataCallback, SpecialDataCallback]
 
 
@@ -54,7 +57,7 @@ __all__ = ("WebsocketServer",)
 
 @dataclass
 class WebsocketClient:
-    ws: WebSocketConnection
+    ws: WebsocketProto = field(repr=False, hash=False)
     terminated: asyncio.Event = None
 
     def __post_init__(self):
@@ -76,7 +79,7 @@ class PongTimeoutException(Exception):
 # Based on: https://stackoverflow.com/a/57483591
 class WebsocketServer:
     SPECIAL_EVENTS = ["connect", "disconnect"]
-    PING_TIMEOUT = 60
+    PING_TIMEOUT = 30
 
     def __init__(self, app: SanicVTHell):
         self.app = app
@@ -246,8 +249,9 @@ class WebsocketServer:
             raise PongTimeoutException
         logger.debug("Pong packet received after %d milisecond(s)", distance)
 
-    async def keep_alive(self, sid: str, ws: WebSocketConnection):
+    async def keep_alive(self, sid: str, ws: WebsocketProto):
         try:
+            logger.info(f"Starting keep alive handler for {sid}")
             while True:
                 try:
                     ping_data = {
@@ -276,8 +280,9 @@ class WebsocketServer:
             logger.error("An error occured while trying to process for client %s", sid, exc_info=e)
             await self._client_disconnected(sid)
 
-    async def receive_message(self, sid: str, ws: WebSocketConnection):
+    async def receive_message(self, sid: str, ws: WebsocketProto):
         try:
+            logger.info(f"Starting message receiver handler for {sid}")
             while True:
                 try:
                     message = await ws.recv()
@@ -303,7 +308,7 @@ class WebsocketServer:
             logger.error("An error occured while trying to process for client %s", sid, exc_info=e)
             await self._client_disconnected(sid)
 
-    async def error_termination(self, sid: str, ws: WebsocketClient):
+    async def error_termination(self, sid: str, ws: WebsocketProto):
         try:
             logger.info(f"Started long polling {sid} for error termination")
             await ws.poll()
@@ -322,7 +327,7 @@ class WebsocketServer:
             logger.error("An error occured while trying to process for client %s", sid, exc_info=e)
             await self._client_disconnected(sid)
 
-    async def listen(self, ws: WebSocketConnection):
+    async def listen(self, ws: WebsocketProto):
         """Start listening for messages from the websocket connection"""
         sid, client = await self._client_connected(ws)
 
@@ -357,6 +362,9 @@ class WebsocketServer:
             loop = app.loop
             task_name = f"WebsocketServer-{ctime}"
             logger.info(f"Starting websocket server on task {task_name}")
+            # Recreate the Queue since it's running on different loop on init
+            self._listener_queue = asyncio.Queue()
+            self._dispatch_queue = asyncio.Queue()
             task_listen = loop.create_task(self._internal_listener_task(), name=task_name + "-listen")
             task_listen.add_done_callback(self._closed_down_task)
             task_dispatch = loop.create_task(self._internal_dispatcher_task(), name=task_name + "-dispatch")
