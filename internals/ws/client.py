@@ -228,16 +228,15 @@ class WebsocketServer:
         message = WebSocketMessage(sid, packet, ws)
         await self._listener_queue.put(message)
 
-    async def _pong(self, packet: WebSocketPacket):
-        request_time = packet.data
-        if not isinstance(request_time, dict):
+    async def _pong(self, data: Any):
+        if not isinstance(data, dict):
             logger.warning("Invalid pong packet received, dropping")
             return
-        t = request_time.get("t")
+        t = data.get("t")
         if t is None:
             logger.warning("Empty t data on pong packet, dropping")
             return
-        sid = request_time.get("sid")
+        sid = data.get("sid")
         if sid is None:
             logger.warning("Empty sid data on pong packet, dropping")
             return
