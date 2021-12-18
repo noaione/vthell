@@ -24,7 +24,7 @@ SOFTWARE.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List, Literal, Optional
 
 __all__ = ("VTHellRecords",)
@@ -35,8 +35,8 @@ class VTHellRecords:
     id: str
     name: str
     type: Literal["folder", "file"]
-    toggled: bool = False
-    children: List[VTHellRecords] = field(default_factory=list)
+    toggled: Optional[bool] = None
+    children: Optional[List[VTHellRecords]] = None
     size: Optional[int] = None
     mimetype: Optional[str] = None
     modtime: Optional[str] = None
@@ -49,13 +49,15 @@ class VTHellRecords:
             "id": self.id,
             "name": self.name,
             "type": self.type,
-            "toggled": self.toggled,
-            "children": [],
         }
         for child in self.children:
             base["children"].append(child.to_json())
         if self.size is not None:
             base["size"] = self.size
+        if self.children is not None:
+            base["children"] = self.children
+        if self.toggled is not None:
+            base["toggled"] = self.toggled
         if self.mimetype is not None:
             base["mimetype"] = self.mimetype
         if self.modtime is not None:
