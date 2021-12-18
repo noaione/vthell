@@ -233,7 +233,7 @@ def setup_app():
     app.config.WEBSOCKET_MAX_QUEUE = 32
     app.config.WEBSOCKET_READ_LIMIT = 2 ** 16
     app.config.WEBSOCKET_WRITE_LIMIT = 2 ** 16
-    app.config.WEBSOCKET_PING_INTERVAL = 20
+    app.config.WEBSOCKET_PING_INTERVAL = None  # Disable, use custom ping
     app.config.WEBSOCKET_PING_TIMEOUT = 30
     app.enable_websocket()
 

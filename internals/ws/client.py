@@ -224,9 +224,18 @@ class WebsocketServer:
         await self._listener_queue.put(message)
         return sid, client
 
-    async def _client_disconnected(self, sid: str):
+    async def _client_disconnected(self, sid: str, keep_alive_fail: bool = False):
         ws = self._clients.pop(sid, None)
+        if ws is None:
+            return
         logger.info(f"Client {sid} disconnected")
+        if isinstance(ws, WebsocketImplProtocol):
+            try:
+                logger.debug("Closing websocket connection")
+                await ws.close(1006 if keep_alive_fail else 1000)
+                logger.debug("Closed connection")
+            except Exception as e:
+                logger.debug("Error while closing connection", exc_info=e)
         packet = WebSocketPacket(event="disconnect", data=None)
         message = WebSocketMessage(sid, packet, ws)
         await self._listener_queue.put(message)
