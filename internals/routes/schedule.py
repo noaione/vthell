@@ -79,6 +79,10 @@ async def add_new_jobs(request: Request):
         existing_job.filename = filename
         existing_job.start_time = video_res.start_time
         existing_job.member_only = video_res.is_member
+        if existing_job.status == models.VTHellJobStatus.error:
+            last_status = existing_job.last_status
+            if last_status in [models.VTHellJobStatus.downloading, models.VTHellJobStatus.preparing]:
+                existing_job.status = models.VTHellJobStatus.waiting
         await existing_job.save()
         await app.wshandler.emit(
             "job_update",
