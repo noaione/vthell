@@ -134,6 +134,7 @@ async def delete_job(request: Request, video_id: str):
         models.VTHellJobStatus.cleaning,
         models.VTHellJobStatus.done,
         models.VTHellJobStatus.waiting,
+        models.VTHellJobStatus.error,
     ]:
         return json({"error": "Current video status does not allow you to delete video"}, status=406)
 
