@@ -246,8 +246,9 @@ if __name__ == "__main__":
     parser.add_argument("-P", "--port", type=int, help="Port to listen on", default=PORT)
     parser.add_argument("-D", "--debug", action="store_true", help="Enable debug mode")
     parser.add_argument("-H", "--host", help="Host to listen on", default="127.0.0.1")
+    parser.add_argument("-W", "--workers", help="Number of worker to be used", default=1, type=int)
     args = parser.parse_args()
 
     logger.info(f"Starting VTHell server at port {args.port}...")
     app = setup_app()
-    app.run(port=args.port, workers=1, debug=args.debug, host=args.host)
+    app.run(port=args.port, workers=args.workers, debug=args.debug, host=args.host, access_log=not args.debug)
