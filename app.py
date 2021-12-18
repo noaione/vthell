@@ -258,7 +258,7 @@ if __name__ == "__main__":
         "workers": args.workers,
     }
 
-    if args.unix is not None:
+    if args.uds is not None:
         app.run(unix=args.uds, **defaults)
     else:
         app.run(host=args.host, port=args.port, **defaults)
