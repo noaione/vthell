@@ -230,6 +230,12 @@ def setup_app():
     logger.info("Auto discovering routes, tasks and more...")
     autodiscover(app, *DISCOVERY_MODULES, recursive=True)
     app.enable_websocket()
+    app.config.WEBSOCKET_MAX_SIZE = 2 ** 20
+    app.config.WEBSOCKET_MAX_QUEUE = 32
+    app.config.WEBSOCKET_READ_LIMIT = 2 ** 16
+    app.config.WEBSOCKET_WRITE_LIMIT = 2 ** 16
+    app.config.WEBSOCKET_PING_INTERVAL = 20
+    app.config.WEBSOCKET_PING_TIMEOUT = 20
 
     logger.info("Sanic is now ready to be fast!")
     return app
