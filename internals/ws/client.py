@@ -108,7 +108,7 @@ class WebsocketServer:
 
     def _encode_packet(self, packet: WebSocketPacket):
         as_json = packet.to_ws()
-        return orjson.dumps(as_json)
+        return orjson.dumps(as_json).decode("utf-8")
 
     def _decode_packet(self, packet: Any):
         if packet is None:
