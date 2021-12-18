@@ -530,6 +530,24 @@ This will be called as soon as you established connection with the Socket.IO ser
 
 The data will be the same as requesting to the `/api/status` (without the job with `DONE` status)
 
+> `ping` and `pong` event
+
+This ping/pong packet or event is being used to make sure the connection is alive and well.
+
+The server will sent a `ping` request with the followwing content:
+
+```json
+{
+  "t" 1234567890,
+  "sid": "user-id"
+}
+```
+
+`t` will be the server unix milis, you will need to respond with the `pong` event with the same data.
+If you dont answer within 30 seconds, the connection will be closed immediately.
+
+When you connect with the socket, you will get the `ping` event immediately!
+
 ## Improvements
 
 Version 3.0 of VTHell is very much different to the original 2.x or 1.x version of it. It includes a full web server to monitor your recording externally, a better task management to allow you to fire multiple download at once, Socket.IO feature to better monitor your data via websocket.
