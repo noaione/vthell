@@ -333,7 +333,9 @@ class WebsocketServer:
             [keep_alive_task, receive_task, error_poll_task],
             return_when=asyncio.FIRST_COMPLETED,
         )
+        logger.info("Stopping all ws task for %s since it closed down.", sid)
         for task in pending:
+            logger.debug("Cancelling task %s", task.get_name())
             task.cancel()
 
     def _closed_down_task(self, task: asyncio.Task):
@@ -345,7 +347,7 @@ class WebsocketServer:
         except asyncio.exceptions.InvalidStateError:
             pass
         self._running_tasks.pop(task_name, None)
-        logger.info(f"Task {task_name} finished")
+        logger.debug(f"Task {task_name} finished")
 
     def attach(self):
         """Attach the websocket server to the application"""
