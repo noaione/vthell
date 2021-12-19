@@ -343,6 +343,18 @@ class WebsocketServer:
         keep_alive_task = asyncio.ensure_future(self.keep_alive(sid, ws), loop=self.app.loop)
         receive_task = asyncio.ensure_future(self.receive_message(sid, ws), loop=self.app.loop)
         error_poll_task = asyncio.ensure_future(self.error_termination(sid, client), loop=self.app.loop)
+        if isinstance(keep_alive_task, asyncio.Task):
+            keep_alive_task.set_name(f"ws_client_{sid}-keep-alive")
+            keep_alive_task.add_done_callback(self._closed_down_task)
+            self._running_tasks[f"ws_client_{sid}-keep-alive"] = keep_alive_task
+        if isinstance(receive_task, asyncio.Task):
+            receive_task.set_name(f"ws_client_{sid}-receive")
+            receive_task.add_done_callback(self._closed_down_task)
+            self._running_tasks[f"ws_client_{sid}-receive"] = receive_task
+        if isinstance(error_poll_task, asyncio.Task):
+            error_poll_task.set_name(f"ws_client_{sid}-error-poll")
+            error_poll_task.add_done_callback(self._closed_down_task)
+            self._running_tasks[f"ws_client_{sid}-error-poll"] = error_poll_task
         _, pending = await asyncio.wait(
             [keep_alive_task, receive_task, error_poll_task],
             return_when=asyncio.FIRST_COMPLETED,
