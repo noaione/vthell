@@ -273,21 +273,21 @@ class WebsocketServer:
                     logger.info(
                         "Server failed to sent ping request to %s after 20s, servering connection!", sid
                     )
-                    await self._client_disconnected(sid)
+                    await self._client_disconnected(sid, True)
                     break
                 except ConnectionClosed:
                     logger.error("Connection closed, removing client %s", sid)
-                    await self._client_disconnected(sid)
+                    await self._client_disconnected(sid, True)
                     break
                 await asyncio.sleep(20)
         except asyncio.CancelledError:
             logger.warning("Receive cancel code from asyncio, stopping...")
         except ConnectionClosed:
             logger.warning("Connection closed, removing client %s", sid)
-            await self._client_disconnected(sid)
+            await self._client_disconnected(sid, True)
         except Exception as e:
             logger.error("An error occured while trying to process for client %s", sid, exc_info=e)
-            await self._client_disconnected(sid)
+            await self._client_disconnected(sid, True)
 
     async def receive_message(self, sid: str, ws: WebsocketProto):
         try:
