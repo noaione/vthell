@@ -167,7 +167,15 @@ class HolodexAPI:
         return collected_videos
 
     async def get_lives(self):
-        results = await self._get_videos_paginated(None, "live")
+        async with self.client.get(f"{self.BASE}live") as response:
+            if response.status != 200:
+                logger.error(f"Failed to get live videos: {response.status}")
+                return []
+            try:
+                results: List[HolodexVideoPayload] = await response.json()
+            except Exception:
+                logger.exception("Failed to parse live videos")
+                return []
 
         coerced_data: List[HolodexVideo] = []
         for video in results:
