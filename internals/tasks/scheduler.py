@@ -243,6 +243,7 @@ class AutoSchedulerTasks(InternalTaskBase):
                 if map_to_boolean(getenv("SKIP_MAIN_TASK", "0")):
                     logger.info("Skipping main task loop")
                     return
+                await asyncio.sleep(config.VTHELL_LOOP_SCHEDULER)
                 ctime = pendulum.now("UTC").int_timestamp
                 logger.info(f"Checking for auto scheduler at {ctime}")
                 task_name = f"auto-scheduler-{ctime}"
@@ -255,7 +256,6 @@ class AutoSchedulerTasks(InternalTaskBase):
                     await task
                 except Exception as e:
                     logger.error(f"Failed to create task {task_name}", exc_info=e)
-                await asyncio.sleep(config.VTHELL_LOOP_SCHEDULER)
         except asyncio.CancelledError:
             logger.warning("Got cancel signal, cleaning up all running tasks")
             for name, task in cls._tasks.items():
