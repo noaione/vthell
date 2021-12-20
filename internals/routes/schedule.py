@@ -32,7 +32,7 @@ from sanic.response import json
 
 from internals.db import models
 from internals.decorator import secure_access
-from internals.utils import secure_filename
+from internals.utils import map_to_boolean, secure_filename
 
 if TYPE_CHECKING:
     from internals.vth import SanicVTHell
@@ -129,17 +129,22 @@ async def add_new_jobs(request: Request):
 async def delete_job(request: Request, video_id: str):
     app: SanicVTHell = request.app
     await app.wait_until_ready()
+    force_delete = map_to_boolean(request.args.get("force", "0"))
     logger.info("ScheduleDelete: Received request for video <%s>", video_id)
     job = await models.VTHellJob.get_or_none(id=video_id)
     if job is None:
         logger.error("ScheduleDelete: Video <%s> not found", video_id)
         return json({"error": "Video not found"}, status=404)
-    if job.status not in [
-        models.VTHellJobStatus.cleaning,
-        models.VTHellJobStatus.done,
-        models.VTHellJobStatus.waiting,
-        models.VTHellJobStatus.error,
-    ]:
+    if (
+        job.status
+        not in [
+            models.VTHellJobStatus.cleaning,
+            models.VTHellJobStatus.done,
+            models.VTHellJobStatus.waiting,
+            models.VTHellJobStatus.error,
+        ]
+        and not force_delete
+    ):
         return json({"error": "Current video status does not allow you to delete video"}, status=406)
 
     await job.delete()
