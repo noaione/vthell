@@ -56,8 +56,6 @@ class VTHellRecords:
                 base["children"].append(child.to_json())
         if self.size is not None:
             base["size"] = self.size
-        if self.children is not None:
-            base["children"] = self.children
         if self.toggled is not None:
             base["toggled"] = self.toggled
         if self.mimetype is not None:
