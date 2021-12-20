@@ -51,6 +51,7 @@ class VTHellRecords:
             "type": self.type,
         }
         for child in self.children:
+            base["children"] = []
             base["children"].append(child.to_json())
         if self.size is not None:
             base["size"] = self.size
