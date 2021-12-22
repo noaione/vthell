@@ -83,7 +83,7 @@ class IPCConnection:
             self.reader.feed_eof()
         self.writer.close()
 
-        for task in self._listener_tasks:
+        for task in self._listener_tasks.values():
             task.cancel()
         self._closed = True
 
@@ -118,7 +118,10 @@ class IPCConnection:
     async def _receiver(self):
         try:
             while True:
-                data = await self.read_message()
+                try:
+                    data = await self.read_message()
+                except RemoteDisconnection:
+                    break
                 packet = self._decode_message(data)
                 if packet is None:
                     continue
