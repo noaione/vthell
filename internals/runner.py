@@ -107,7 +107,7 @@ def serve(
         loop.set_debug(app.debug)
 
     app.asgi = False
-    app.worker = worker_num
+    app.worker_num = worker_num
 
     connections = connections if connections is not None else set()
     protocol_kwargs = _build_protocol_kwargs(protocol, app.config)

@@ -196,7 +196,7 @@ class SanicVTHell(Sanic):
     vtrecords: VTHellRecordedData
     wshandler: WebsocketServer
     ipc: Union[IPCClient, IPCServer]
-    worker: int
+    worker_num: int
 
     def __init__(
         self,
@@ -300,11 +300,11 @@ class SanicVTHell(Sanic):
         self.wshandler.attach()
 
         self.ipc = None
-        self.worker = 0
+        self.worker_num = 0
 
     @property
     def first_process(self):
-        return self.worker and self.worker == 0
+        return self.worker_num and self.worker_num == 0
 
     async def wait_until_ready(self) -> None:
         """
@@ -356,8 +356,7 @@ class SanicVTHell(Sanic):
                 logger.error("Invalid dataset file %s", dataset, exc_info=exc)
 
         logger.info("Loaded %d dataset", len(self.vtdataset))
-        if self.first_process:
-            self.add_task(self.watch_vthell_dataset_folder)
+        self.add_task(self.watch_vthell_dataset_folder)
 
     def find_id_on_dataset(
         self, id: str, platform: str
@@ -375,6 +374,8 @@ class SanicVTHell(Sanic):
         return dataset.build_path(vtuber)
 
     async def watch_vthell_dataset_folder(self, app: SanicVTHell):
+        if app.first_process:
+            return
         dataset_path = CURRENT_PATH / "dataset"
         logger.info("Watching dataset folder %s", dataset_path)
         async for changes in wg.awatch(
