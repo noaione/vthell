@@ -196,7 +196,7 @@ class SanicVTHell(Sanic):
     vtrecords: VTHellRecordedData
     wshandler: WebsocketServer
     ipc: Union[IPCClient, IPCServer]
-    first_process: bool = False
+    worker: int
 
     def __init__(
         self,
@@ -300,6 +300,11 @@ class SanicVTHell(Sanic):
         self.wshandler.attach()
 
         self.ipc = None
+        self.worker = 0
+
+    @property
+    def first_process(self):
+        return self.worker and self.worker == 0
 
     async def wait_until_ready(self) -> None:
         """

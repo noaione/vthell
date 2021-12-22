@@ -45,8 +45,8 @@ from internals.db.ipc import IPCClient, IPCServer
 from internals.discover import autodiscover
 from internals.holodex import HolodexAPI
 from internals.logme import setup_logger
+from internals.monke import monkeypatch_sanic_runner
 from internals.utils import (
-    acquire_file_lock,
     find_mkvmerge_binary,
     find_rclone_binary,
     find_ytarchive_binary,
@@ -61,6 +61,7 @@ from internals.vth import SanicVTHell, SanicVTHellConfig
 if TYPE_CHECKING:
     from sanic.request import Request
 
+monkeypatch_sanic_runner()
 CURRENT_PATH = Path(__file__).absolute().parent
 logger = setup_logger(CURRENT_PATH / "logs")
 load_dotenv(str(CURRENT_PATH / ".env"))
@@ -72,10 +73,8 @@ else:
     PORT = int(PORT)
 
 
-async def before_server_starting(app: SanicVTHell, loop: asyncio.AbstractEventLoop):
-    is_success = await acquire_file_lock(loop)
-    app.first_process = is_success
-    if is_success:
+async def after_server_starting(app: SanicVTHell, loop: asyncio.AbstractEventLoop):
+    if app.first_process:
         logger.info("Running IPC server since this is the main process")
         app.ipc = IPCServer()
         app.ipc.attach(app)
@@ -214,7 +213,7 @@ def setup_app():
     logger.info("Attaching Holodex to Sanic")
     HolodexAPI.attach(app)
     logger.info("Registering Sanic middlewares and extra routes")
-    app.before_server_start(before_server_starting)
+    app.after_server_start(after_server_starting)
     app.after_server_stop(after_server_closing)
 
     @app.route("/", methods=["GET", "HEAD"])
