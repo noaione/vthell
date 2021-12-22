@@ -379,7 +379,7 @@ class SanicVTHell(Sanic):
             return ["Unknown"]
         return dataset.build_path(vtuber)
 
-    async def run(
+    def run(
         self,
         host: Optional[str] = None,
         port: Optional[int] = None,
