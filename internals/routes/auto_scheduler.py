@@ -153,7 +153,14 @@ async def post_auto_scheduler(request: Request):
         chains=chains,
     )
     await auto_sched.save()
-    return empty(201)
+    return json(
+        {
+            "id": auto_sched.pk,
+            "type": auto_sched.type.name,
+            "data": auto_sched.data,
+            "chains": auto_sched.chains,
+        }
+    )
 
 
 @bp_autosched.patch("/auto-scheduler/<id:int>")
