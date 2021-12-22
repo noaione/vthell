@@ -48,7 +48,7 @@ logger = logging.getLogger("internals.IPC")
 
 def create_id():
     ctime = pendulum.now("UTC").int_timestamp
-    return f"{rng_string(5)}-{ctime}"
+    return f"ipc-{rng_string(5)}-{ctime}"
 
 
 class RemoteDisconnection(Exception):
