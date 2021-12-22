@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import logging
+
 __all__ = ("monkeypatch_sanic_runner",)
 
 
@@ -29,6 +31,8 @@ def monkeypatch_sanic_runner():
     import sanic.server.runners
 
     from internals.runner import serve, serve_multiple, serve_single
+
+    logging.info("Nonkeypatching sanic.server.runners")
 
     sanic.server.runners.serve = serve
     sanic.server.runners.serve_single = serve_single

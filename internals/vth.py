@@ -36,14 +36,20 @@ import aiofiles
 import orjson
 import pendulum
 import watchgod as wg
-from sanic import Sanic
+from sanic import Sanic, reloader_helpers
 from sanic.config import SANIC_PREFIX, Config
+from sanic.server.protocols.http_protocol import HttpProtocol
+from sanic.server.protocols.websocket_protocol import WebSocketProtocol
 
 from internals.db import IPCServerClientBridge
+from internals.runner import serve_multiple, serve_single
 from internals.struct import VTHellRecords
 from internals.ws import WebsocketServer
 
 if TYPE_CHECKING:
+    from socket import socket
+    from ssl import SSLContext
+
     from sanic.handlers import ErrorHandler
     from sanic.request import Request
     from sanic.router import Router
@@ -372,6 +378,89 @@ class SanicVTHell(Sanic):
         if not dataset:
             return ["Unknown"]
         return dataset.build_path(vtuber)
+
+    async def run(
+        self,
+        host: Optional[str] = None,
+        port: Optional[int] = None,
+        *,
+        debug: bool = False,
+        auto_reload: Optional[bool] = None,
+        ssl: Union[Dict[str, str], SSLContext, None] = None,
+        sock: Optional[socket] = None,
+        workers: int = 1,
+        protocol: Optional[Type[asyncio.Protocol]] = None,
+        backlog: int = 100,
+        register_sys_signals: bool = True,
+        access_log: Optional[bool] = None,
+        unix: Optional[str] = None,
+        loop: None = None,
+        reload_dir: Optional[Union[List[str], str]] = None,
+    ) -> None:
+        if reload_dir:
+            if isinstance(reload_dir, str):
+                reload_dir = [reload_dir]
+
+            for directory in reload_dir:
+                direc = Path(directory)
+                if not direc.is_dir():
+                    logger.warning(f"Directory {directory} could not be located")
+                self.reload_dirs.add(Path(directory))
+
+        if loop is not None:
+            raise TypeError(
+                "loop is not a valid argument. To use an existing loop, "
+                "change to create_server().\nSee more: "
+                "https://sanic.readthedocs.io/en/latest/sanic/deploying.html"
+                "#asynchronous-support"
+            )
+
+        if auto_reload or auto_reload is None and debug:
+            self.auto_reload = True
+            if os.environ.get("SANIC_SERVER_RUNNING") != "true":
+                return reloader_helpers.watchdog(1.0, self)
+
+        if sock is None:
+            host, port = host or "127.0.0.1", port or 8000
+
+        if protocol is None:
+            protocol = WebSocketProtocol if self.websocket_enabled else HttpProtocol
+        # if access_log is passed explicitly change config.ACCESS_LOG
+        if access_log is not None:
+            self.config.ACCESS_LOG = access_log
+
+        server_settings = self._helper(
+            host=host,
+            port=port,
+            debug=debug,
+            ssl=ssl,
+            sock=sock,
+            unix=unix,
+            workers=workers,
+            protocol=protocol,
+            backlog=backlog,
+            register_sys_signals=register_sys_signals,
+            auto_reload=auto_reload,
+        )
+
+        try:
+            self.is_running = True
+            self.is_stopping = False
+            if workers > 1 and os.name != "posix":
+                logger.warn(
+                    f"Multiprocessing is currently not supported on {os.name}," " using workers=1 instead"
+                )
+                workers = 1
+            if workers == 1:
+                serve_single(server_settings)
+            else:
+                serve_multiple(server_settings, workers)
+        except BaseException:
+            logger.exception("Experienced exception while trying to serve")
+            raise
+        finally:
+            self.is_running = False
+        logger.info("Server Stopped")
 
     async def watch_vthell_dataset_folder(self, app: SanicVTHell):
         if app.first_process:
