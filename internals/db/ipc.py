@@ -215,6 +215,10 @@ class IPCServerClientBridge:
 
         self._extra_tasks: Dict[str, asyncio.Task] = {}
 
+    @property
+    def ipc_path(self):
+        return self.__ipc_path
+
     async def create_server(self):
         server: asyncio.AbstractServer = await asyncio.start_unix_server(
             self._handle_connection, path=str(self.__ipc_path)

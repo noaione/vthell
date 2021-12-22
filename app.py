@@ -51,7 +51,6 @@ from internals.utils import (
     find_rclone_binary,
     find_ytarchive_binary,
     map_to_boolean,
-    remove_acquired_lock,
     test_mkvmerge_binary,
     test_rclone_binary,
     test_ytarchive_binary,
@@ -87,9 +86,16 @@ async def after_server_closing(app: SanicVTHell, loop: asyncio.AbstractEventLoop
         await app.holodex.close()
     logger.info("Closing WSHandler")
     app.wshandler.close()
-    if app.first_process:
-        logger.info("Trying to detach from lock file...")
-        await remove_acquired_lock(loop)
+    if app.ipc:
+        logger.info("Closing IPC server and client")
+        app.ipc.close()
+        if app.first_process:
+            logger.info("Cleaning up IPC server file...")
+            await asyncio.sleep(2)
+            try:
+                await loop.run_in_executor(None, os.remove, str(app.ipc.ipc_path))
+            except Exception as err:
+                logger.error("Failed to clean up IPC server file", exc_info=err)
     logger.info("Extras are all cleanup!")
 
 
