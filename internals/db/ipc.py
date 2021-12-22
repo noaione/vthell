@@ -115,7 +115,7 @@ class IPCServer:
         self._extra_tasks: Dict[str, asyncio.Task] = {}
 
     async def connect(self):
-        server: asyncio.AbstractServer = asyncio.start_unix_server(
+        server: asyncio.AbstractServer = await asyncio.start_unix_server(
             self._handle_connection, path=str(self.__ipc_path)
         )
 
