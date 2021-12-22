@@ -270,8 +270,12 @@ class IPCClient:
 
     async def _listen_for_message(self):
         while True:
-            data = await self._msg_queue.get()
-            print(data)
+            packet = await self._msg_queue.get()
+
+            if packet.event.startswith("ws_") and self._app:
+                logger.debug("Got IPC event from server %s, rebroadcasting to WS emitter", packet.event)
+                event_name = packet.event[3:]
+                await self._app.wshandler.emit(event_name, packet.data)
 
     def _closed_down_task(self, task: asyncio.Task):
         task_name = task.get_name()
