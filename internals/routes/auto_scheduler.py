@@ -97,7 +97,7 @@ async def post_auto_scheduler(request: Request):
 
     ctype = json_request.get("type")
     data = json_request.get("data")
-    include = json_request.get("include", True)
+    include = json_request.get("include", json_request.get("enabled", True))
     chains_new = json_request.get("chains")
 
     if not isinstance(include, bool):
@@ -120,7 +120,7 @@ async def post_auto_scheduler(request: Request):
         return json({"error": "Invalid type, must be `channel`, `group`, `word`, `regex_word`"}, status=400)
 
     chains = None
-    if ctype in [models.VTHellAutoType.word, models.VTHellAutoType.regex_word] and isinstance(
+    if ctype_enum in [models.VTHellAutoType.word, models.VTHellAutoType.regex_word] and isinstance(
         chains_new, (dict, list)
     ):
         valid_chains = []
@@ -146,6 +146,7 @@ async def post_auto_scheduler(request: Request):
                     return json({"error": f"Invalid type for chains.{x}"}, status=400)
                 valid_chains.append({"type": validate_type.name, "data": chain["data"]})
         chains = valid_chains.copy()
+        print(chains, chains_new)
     auto_sched = models.VTHellAutoScheduler(
         type=ctype_enum,
         data=data,
@@ -159,6 +160,7 @@ async def post_auto_scheduler(request: Request):
             "type": auto_sched.type.name,
             "data": auto_sched.data,
             "chains": auto_sched.chains,
+            "enabled": auto_sched.include,
         }
     )
 
