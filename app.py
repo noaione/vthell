@@ -268,7 +268,7 @@ if __name__ == "__main__":
     app = setup_app()
     defaults = {
         "debug": args.debug,
-        "access_log": not args.debug,
+        "access_log": args.debug,
         "workers": args.workers,
     }
 
