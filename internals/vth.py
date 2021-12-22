@@ -310,7 +310,8 @@ class SanicVTHell(Sanic):
 
     @property
     def first_process(self):
-        return self.worker_num and self.worker_num == 0
+        worker_num = getattr(self, "worker_num", 0)
+        return worker_num == 0
 
     async def wait_until_ready(self) -> None:
         """
