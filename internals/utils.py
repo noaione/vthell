@@ -285,7 +285,7 @@ def _acquire_lock_unix(file: IO):
     import fcntl
 
     try:
-        fcntl.flock(file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        fcntl.flock(file.fileno(), fcntl.LOCK_EX)
     except BlockingIOError:
         raise AcquiringLockError("Could not acquire lock")
 
