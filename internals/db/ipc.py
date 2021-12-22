@@ -266,7 +266,7 @@ class IPCServerClientBridge:
             conn.close()
 
     async def _handle_connection(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
-        conn = IPCConnection(reader, writer)
+        conn = IPCConnection(self._app, reader, writer)
         logger.info("New connection %s", conn.id)
         task_name = f"ipc-client-{conn.id}_client_loop_task"
         task = self._app.loop.create_task(conn.establish(), name=task_name)
