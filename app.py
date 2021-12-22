@@ -73,9 +73,10 @@ else:
 
 
 async def after_server_starting(app: SanicVTHell, loop: asyncio.AbstractEventLoop):
-    logger.info("Attaching the IPC server and client")
-    app.ipc = IPCServerClientBridge()
-    app.ipc.attach(app)
+    if os.name != "nt":
+        logger.info("Attaching the IPC server and client")
+        app.ipc = IPCServerClientBridge()
+        app.ipc.attach(app)
 
 
 async def after_server_closing(app: SanicVTHell, loop: asyncio.AbstractEventLoop):
