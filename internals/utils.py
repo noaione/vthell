@@ -303,7 +303,8 @@ def _acquire_lock(file: IO):
     import sys
 
     if sys.platform == "win32":
-        _acquire_lock_windows(file)
+        # _acquire_lock_windows(file)
+        pass
     else:
         _acquire_lock_unix(file)
 
@@ -312,7 +313,8 @@ def _release_lock(file: IO):
     import sys
 
     if sys.platform == "win32":
-        _release_lock_windows(file)
+        # _release_lock_windows(file)
+        pass
     else:
         _release_lock_unix(file)
 
