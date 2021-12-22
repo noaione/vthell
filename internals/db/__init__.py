@@ -8,4 +8,5 @@ Database related code and models.
 """
 
 from .client import *
+from .ipc import *
 from .models import *

@@ -41,6 +41,7 @@ from tortoise import Tortoise
 
 from internals.constants import archive_gh, hash_gh
 from internals.db import models, register_db
+from internals.db.ipc import IPCClient, IPCServer
 from internals.discover import autodiscover
 from internals.holodex import HolodexAPI
 from internals.logme import setup_logger
@@ -74,6 +75,14 @@ else:
 async def before_server_starting(app: SanicVTHell, loop: asyncio.AbstractEventLoop):
     is_success = await acquire_file_lock(loop)
     app.first_process = is_success
+    if is_success:
+        logger.info("Running IPC server since this is the main process")
+        app.ipc = IPCServer()
+        app.ipc.attach(app)
+    else:
+        logger.info("Running IPC client since this is a child process")
+        app.ipc = IPCClient()
+        app.ipc.attach(app)
 
 
 async def after_server_closing(app: SanicVTHell, loop: asyncio.AbstractEventLoop):

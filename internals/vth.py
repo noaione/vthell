@@ -39,6 +39,7 @@ import watchgod as wg
 from sanic import Sanic
 from sanic.config import SANIC_PREFIX, Config
 
+from internals.db import IPCClient, IPCServer
 from internals.struct import VTHellRecords
 from internals.ws import WebsocketServer
 
@@ -194,6 +195,7 @@ class SanicVTHell(Sanic):
     vtdataset: Dict[str, VTHellDataset]
     vtrecords: VTHellRecordedData
     wshandler: WebsocketServer
+    ipc: Union[IPCClient, IPCServer]
     first_process: bool = False
 
     def __init__(
@@ -296,6 +298,8 @@ class SanicVTHell(Sanic):
         self.startup_vthell_dataset()
         self.wshandler = WebsocketServer(self)
         self.wshandler.attach()
+
+        self.ipc = None
 
     async def wait_until_ready(self) -> None:
         """

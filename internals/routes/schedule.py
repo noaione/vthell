@@ -84,17 +84,17 @@ async def add_new_jobs(request: Request):
             if last_status in [models.VTHellJobStatus.downloading, models.VTHellJobStatus.preparing]:
                 existing_job.status = models.VTHellJobStatus.waiting
         await existing_job.save()
-        await app.wshandler.emit(
-            "job_update",
-            {
-                "id": existing_job.id,
-                "title": existing_job.title,
-                "start_time": existing_job.start_time,
-                "channel_id": existing_job.channel_id,
-                "is_member": existing_job.member_only,
-                "status": existing_job.status.value,
-            },
-        )
+        job_update_data = {
+            "id": existing_job.id,
+            "title": existing_job.title,
+            "start_time": existing_job.start_time,
+            "channel_id": existing_job.channel_id,
+            "is_member": existing_job.member_only,
+            "status": existing_job.status.value,
+        }
+        await app.wshandler.emit("job_update", job_update_data)
+        if app.first_process and app.ipc:
+            await app.ipc.emit("ws_job_update", job_update_data)
     else:
         logger.info(f"ScheduleRequest: Video {video_id} not found, creating new job...")
         job_request = models.VTHellJob(
@@ -106,20 +106,20 @@ async def add_new_jobs(request: Request):
             member_only=video_res.is_member,
         )
         await job_request.save()
-        await app.wshandler.emit(
-            "job_scheduled",
-            {
-                "id": job_request.id,
-                "title": job_request.title,
-                "filename": job_request.filename,
-                "start_time": job_request.start_time,
-                "channel_id": job_request.channel_id,
-                "is_member": job_request.member_only,
-                "status": job_request.status.value,
-                "resolution": job_request.resolution,
-                "error": job_request.error,
-            },
-        )
+        job_data_update = {
+            "id": job_request.id,
+            "title": job_request.title,
+            "filename": job_request.filename,
+            "start_time": job_request.start_time,
+            "channel_id": job_request.channel_id,
+            "is_member": job_request.member_only,
+            "status": job_request.status.value,
+            "resolution": job_request.resolution,
+            "error": job_request.error,
+        }
+        await app.wshandler.emit("job_scheduled", job_data_update)
+        if app.first_process and app.ipc:
+            await app.ipc.emit("ws_job_scheduled", job_data_update)
     logger.info(f"APIAdd: Video {video_id} added to queue, sending back request")
     return json(video_res.to_json())
 
@@ -149,6 +149,8 @@ async def delete_job(request: Request, video_id: str):
 
     await job.delete()
     await app.wshandler.emit("job_delete", {"id": video_id})
+    if app.first_process and app.ipc:
+        await app.ipc.emit("ws_job_delete", {"id": video_id})
     return json(
         {
             "id": job.id,
