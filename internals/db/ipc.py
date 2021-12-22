@@ -300,9 +300,10 @@ class IPCServerClientBridge:
 
         async def _attach_listener(app: SanicVTHell):
             ctime = pendulum.now("UTC").int_timestamp
+            logger.info(f"IPC worker: {app.worker_num}")
             if app.first_process:
-                task_name = f"ipc-server-{ctime}"
                 logger.info("Starting IPC server...")
+                task_name = f"ipc-server-startup-{ctime}"
                 task_main = app.loop.create_task(self.create_server(), name=task_name)
                 task_main.add_done_callback(self._closed_down_task)
             else:
