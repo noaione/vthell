@@ -42,7 +42,7 @@ if TYPE_CHECKING:
 
 
 BASE_PATH = Path(__file__).absolute().parent.parent.parent
-__all__ = ("IPCClient", "IPCServer")
+__all__ = ("IPCServerClientBridge", "IPCConnection")
 logger = logging.getLogger("internals.IPC")
 
 
@@ -58,21 +58,89 @@ class RemoteDisconnection(Exception):
 
 
 class IPCConnection:
-    def __init__(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
+    def __init__(self, app: SanicVTHell, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
         self._id = create_id()
+        self._app: SanicVTHell = app
         self.reader = reader
         self.writer = writer
 
         self._drain_lock = asyncio.Lock()
+
+        self._msg_receiver: asyncio.Queue[WebSocketPacket] = asyncio.Queue()
+        self._msg_sender: asyncio.Queue[WebSocketPacket] = asyncio.Queue()
+
+        self._listener_tasks: Dict[asyncio.Task] = {}
+        self._closed = False
 
     @property
     def id(self):
         return self._id
 
     def close(self):
+        if self._closed:
+            return
         if not self.reader.at_eof():
             self.reader.feed_eof()
         self.writer.close()
+
+        for task in self._listener_tasks:
+            task.cancel()
+        self._closed = True
+
+    def _encode_packet(self, packet: WebSocketPacket):
+        as_json = packet.to_ws()
+        return orjson.dumps(as_json).decode("utf-8")
+
+    def _decode_message(self, message: str):
+        if not message:
+            return None
+        try:
+            as_json = orjson.loads(message)
+        except Exception:
+            return None
+        try:
+            return WebSocketPacket.from_ws(as_json)
+        except (ValueError, TypeError):
+            return None
+
+    async def _listen_for_message(self):
+        try:
+            while True:
+                packet = await self._msg_receiver.get()
+
+                if packet.event.startswith("ws_") and self._app:
+                    logger.debug("Got IPC event from server %s, rebroadcasting to WS emitter", packet.event)
+                    event_name = packet.event[3:]
+                    await self._app.wshandler.emit(event_name, packet.data)
+        except asyncio.CancelledError:
+            return
+
+    async def _receiver(self):
+        try:
+            while True:
+                data = await self.read_message()
+                packet = self._decode_message(data)
+                if packet is None:
+                    continue
+
+                await self._msg_receiver.put(packet)
+        except asyncio.CancelledError:
+            return
+
+    async def _dispatcher(self):
+        try:
+            while True:
+                packet = await self._msg_sender.get()
+                try:
+                    await self.send_message(self._encode_packet(packet))
+                except RemoteDisconnection:
+                    break
+        except asyncio.CancelledError:
+            return
+
+    async def emit(self, event: str, data: Any):
+        packet = WebSocketPacket(event, data)
+        await self._msg_sender.put(packet)
 
     async def send_message(self, message: Union[str, bytes]):
         if isinstance(message, str):
@@ -103,18 +171,51 @@ class IPCConnection:
         except (asyncio.IncompleteReadError, BrokenPipeError, ConnectionResetError):
             raise RemoteDisconnection(self)
 
+    def _closed_down_task(self, task: asyncio.Task):
+        task_name = task.get_name()
+        try:
+            exception = task.exception()
+            if exception is not None:
+                logger.error(f"Task {task_name} failed with exception: {exception}", exc_info=exception)
+        except asyncio.exceptions.InvalidStateError:
+            pass
+        self._listener_tasks.pop(task_name, None)
+        logger.debug(f"Task {task_name} finished")
 
-class IPCServer:
+    async def establish(self):
+        sid = self._id
+        receive_task = asyncio.ensure_future(self._receiver())
+        dispatch_task = asyncio.ensure_future(self._dispatcher())
+        if isinstance(receive_task, asyncio.Task):
+            receive_task.set_name(f"ws_client_{sid}-keep-alive")
+            receive_task.add_done_callback(self._closed_down_task)
+            self._listener_tasks[f"ws_client_{sid}-keep-alive"] = receive_task
+        if isinstance(dispatch_task, asyncio.Task):
+            dispatch_task.set_name(f"ws_client_{sid}-receive")
+            dispatch_task.add_done_callback(self._closed_down_task)
+            self._listener_tasks[f"ws_client_{sid}-receive"] = dispatch_task
+
+        _, pending = await asyncio.wait(
+            [receive_task, dispatch_task],
+            return_when=asyncio.FIRST_COMPLETED,
+        )
+        logger.info("Stopping all IPC task for %s since it closed down.", sid)
+        for task in pending:
+            logger.debug("Cancelling %s", task.get_name())
+            task.cancel()
+        self.close()
+
+
+class IPCServerClientBridge:
     def __init__(self) -> None:
         self.__ipc_path = BASE_PATH / "dbs" / "sanic-ipc_do_not_delete.sock"
         self._app: Optional[SanicVTHell] = None
 
         self._connection_manager: Dict[str, IPCConnection] = {}
-        self._msg_queue: asyncio.Queue[WebSocketPacket] = None
 
         self._extra_tasks: Dict[str, asyncio.Task] = {}
 
-    async def connect(self):
+    async def create_server(self):
         server: asyncio.AbstractServer = await asyncio.start_unix_server(
             self._handle_connection, path=str(self.__ipc_path)
         )
@@ -125,107 +226,7 @@ class IPCServer:
             server.close()
             await server.wait_closed()
 
-    def close(self):
-        self._disonnect_all()
-        for task in self._extra_tasks.values():
-            task.cancel()
-
-    async def _handle_connection(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
-        conn = IPCConnection(reader, writer)
-        await conn.send_message("hello")
-        response = await conn.read_message()
-        if response == "hi":
-            logger.info("New connection %s", conn.id)
-            self._connection_manager[conn.id] = conn
-        else:
-            logger.warning("Unexpected response from %s: %s", conn.id, response)
-            conn.close()
-
-    def _encode_packet(self, packet: WebSocketPacket):
-        as_json = packet.to_ws()
-        return orjson.dumps(as_json).decode("utf-8")
-
-    async def emit(self, event: str, data: Any):
-        packet = WebSocketPacket(event, data)
-        await self._msg_queue.put(packet)
-
-    def _disconnect(self, conn: IPCConnection):
-        conn.close()
-        self._connection_manager.pop(conn.id, None)
-
-    def _disonnect_all(self):
-        copy_data = self._connection_manager.copy()
-        for conn in copy_data.values():
-            self._disconnect(conn)
-
-    async def _quick_dispatcher(self):
-        try:
-            while True:
-                packet = await self._msg_queue.get()
-                for conn in list(self._connection_manager.values())[:]:
-                    try:
-                        await conn.send_message(self._encode_packet(packet))
-                    except RemoteDisconnection:
-                        self._disconnect(conn)
-        except asyncio.CancelledError:
-            self._disonnect_all()
-
-    def _closed_down_task(self, task: asyncio.Task):
-        task_name = task.get_name()
-        try:
-            exception = task.exception()
-            if exception is not None:
-                logger.error(f"Task {task_name} failed with exception: {exception}", exc_info=exception)
-        except asyncio.exceptions.InvalidStateError:
-            pass
-        self._extra_tasks.pop(task_name, None)
-        logger.debug(f"Task {task_name} finished")
-
-    def attach(self, app: SanicVTHell):
-        self._app = app
-
-        async def _attach_listener(app: SanicVTHell):
-            ctime = pendulum.now("UTC").int_timestamp
-            self._msg_queue = asyncio.Queue()
-            fnmae = f"ipc-server-{ctime}"
-            logger.info("Starting IPC server dispatcher %s", fnmae)
-            task_dispatch = app.loop.create_task(self._quick_dispatcher(), name=fnmae + "-dispatcher")
-            task_dispatch.add_done_callback(self._closed_down_task)
-            self._extra_tasks[fnmae + "-dispatcher"] = task_dispatch
-            logger.info("Starting IPC server...")
-            task_main = app.loop.create_task(self.connect(), name=fnmae)
-            task_main.add_done_callback(self._closed_down_task)
-            self._extra_tasks[fnmae] = task_main
-
-        app.add_task(_attach_listener)
-
-
-class IPCClient:
-    def __init__(self) -> None:
-        self.__ipc_path = BASE_PATH / "dbs" / "sanic-ipc_do_not_delete.sock"
-        self._app: Optional[SanicVTHell] = None
-
-        self._conn: IPCConnection = None
-        self._conn_ready = asyncio.Event()
-        self._msg_queue: asyncio.Queue[WebSocketPacket] = None
-
-        self._extra_tasks: Dict[str, asyncio.Task] = {}
-
-    async def _wait_until_ready(self):
-        while True:
-            is_exist = await self._app.loop.run_in_executor(None, self.__ipc_path.exists)
-            if is_exist:
-                break
-            await asyncio.sleep(0.5)
-
-    def close(self):
-        if self._conn:
-            self._conn.close()
-
-        for task in self._extra_tasks.values():
-            task.cancel()
-
-    async def connect(self):
+    async def connect_client(self):
         try:
             await self._wait_until_ready()
         except asyncio.CancelledError:
@@ -235,47 +236,41 @@ class IPCClient:
         except FileNotFoundError:
             pass
 
-        conn = IPCConnection(reader, writer)
-        response = await conn.read_message()
-        if response == "hello":
-            logger.info("Connection established %s, trying to send hi message", conn.id)
-            await conn.send_message("hi")
-            self._conn = conn
-            self._conn_ready.set()
-        else:
-            logger.warning("Unexpected init from %s: %s", conn.id, response)
+        conn = IPCConnection(self._app, reader, writer)
+        logger.info("Connection established %s, trying to send hi message", conn.id)
+        task_name = f"ipc-client-{conn.id}_client_loop_task"
+        task = self._app.loop.create_task(conn.establish(), name=task_name)
+        task.add_done_callback(self.connection_done_task)
+        self._connection_manager[conn.id] = conn
+
+    def connection_done_task(self, task: asyncio.Task):
+        task_name = task.get_name()
+        # ipc-client-{conn.id}_client_loop_task
+        actual_id = task_name.replace("ipc-client-", "")
+        actual_id = actual_id.replace("_client_loop_task", "")
+        conn = self._connection_manager.pop(actual_id, None)
+        if conn is not None:
+            logger.info("Connection %s closed", actual_id)
             conn.close()
 
-    def _decode_message(self, message: str):
-        if not message:
-            return None
-        try:
-            as_json = orjson.loads(message)
-        except Exception:
-            return None
-        try:
-            return WebSocketPacket.from_ws(as_json)
-        except (ValueError, TypeError):
-            return None
+    async def _handle_connection(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
+        conn = IPCConnection(reader, writer)
+        logger.info("New connection %s", conn.id)
+        task_name = f"ipc-client-{conn.id}_client_loop_task"
+        task = self._app.loop.create_task(conn.establish(), name=task_name)
+        task.add_done_callback(self.connection_done_task)
+        self._extra_tasks[task_name] = task
+        self._connection_manager[conn.id] = conn
 
-    async def _message_receiver(self):
-        await self._conn_ready.wait()
-        while True:
-            data = await self._conn.read_message()
-            packet = self._decode_message(data)
-            if packet is None:
-                continue
+    async def emit(self, event: str, data: Any):
+        for conn in self._connection_manager.values():
+            await conn.emit(event, data)
 
-            await self._msg_queue.put(packet)
-
-    async def _listen_for_message(self):
-        while True:
-            packet = await self._msg_queue.get()
-
-            if packet.event.startswith("ws_") and self._app:
-                logger.debug("Got IPC event from server %s, rebroadcasting to WS emitter", packet.event)
-                event_name = packet.event[3:]
-                await self._app.wshandler.emit(event_name, packet.data)
+    def close(self):
+        for conn in self._connection_manager.values():
+            conn.close()
+        for task in self._extra_tasks.values():
+            task.cancel()
 
     def _closed_down_task(self, task: asyncio.Task):
         task_name = task.get_name()
@@ -293,16 +288,17 @@ class IPCClient:
 
         async def _attach_listener(app: SanicVTHell):
             ctime = pendulum.now("UTC").int_timestamp
-            self._msg_queue = asyncio.Queue()
-            fnmae = f"ipc-server-{ctime}"
-            logger.info("Starting IPC server listener %s", fnmae)
-            task_dispatch = app.loop.create_task(self._listen_for_message(), name=fnmae + "-listener")
-            task_dispatch.add_done_callback(self._closed_down_task)
-            self._extra_tasks[fnmae + "-listener"] = task_dispatch
-            logger.info("Starting IPC client...")
-            await self.connect()
-            task_main = app.loop.create_task(self._message_receiver(), name=fnmae)
-            task_main.add_done_callback(self._closed_down_task)
-            self._extra_tasks[fnmae] = task_main
+            if app.first_process:
+                task_name = f"ipc-server-{ctime}"
+                logger.info("Starting IPC server...")
+                task_main = app.loop.create_task(self.create_server(), name=task_name)
+                task_main.add_done_callback(self._closed_down_task)
+            else:
+                logger.info("Starting IPC client...")
+                task_name = f"ipc-client-startup-{ctime}"
+                task_main = app.loop.create_task(self.connect_client(), name=task_name)
+                task_main.add_done_callback(self._closed_down_task)
+
+            self._extra_tasks[task_name] = task_main
 
         app.add_task(_attach_listener)
