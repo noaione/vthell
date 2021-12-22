@@ -219,6 +219,13 @@ class IPCServerClientBridge:
     def ipc_path(self):
         return self.__ipc_path
 
+    async def _wait_until_ready(self):
+        while True:
+            is_exist = await self._app.loop.run_in_executor(None, self.__ipc_path.exists)
+            if is_exist:
+                break
+            await asyncio.sleep(0.5)
+
     async def create_server(self):
         server: asyncio.AbstractServer = await asyncio.start_unix_server(
             self._handle_connection, path=str(self.__ipc_path)
@@ -233,6 +240,7 @@ class IPCServerClientBridge:
     async def connect_client(self):
         try:
             await self._wait_until_ready()
+            await asyncio.sleep(1)
         except asyncio.CancelledError:
             return
         try:
