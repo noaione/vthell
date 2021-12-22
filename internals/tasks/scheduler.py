@@ -214,20 +214,20 @@ class AutoSchedulerTasks(InternalTaskBase):
             await app.dispatch(
                 "internals.notifier.discord", context={"app": app, "data": job, "emit_type": "schedule"}
             )
-            await app.wshandler.emit(
-                "job_scheduled",
-                {
-                    "id": job.id,
-                    "title": job.title,
-                    "filename": job.filename,
-                    "start_time": job.start_time,
-                    "channel_id": job.channel_id,
-                    "is_member": job.member_only,
-                    "status": job.status.value,
-                    "resolution": job.resolution,
-                    "error": job.error,
-                },
-            )
+            data_update = {
+                "id": job.id,
+                "title": job.title,
+                "filename": job.filename,
+                "start_time": job.start_time,
+                "channel_id": job.channel_id,
+                "is_member": job.member_only,
+                "status": job.status.value,
+                "resolution": job.resolution,
+                "error": job.error,
+            }
+            await app.wshandler.emit("job_scheduled", data_update)
+            if app.first_process and app.ipc:
+                await app.ipc.emit("ws_job_scheduled", data_update)
 
     @staticmethod
     async def get_auto_schedulers():
@@ -235,6 +235,9 @@ class AutoSchedulerTasks(InternalTaskBase):
 
     @classmethod
     async def main_loop(cls: Type[AutoSchedulerTasks], app: SanicVTHell):
+        if not app.first_process:
+            logger.warning("Autoscheduler is not running in the first process, skipping it")
+            return
         loop = app.loop
         config = app.config
         await app.wait_until_ready()

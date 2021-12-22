@@ -41,9 +41,11 @@ from tortoise import Tortoise
 
 from internals.constants import archive_gh, hash_gh
 from internals.db import models, register_db
+from internals.db.ipc import IPCServerClientBridge
 from internals.discover import autodiscover
 from internals.holodex import HolodexAPI
 from internals.logme import setup_logger
+from internals.monke import monkeypatch_sanic_runner
 from internals.utils import (
     find_mkvmerge_binary,
     find_rclone_binary,
@@ -58,6 +60,7 @@ from internals.vth import SanicVTHell, SanicVTHellConfig
 if TYPE_CHECKING:
     from sanic.request import Request
 
+monkeypatch_sanic_runner()
 CURRENT_PATH = Path(__file__).absolute().parent
 logger = setup_logger(CURRENT_PATH / "logs")
 load_dotenv(str(CURRENT_PATH / ".env"))
@@ -69,6 +72,13 @@ else:
     PORT = int(PORT)
 
 
+async def after_server_starting(app: SanicVTHell, loop: asyncio.AbstractEventLoop):
+    if os.name != "nt":
+        logger.info("Attaching the IPC server and client")
+        app.ipc = IPCServerClientBridge()
+        app.ipc.attach(app)
+
+
 async def after_server_closing(app: SanicVTHell, loop: asyncio.AbstractEventLoop):
     logger.info("Closing DB client")
     await Tortoise.close_connections()
@@ -77,6 +87,16 @@ async def after_server_closing(app: SanicVTHell, loop: asyncio.AbstractEventLoop
         await app.holodex.close()
     logger.info("Closing WSHandler")
     app.wshandler.close()
+    if app.ipc:
+        logger.info("Closing IPC server and client")
+        app.ipc.close()
+        if app.first_process:
+            logger.info("Cleaning up IPC server file...")
+            await asyncio.sleep(2)
+            try:
+                await loop.run_in_executor(None, os.remove, str(app.ipc.ipc_path))
+            except Exception as err:
+                logger.error("Failed to clean up IPC server file", exc_info=err)
     logger.info("Extras are all cleanup!")
 
 
@@ -195,6 +215,7 @@ def setup_app():
     logger.info("Attaching Holodex to Sanic")
     HolodexAPI.attach(app)
     logger.info("Registering Sanic middlewares and extra routes")
+    app.after_server_start(after_server_starting)
     app.after_server_stop(after_server_closing)
 
     @app.route("/", methods=["GET", "HEAD"])
@@ -254,7 +275,7 @@ if __name__ == "__main__":
     app = setup_app()
     defaults = {
         "debug": args.debug,
-        "access_log": not args.debug,
+        "access_log": args.debug,
         "workers": args.workers,
     }
 

@@ -19,6 +19,7 @@
     - [Migration](#migration)
   - [Accessing Protected Routes](#accessing-protected-routes)
   - [WebSockets](#websockets)
+  - [Multi Workers](#multi-workers)
 - [Improvements](#improvements)
 - [Dataset](#dataset)
 - [License](#license)
@@ -451,6 +452,9 @@ curl -X POST -H "X-Auth-Token: SecretPassword123" http://localhost:12790/api/add
 
 ### WebSockets
 
+**Note**<br>
+If you are running with Uvicorn or anything else, make sure to disable the ping timeout and ping interval. We have our own ping method that you need to answer and using that ping method will broke if you use Nginx deployment or something like that.
+
 The v3 of VTHell now have a Websocket server ready to be connected to. To start, connect to this following route: `/api/event`
 
 For example in JS:
@@ -547,6 +551,20 @@ The server will sent a `ping` request with the followwing content:
 If you dont answer within 30 seconds, the connection will be closed immediately.
 
 When you connect with the socket, you will get the `ping` event immediately!
+
+### Multi Workers
+
+It is recommended to run it in direct mode if you want to use multiple workers.<br>
+Although, it is supported, it might doing some unexpected thing.
+
+To run it in multiple workers mode, just add the parameter `--workers` or `-W` when invoking the `app.py` file
+
+```sh
+$ source .venv/bin/activate
+$ (.venv) python3 app.py -W 4
+```
+
+Above command will run the server with 4 workers.
 
 ## Improvements
 

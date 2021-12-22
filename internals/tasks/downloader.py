@@ -76,9 +76,10 @@ class DownloaderTasks(InternalTaskBase):
             data.status = models.VTHellJobStatus.error
             data.last_status = models.VTHellJobStatus.muxing
             data.error = f"mkvmerge exited with code {ret_code}:\n{stderr}"
-            await app.wshandler.emit(
-                "job_update", {"id": data.id, "status": "ERROR", "error": "MKV_MUX_FAIL"}
-            )
+            data_update = {"id": data.id, "status": "ERROR", "error": "MKV_MUX_FAIL"}
+            await app.wshandler.emit("job_update", data_update)
+            if app.first_process and app.ipc:
+                await app.ipc.emit("ws_job_update", data_update)
             return True
         return False
 
@@ -138,10 +139,10 @@ class DownloaderTasks(InternalTaskBase):
             data.last_status = models.VTHellJobStatus.uploading
             data.error = f"rclone exited with code {ret_code}:\n{error_line}"
             await data.save()
-            await app.wshandler.emit(
-                "job_update",
-                {"id": data.id, "status": "ERROR", "error": "RCLONE_UPLOAD_FAIL"},
-            )
+            data_update = {"id": data.id, "status": "ERROR", "error": "RCLONE_UPLOAD_FAIL"}
+            await app.wshandler.emit("job_update", data_update)
+            if app.first_process and app.ipc:
+                await app.ipc.emit("ws_job_update", data_update)
             return True
         return False
 
@@ -234,6 +235,8 @@ class DownloaderTasks(InternalTaskBase):
             if extras:
                 data_update.update(extras)
         await app.wshandler.emit("job_update", data_update)
+        if app.first_process and app.ipc:
+            await app.ipc.emit("ws_job_update", data_update)
         if notify:
             await app.dispatch(
                 "internals.notifier.discord",
@@ -356,7 +359,10 @@ class DownloaderTasks(InternalTaskBase):
                 data.status = models.VTHellJobStatus.done
             data.error = f"ytarchive exited with code {ret_code} ({error_line})"
             await data.save()
-            await app.wshandler.emit("job_update", {"id": data.id, "status": "ERROR", "error": data.error})
+            emit_data = {"id": data.id, "status": "ERROR", "error": data.error}
+            await app.wshandler.emit("job_update", emit_data)
+            if app.first_process and app.ipc:
+                await app.ipc.emit("ws_job_update", emit_data)
             return
 
         await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.muxing, True)
@@ -382,7 +388,10 @@ class DownloaderTasks(InternalTaskBase):
             "internals.notifier.discord",
             context={"app": app, "data": data, "emit_type": "update"},
         )
-        await app.wshandler.emit("job_update", {"id": data.id, "status": "DONE"})
+        data_update = {"id": data.id, "status": "DONE"}
+        await app.wshandler.emit("job_update", data_update)
+        if app.first_process and app.ipc:
+            await app.ipc.emit("ws_job_update", data_update)
 
         await DownloaderTasks.cleanup_files(data, app)
         logger.info(f"Job {data.id} finished cleaning up, setting job as finished...")
@@ -403,6 +412,9 @@ class DownloaderTasks(InternalTaskBase):
 
     @classmethod
     async def main_loop(cls: Type[DownloaderTasks], app: SanicVTHell):
+        if not app.first_process:
+            logger.warning("Downloader is not running in the first process, skipping it")
+            return
         loop = app.loop
         config = app.config
         await app.wait_until_ready()
