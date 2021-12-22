@@ -45,10 +45,12 @@ from internals.discover import autodiscover
 from internals.holodex import HolodexAPI
 from internals.logme import setup_logger
 from internals.utils import (
+    acquire_file_lock,
     find_mkvmerge_binary,
     find_rclone_binary,
     find_ytarchive_binary,
     map_to_boolean,
+    remove_acquired_lock,
     test_mkvmerge_binary,
     test_rclone_binary,
     test_ytarchive_binary,
@@ -69,6 +71,11 @@ else:
     PORT = int(PORT)
 
 
+async def before_server_starting(app: SanicVTHell, loop: asyncio.AbstractEventLoop):
+    is_success = await acquire_file_lock(loop)
+    app.first_process = is_success
+
+
 async def after_server_closing(app: SanicVTHell, loop: asyncio.AbstractEventLoop):
     logger.info("Closing DB client")
     await Tortoise.close_connections()
@@ -77,6 +84,9 @@ async def after_server_closing(app: SanicVTHell, loop: asyncio.AbstractEventLoop
         await app.holodex.close()
     logger.info("Closing WSHandler")
     app.wshandler.close()
+    if app.first_process:
+        logger.info("Trying to detach from lock file...")
+        await remove_acquired_lock(loop)
     logger.info("Extras are all cleanup!")
 
 
@@ -195,6 +205,7 @@ def setup_app():
     logger.info("Attaching Holodex to Sanic")
     HolodexAPI.attach(app)
     logger.info("Registering Sanic middlewares and extra routes")
+    app.before_server_start(before_server_starting)
     app.after_server_stop(after_server_closing)
 
     @app.route("/", methods=["GET", "HEAD"])

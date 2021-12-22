@@ -403,6 +403,9 @@ class DownloaderTasks(InternalTaskBase):
 
     @classmethod
     async def main_loop(cls: Type[DownloaderTasks], app: SanicVTHell):
+        if not app.first_process:
+            logger.warning("Downloader is not running in the first process, skipping it")
+            return
         loop = app.loop
         config = app.config
         await app.wait_until_ready()

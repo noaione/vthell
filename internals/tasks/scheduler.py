@@ -235,6 +235,9 @@ class AutoSchedulerTasks(InternalTaskBase):
 
     @classmethod
     async def main_loop(cls: Type[AutoSchedulerTasks], app: SanicVTHell):
+        if not app.first_process:
+            logger.warning("Autoscheduler is not running in the first process, skipping it")
+            return
         loop = app.loop
         config = app.config
         await app.wait_until_ready()

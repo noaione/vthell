@@ -186,3 +186,5 @@ _oldstuff/
 chatarchive/*
 
 dl_temp/*
+
+*.sock

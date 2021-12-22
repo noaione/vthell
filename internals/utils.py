@@ -22,13 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import asyncio
+import logging
 import os
 import random
 import re
 import string as pystring
 import subprocess
 from pathlib import Path
-from typing import Any
+from typing import IO, Any, NoReturn
 
 import aiofiles.ospath
 
@@ -46,7 +48,12 @@ __all__ = (
     "find_cookies_file_sync",
     "map_to_boolean",
     "rng_string",
+    "acquire_file_lock",
+    "remove_acquired_lock",
 )
+
+logger = logging.getLogger("internals.utils")
+BASE_PATH = Path(__file__).absolute().parent.parent
 
 
 def secure_filename(fn: str):
@@ -217,3 +224,135 @@ def rng_string(length: int) -> str:
     all_strings = pystring.ascii_letters + pystring.digits
     contents = [random.choice(all_strings) for _ in range(length)]
     return "".join(contents)
+
+
+class AcquiringLockError(Exception):
+    pass
+
+
+class ReleaseLockError(Exception):
+    def __init__(self, exc: Exception) -> None:
+        self.original_error = exc
+        super().__init__("An error occured while trying to unlock lock file")
+
+
+def _acquire_lock_windows(file: IO):
+    import msvcrt
+
+    mode = msvcrt.LK_NBLCK
+    savepos = file.tell()
+    if savepos:
+        file.seek(0)
+    try:
+        msvcrt.locking(file.fileno(), mode, int(2 ** 31 - 1))
+    except IOError:
+        raise AcquiringLockError("Could not acquire lock")
+    if savepos:
+        file.seek(savepos)
+
+
+def _release_lock_windows(file: IO):
+    import msvcrt
+
+    import pywintypes  # type: ignore
+    import win32file  # type: ignore
+    import winerror  # type: ignore
+
+    __overlapped = pywintypes.OVERLAPPED()
+    savepos = file.tell()
+    if savepos:
+        file.seek(0)
+    try:
+        msvcrt.locking(file.fileno(), msvcrt.LK_UNLCK, int(2 ** 31 - 1))
+    except IOError as exc:
+        if exc.strerror == "Permission denied":
+            hfile = win32file._get_osfhandle(file.fileno())
+            try:
+                win32file.UnlockFileEx(hfile, 0, -0x10000, __overlapped)
+            except pywintypes.error as exc2:
+                if exc2.winerror == winerror.ERROR_NOT_LOCKED:
+                    pass
+                else:
+                    raise ReleaseLockError(exc2)
+        else:
+            raise ReleaseLockError(exc)
+    finally:
+        if savepos:
+            file.seek(savepos)
+
+
+def _acquire_lock_unix(file: IO):
+    import fcntl
+
+    try:
+        fcntl.flock(file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        raise AcquiringLockError("Could not acquire lock")
+
+
+def _release_lock_unix(file: IO):
+    import fcntl
+
+    try:
+        fcntl.flock(file.fileno(), fcntl.LOCK_UN)
+    except Exception as e:
+        raise ReleaseLockError(e)
+
+
+def _acquire_lock(file: IO):
+    import sys
+
+    if sys.platform == "win32":
+        _acquire_lock_windows(file)
+    else:
+        _acquire_lock_unix(file)
+
+
+def _release_lock(file: IO):
+    import sys
+
+    if sys.platform == "win32":
+        _release_lock_windows(file)
+    else:
+        _release_lock_unix(file)
+
+
+async def acquire_file_lock(loop: asyncio.AbstractEventLoop = None) -> bool:
+    loop = loop or asyncio.get_event_loop()
+    db_path = BASE_PATH / "dbs" / "vthell-server_do_not_delete.lock"
+
+    fp = await loop.run_in_executor(None, open, str(db_path), "w")
+    try:
+        logger.info("Acquiring file lock")
+        await loop.run_in_executor(None, _acquire_lock, fp)
+        logger.info("Acquired file lock, running as server mode")
+    except AcquiringLockError:
+        logger.info("Failed to acquire file lock, running as client mode")
+        return False
+    await loop.run_in_executor(None, fp.close)
+    return True
+
+
+async def remove_acquired_lock(loop: asyncio.AbstractEventLoop = None) -> NoReturn:
+    loop = loop or asyncio.get_event_loop()
+    db_path = BASE_PATH / "dbs" / "vthell-server_do_not_delete.lock"
+
+    try:
+        fp = await loop.run_in_executor(None, open, str(db_path), "w")
+    except FileNotFoundError:
+        logger.error("Failed to remove acquired lock, file not found")
+        return
+    try:
+        logger.info("Removing acquired lock")
+        await loop.run_in_executor(None, _release_lock, fp)
+        logger.info("Removed acquired lock")
+    except ReleaseLockError as exc:
+        logger.error("Failed to remove acquired lock", exc_info=exc.original_error)
+        return
+    await loop.run_in_executor(None, fp.close)
+
+    try:
+        # Cleanup
+        await loop.run_in_executor(None, db_path.unlink)
+    except Exception:
+        return

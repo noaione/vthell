@@ -106,6 +106,9 @@ class DatasetUpdaterTasks(InternalTaskBase):
     @classmethod
     async def main_loop(cls: Type[DatasetUpdaterTasks], app: SanicVTHell):
         await app.wait_until_ready()
+        if not app.first_process:
+            logger.warning("Datasets is not running in the first process, skipping it")
+            return
         try:
             while True:
                 ctime = pendulum.now("UTC").int_timestamp

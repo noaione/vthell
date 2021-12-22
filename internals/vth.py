@@ -194,6 +194,7 @@ class SanicVTHell(Sanic):
     vtdataset: Dict[str, VTHellDataset]
     vtrecords: VTHellRecordedData
     wshandler: WebsocketServer
+    first_process: bool = False
 
     def __init__(
         self,
