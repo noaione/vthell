@@ -108,7 +108,7 @@ class IPCConnection:
             while True:
                 packet = await self._msg_receiver.get()
 
-                if packet.event.startswith("ws_") and self._app:
+                if packet.event.startswith("ws_"):
                     logger.debug("Got IPC event from server %s, rebroadcasting to WS emitter", packet.event)
                     event_name = packet.event[3:]
                     await self._app.wshandler.emit(event_name, packet.data)
@@ -151,6 +151,7 @@ class IPCConnection:
         with_eof_bytes = message + b"\x04\x04\x04"
 
         try:
+            logger.debug("Sending IPC message to client: %s", message)
             self.writer.write(with_eof_bytes)
             async with self._drain_lock:
                 await self.writer.drain()
@@ -170,6 +171,7 @@ class IPCConnection:
             raw_data = await self.reader.readuntil(b"\x04\x04\x04")
             if raw_data.endswith(b"\x04\x04\x04"):
                 raw_data = raw_data[:-3]
+            logger.debug("Got IPC message from client: %d bytes", len(raw_data))
             return raw_data.decode("utf-8")
         except (asyncio.IncompleteReadError, BrokenPipeError, ConnectionResetError):
             raise RemoteDisconnection(self)
@@ -190,13 +192,13 @@ class IPCConnection:
         receive_task = asyncio.ensure_future(self._receiver())
         dispatch_task = asyncio.ensure_future(self._dispatcher())
         if isinstance(receive_task, asyncio.Task):
-            receive_task.set_name(f"ws_client_{sid}-keep-alive")
+            receive_task.set_name(f"ipc-client_{sid}-receiver_task")
             receive_task.add_done_callback(self._closed_down_task)
-            self._listener_tasks[f"ws_client_{sid}-keep-alive"] = receive_task
+            self._listener_tasks[f"ipc-client_{sid}-receiver_task"] = receive_task
         if isinstance(dispatch_task, asyncio.Task):
-            dispatch_task.set_name(f"ws_client_{sid}-receive")
+            dispatch_task.set_name(f"ipc-client_{sid}-dispatcher_task")
             dispatch_task.add_done_callback(self._closed_down_task)
-            self._listener_tasks[f"ws_client_{sid}-receive"] = dispatch_task
+            self._listener_tasks[f"ipc-client_{sid}-dispatcher_task"] = dispatch_task
 
         _, pending = await asyncio.wait(
             [receive_task, dispatch_task],
