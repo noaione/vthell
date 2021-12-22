@@ -351,7 +351,8 @@ class SanicVTHell(Sanic):
                 logger.error("Invalid dataset file %s", dataset, exc_info=exc)
 
         logger.info("Loaded %d dataset", len(self.vtdataset))
-        self.add_task(self.watch_vthell_dataset_folder)
+        if self.first_process:
+            self.add_task(self.watch_vthell_dataset_folder)
 
     def find_id_on_dataset(
         self, id: str, platform: str
