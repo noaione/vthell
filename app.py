@@ -74,6 +74,7 @@ else:
 
 
 async def after_server_starting(app: SanicVTHell, loop: asyncio.AbstractEventLoop):
+    logger.info("Executing after_server_starting")
     if app.first_process:
         logger.info("Running IPC server since this is the main process")
         app.ipc = IPCServer()
