@@ -50,6 +50,7 @@ class ChatDownloaderUploaderReceiver(InternalSignalHandler):
         final_output = CHATDUMP_PATH / data.filename
         if not final_output.exists():
             logger.warning(f"[{data.id}] chat dump not found, skipping")
+            await data.delete()
             return
 
         base_folder = "Chat Archive"
