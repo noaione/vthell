@@ -31,7 +31,7 @@ import orjson
 from tortoise import fields
 from tortoise.models import Model
 
-__all__ = ("VTHellJob", "VTHellAutoType", "VTHellAutoScheduler", "VTHellJobStatus")
+__all__ = ("VTHellJob", "VTHellAutoType", "VTHellAutoScheduler", "VTHellJobStatus", "VTHellJobChatTemporary")
 
 
 def orjson_dumps(obj: object) -> bytes:
@@ -71,6 +71,12 @@ class VTHellJob(Model):
     status = fields.CharEnumField(VTHellJobStatus, null=False, default=VTHellJobStatus.waiting, max_length=24)
     last_status = fields.CharEnumField(VTHellJobStatus, null=True, max_length=24)
     error = fields.TextField(null=True)
+
+
+class VTHellJobChatTemporary(Model):
+    id = fields.CharField(pk=True, unique=True, index=True, max_length=128)
+    filename = fields.TextField(null=False)
+    channel_id = fields.TextField(null=False)
 
 
 class VTHellAutoType(IntEnum):

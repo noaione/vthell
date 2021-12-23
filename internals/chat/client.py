@@ -1,36 +1,181 @@
+"""
+MIT License
+
+Copyright (c) 2020-present noaione, xenova
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 from __future__ import annotations
 
 import asyncio
 import hashlib
 import logging
 import time
+from enum import Enum
 from http.cookies import Morsel
 from typing import TYPE_CHECKING, Any, Dict, Type
+from urllib.parse import quote as url_quote
 
 import aiofiles
 import aiohttp
 
-from internals.db.models import VTHellJob
+from internals.db.models import VTHellJobChatTemporary
 from internals.struct import InternalSignalHandler
-from internals.utils import find_cookies_file
 
-from .parser import ChatDetails, complex_walk, parse_netscape_cookie_to_morsel, parse_youtube_video_data
+from .errors import ChatDisabled, LoginRequired, NoChatReplay, VideoUnavailable, VideoUnplayable  # noqa
+from .parser import (
+    ChatDetails,
+    YoutubeChatParser,
+    complex_walk,
+    parse_expiry_as_date,
+    parse_initial_data,
+    parse_netscape_cookie_to_morsel,
+    parse_youtube_video_data,
+)
+from .utils import camel_case_split, remove_prefixes, remove_suffixes, try_get_first_key  # noqa
+from .writer import JSONWriter
 
 if TYPE_CHECKING:
+    from internals.db import VTHellJob
     from internals.vth import SanicVTHell
 
+logger = logging.getLogger("Internals.ChatManager")
 
-logger = logging.getLogger("Internals.ChatClient")
+
+class ChatEvent(Enum):
+    data = 0
+    wait = 1
 
 
 class ChatDownloader:
-    def __init__(self, video: VTHellJob):
+    def __init__(self, video_id: str):
         self.session: aiohttp.ClientSession = None
-        self.video = video
-        self.logger = logging.getLogger(f"Internals.ChatDownloader[{video.id}]")
+        self.video_id = video_id
+        self.logger = logging.getLogger(f"Internals.ChatDownloader[{video_id}]")
+
+    # KNOWN ACTIONS AND MESSAGE TYPES
+    _KNOWN_ADD_TICKER_TYPES = {
+        "addLiveChatTickerItemAction": [
+            "liveChatTickerSponsorItemRenderer",
+            "liveChatTickerPaidStickerItemRenderer",
+            "liveChatTickerPaidMessageItemRenderer",
+        ]
+    }
+
+    _KNOWN_ADD_ACTION_TYPES = {
+        "addChatItemAction": [
+            # message saying Live Chat replay is on
+            "liveChatViewerEngagementMessageRenderer",
+            "liveChatMembershipItemRenderer",
+            "liveChatTextMessageRenderer",
+            "liveChatPaidMessageRenderer",
+            "liveChatPlaceholderItemRenderer",  # placeholder
+            "liveChatDonationAnnouncementRenderer",
+            "liveChatPaidStickerRenderer",
+            "liveChatModeChangeMessageRenderer",  # e.g. slow mode enabled
+            # TODO find examples of:
+            # 'liveChatPurchasedProductMessageRenderer',  # product purchased
+            # liveChatLegacyPaidMessageRenderer
+            # liveChatModerationMessageRenderer
+            # liveChatAutoModMessageRenderer
+        ]
+    }
+
+    _KNOWN_REPLACE_ACTION_TYPES = {
+        "replaceChatItemAction": ["liveChatPlaceholderItemRenderer", "liveChatTextMessageRenderer"]
+    }
+    # actions that have an 'item'
+    _KNOWN_ITEM_ACTION_TYPES = {**_KNOWN_ADD_TICKER_TYPES, **_KNOWN_ADD_ACTION_TYPES}
+    # [message deleted] or [message retracted]
+    _KNOWN_REMOVE_ACTION_TYPES = {
+        "markChatItemsByAuthorAsDeletedAction": ["banUser"],  # TODO ban?  # deletedStateMessage
+        "markChatItemAsDeletedAction": ["deletedMessage"],  # deletedStateMessage
+    }
+
+    _KNOWN_ADD_BANNER_TYPES = {
+        "addBannerToLiveChatCommand": [
+            "liveChatBannerRenderer",
+            "liveChatBannerHeaderRenderer" "liveChatTextMessageRenderer",
+        ]
+    }
+    _KNOWN_REMOVE_BANNER_TYPES = {"removeBannerForLiveChatCommand": ["removeBanner"]}  # targetActionId
+    _KNOWN_TOOLTIP_ACTION_TYPES = {"showLiveChatTooltipCommand": ["tooltipRenderer"]}
+    _KNOWN_POLL_ACTION_TYPES = {}
+    _KNOWN_IGNORE_ACTION_TYPES = {
+        # TODO add support for poll actions
+        "showLiveChatActionPanelAction": [],
+        "updateLiveChatPollAction": [],
+        "closeLiveChatActionPanelAction": [],
+    }
+    _KNOWN_ACTION_TYPES = {
+        **_KNOWN_ITEM_ACTION_TYPES,
+        **_KNOWN_REMOVE_ACTION_TYPES,
+        **_KNOWN_REPLACE_ACTION_TYPES,
+        **_KNOWN_ADD_BANNER_TYPES,
+        **_KNOWN_REMOVE_BANNER_TYPES,
+        **_KNOWN_TOOLTIP_ACTION_TYPES,
+        **_KNOWN_POLL_ACTION_TYPES,
+        **_KNOWN_IGNORE_ACTION_TYPES,
+    }
+
+    _KNOWN_IGNORE_MESSAGE_TYPES = ["liveChatPlaceholderItemRenderer"]
+    _KEYS_TO_IGNORE = [
+        # to actually ignore
+        "contextMenuAccessibility",
+        "contextMenuEndpoint",
+        "trackingParams",
+        "accessibility",
+        "dwellTimeMs",
+        "empty",  # signals liveChatMembershipItemRenderer has no message body
+        "contextMenuButton",
+        # parsed elsewhere
+        "showItemEndpoint",
+        "durationSec",
+        # banner parsed elsewhere
+        "header",
+        "contents",
+        "actionId",
+        # tooltipRenderer
+        "dismissStrategy",
+        "suggestedPosition",
+        "promoConfig",
+    ]
+
+    _KNOWN_KEYS = set(
+        list(YoutubeChatParser._REMAPPING.keys())
+        + YoutubeChatParser._COLOUR_KEYS
+        + YoutubeChatParser._STICKER_KEYS
+        + _KEYS_TO_IGNORE
+    )
+
+    _KNOWN_SEEK_CONTINUATIONS = ["playerSeekContinuationData"]
+
+    _KNOWN_CHAT_CONTINUATIONS = [
+        "invalidationContinuationData",
+        "timedContinuationData",
+        "liveChatReplayContinuationData",
+        "reloadContinuationData",
+    ]
 
     async def create(self):
-        cookie_path = await find_cookies_file()
+        cookie_path = "youtube.com_cookies.txt"
         header = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36",  # noqa
             "Accept-Language": "en-US, en, *",
@@ -74,9 +219,9 @@ class ChatDownloader:
 
         if not sapis_id:
             morsel_sapis = Morsel()
-            morsel_sapis.set("SAPISID", sapisid_cookie)
+            morsel_sapis.set("SAPISID", sapisid_cookie, url_quote(sapisid_cookie))
             morsel_sapis["secure"] = True
-            morsel_sapis["expires"] = time_now + 3600
+            morsel_sapis["expires"] = parse_expiry_as_date(time_now + 3600)
             morsel_sapis["domain"] = ".youtube.com"
             morsel_sapis["path"] = "/"
             self.session.cookie_jar.update_cookies({"SAPISID": morsel_sapis})
@@ -127,6 +272,9 @@ class ChatDownloader:
 
         return headers
 
+    def _update_headers(self, headers: Dict[str, str]):
+        self.session.headers.update(headers)
+
     async def _get_yt_initial_data(self, video_id: str):
         url = f"https://youtube.com/watch?v={video_id}"
         self.logger.debug("Fetching initial data from %s", url)
@@ -139,20 +287,332 @@ class ChatDownloader:
         self.logger.debug("Chat information: %s", chat_info)
         return chat_info
 
-    async def _initialize_chat(self, chat_info: ChatDetails):
+    async def _fetch_chat(self, continuation_url: str, context: Dict[str, Any]):
+        async with self.session.post(continuation_url, json=context) as resp:
+            try:
+                json_data = await resp.json()
+                return json_data
+            except ValueError:
+                self.logger.error("Failed to parse JSON response")
+                return
+
+    async def _iterate_chat(self, chat_info: ChatDetails):
         if len(chat_info.continuations) < 2:
             raise RuntimeError("Initial continuation information could not be found")
 
         # Get all messages from the chat
-        # continuation = chat_info.continuations[1]
+        status = chat_info.status
+        start_time = end_time = offset = None
+        offset_milliseconds = (start_time * 1000) if isinstance(start_time, (float, int)) else None
+        continuation = chat_info.continuations[1]
+        self.logger.debug(f"Getting {continuation.title} chat.")
 
-    async def start(self):
+        is_replay = status == "past"
+        api_type = "live_chat"
+        if is_replay:
+            api_type += "_replay"
+
+        init_page = f"https://www.youtube.com/{api_type}?continuation={continuation.continuation}"
+        api_key = chat_info.cfg.get("INNERTUBE_API_KEY")
+        continuation_url = f"https://www.youtube.com/youtubei/v1/live_chat/get_{api_type}?key={api_key}"
+
+        innertube_context = chat_info.cfg.get("INNERTUBE_CONTEXT") or {}
+        session_header = self._generate_ytcfg_header(chat_info.cfg)
+        self._update_headers(session_header)
+
+        message_count = 0
+        first_time = True
+        click_tracking_params = None
+
+        while True:
+            continuation_params = {"context": innertube_context, "continuation": continuation}
+
+            if first_time:
+                first_run, _ = await self._session_get(init_page)
+                yt_info = parse_initial_data(first_run)
+            else:
+                if is_replay and offset_milliseconds is not None:
+                    continuation_params["currentPlayerState"] = {"playerOffsetMs": offset_milliseconds}
+                if click_tracking_params:
+                    continuation_params["context"]["clickTracking"] = {
+                        "clickTrackingParams": click_tracking_params,
+                    }
+                yt_info = await self._fetch_chat(continuation_url, continuation_params)
+
+            info = complex_walk(yt_info, "continuationContents.liveChatContinuation")
+            if not info:
+                self.logger.debug(f"No chat information found: {info}")
+                return
+
+            actions = info.get("actions", [])
+            if actions:
+                for action in actions:
+                    data = {}
+
+                    # if it is a replay chat item action, must re-base it
+                    replay_chat_item_action = action.get("replayChatItemAction")
+                    if replay_chat_item_action:
+                        offset_time = replay_chat_item_action.get("videoOffsetTimeMsec")
+                        if offset_time:
+                            data["time_in_seconds"] = float(offset_time) / 1000
+
+                        action = replay_chat_item_action["actions"][0]
+
+                    action.pop("clickTrackingParams", None)
+                    original_action_type = try_get_first_key(action)
+
+                    data["action_type"] = camel_case_split(
+                        remove_suffixes(original_action_type, ("Action", "Command"))
+                    )
+
+                    original_message_type = None
+                    original_item = {}
+
+                    # We now parse the info and get the message
+                    # type based on the type of action
+                    if original_action_type in self._KNOWN_ITEM_ACTION_TYPES:
+                        original_item = complex_walk(action, f"{original_action_type}.item")
+
+                        original_message_type = try_get_first_key(original_item)
+                        data = YoutubeChatParser.parse_item(original_item, data, offset)
+                    elif original_action_type in self._KNOWN_REMOVE_ACTION_TYPES:
+                        original_item = action
+                        if original_action_type == "markChatItemAsDeletedAction":
+                            original_message_type = "deletedMessage"
+                        else:  # markChatItemsByAuthorAsDeletedAction
+                            original_message_type = "banUser"
+
+                        data = YoutubeChatParser.parse_item(original_item, data, offset)
+                    elif original_action_type in self._KNOWN_REPLACE_ACTION_TYPES:
+                        original_item = complex_walk(action, f"{original_action_type}.replacementItem")
+
+                        original_message_type = try_get_first_key(original_item)
+                        data = YoutubeChatParser.parse_item(original_item, data, offset)
+                    elif original_action_type in self._KNOWN_TOOLTIP_ACTION_TYPES:
+                        original_item = complex_walk(action, f"{original_action_type}.tooltip")
+
+                        original_message_type = try_get_first_key(original_item)
+                        data = YoutubeChatParser.parse_item(original_item, data, offset)
+                    elif original_action_type in self._KNOWN_ADD_BANNER_TYPES:
+                        original_item = complex_walk(action, f"{original_action_type}.bannerRenderer")
+
+                        if original_item:
+                            original_message_type = try_get_first_key(original_item)
+
+                            header = original_item[original_message_type].get("header")
+                            parsed_header = self._parse_item(header, offset=offset)
+                            header_message = parsed_header.get("message")
+
+                            contents = original_item[original_message_type].get("contents")
+                            parsed_contents = self._parse_item(contents, offset=offset)
+
+                            data.update(parsed_header)
+                            data.update(parsed_contents)
+                            data["header_message"] = header_message
+                        else:
+                            self.logger.debug(
+                                "No bannerRenderer item\n"
+                                f"Action type: {original_action_type}\n"
+                                f"Action: {action}\n"
+                                f"Parsed data: {data}"
+                            )
+                    elif original_action_type in self._KNOWN_REMOVE_BANNER_TYPES:
+                        original_item = action
+                        original_message_type = "removeBanner"
+                        data = self._parse_item(original_item, data, offset)
+                    elif original_action_type in self._KNOWN_IGNORE_ACTION_TYPES:
+                        continue
+                    else:
+                        self.logger.debug(f"Unknown action: {original_action_type}\n{action}\n{data}")
+
+                    test_for_missing_keys = original_item.get(original_message_type, {}).keys()
+                    missing_keys = test_for_missing_keys - self._KNOWN_KEYS
+
+                    if not data:
+                        self.logger.debug(
+                            f"Parse of action returned empty results: {original_action_type}\n{action}"
+                        )
+
+                    if missing_keys:
+                        self.logger.debug(
+                            f"Missing keys found: {missing_keys}\n"
+                            f"Message type: {original_message_type}\n"
+                            f"Action type: {original_action_type}\n"
+                            f"Action: {action}\n"
+                            f"Parsed data: {data}"
+                        )
+
+                    if original_message_type:
+                        new_index = remove_prefixes(original_message_type, "liveChat")
+                        new_index = remove_suffixes(new_index, "Renderer")
+                        data["message_type"] = camel_case_split(new_index)
+
+                        # TODO add option to keep placeholder items
+                        if original_message_type in self._KNOWN_IGNORE_MESSAGE_TYPES:
+                            continue
+                            # skip placeholder items
+                        elif original_message_type not in self._KNOWN_ACTION_TYPES[original_action_type]:
+                            self.logger.debug(
+                                f'Unknown message type "{original_message_type}"\n'
+                                f"New message type: {data['message_type']}\n"
+                                f"Action: {action}\n"
+                                f"Parsed data: {data}"
+                            )
+
+                    else:
+                        # Ignore
+                        self.logger.debug(
+                            f"No message type found for action: {original_action_type}\n"
+                            f"Action: {action}\n"
+                            f"Parsed data: {data}"
+                        )
+                        continue
+
+                    if is_replay:
+                        # assume message is at beginning if it does not have a time component
+                        time_in_seconds = data.get("time_in_seconds", 0) + (offset or 0)
+
+                        before_start = start_time is not None and time_in_seconds < start_time
+                        after_end = end_time is not None and time_in_seconds > end_time
+
+                        if first_time and before_start:
+                            continue  # first time and invalid start time
+                        elif before_start or after_end:
+                            return  # while actually searching, if time is invalid
+
+                    message_count += 1
+                    yield ChatEvent.data, data
+
+                self.logger.debug(f"Total number of messages: {message_count}")
+            elif is_replay:
+                break
+            else:
+                self.logger.debug("No actions to process.")
+
+            no_continuation = True
+
+            for cont in info.get("continuations", []):
+                continuation_key = try_get_first_key(cont)
+                continuation_info = cont[continuation_key]
+
+                self.logger.debug(f"Continuation info: {continuation_info}")
+
+                if continuation_key in self._KNOWN_CHAT_CONTINUATIONS:
+                    # set new chat continuation
+                    # overwrite if there is continuation data
+                    continuation = continuation_info.get("continuation")
+                    click_tracking_params = continuation_info.get(
+                        "clickTrackingParams"
+                    ) or continuation_info.get("trackingParams")
+                    # there is a chat continuation
+                    no_continuation = False
+                elif continuation_key in self._KNOWN_SEEK_CONTINUATIONS:
+                    pass
+                else:
+                    self.logger.debug(f"Unknown continuation: {continuation_key}\n{cont}")
+
+                sleep_duration = continuation_info.get("timeoutMs")
+                yield ChatEvent.wait, sleep_duration
+                if sleep_duration:
+                    sleep_duration = max(min(sleep_duration, 8000), 0)
+
+                    self.logger.debug(f"Sleeping for {sleep_duration}ms")
+                    await asyncio.sleep(sleep_duration / 1000)
+
+            if no_continuation:
+                break
+
+            if first_time:
+                first_time = False
+
+    async def _validate_result(self, chat_info: ChatDetails):
+        if not chat_info.continuations:
+            playability_status = chat_info.player_response.get("playabilityStatus", {})
+            error_screen = playability_status.get("errorScreen") or {}
+            if error_screen:
+                error_reasons = {
+                    "reason": "",
+                    "subreason": "",
+                }
+                try:
+                    err_info = next(iter(error_screen.values()))
+                except Exception:
+                    err_info = {}
+
+                for error_reason in error_reasons:
+                    text = err_info.get(error_reason) or {}
+                    error_reasons[error_reason] = (
+                        text.get("simpleText")
+                        or YoutubeChatParser.parse_runs(text, False).message
+                        or err_info.pop("offerDescription", "")
+                        or playability_status.get(error_reason)
+                        or ""
+                    )
+
+                error_message = ""
+                for error_reason in error_reasons:
+                    if error_reasons[error_reason]:
+                        if isinstance(error_reasons[error_reason], str):
+                            error_message += f" {error_reasons[error_reason].rstrip('.')}."
+                        else:
+                            error_message += str(error_reasons[error_reason])
+
+                error_message = error_message.strip()
+                status = playability_status.get("status")
+                if status == "ERROR":
+                    raise VideoUnavailable(error_message)
+                elif status == "LOGIN_REQUIRED":
+                    raise LoginRequired(error_message)
+                elif status == "UNPLAYABLE":
+                    raise VideoUnplayable(error_message)
+                else:
+                    self.logger.debug(f"Unknown playability status: {status}. {playability_status}")
+                    error_message = f"{status}: {error_message}"
+                    raise VideoUnavailable(error_message)
+
+            popup_info = complex_walk(
+                chat_info.initial_data,
+                "onResponseReceivedActions.0.openPopupAction.popup.confirmDialogRenderer",
+            )
+            if popup_info:
+                error_message = complex_walk(popup_info, "title.simpleText")
+                dialog_messages = complex_walk(popup_info, "dialogMessages") or []
+                error_message += ". " + " ".join(map(lambda x: x.get("simpleText"), dialog_messages))
+                raise VideoUnavailable(error_message)
+            elif not chat_info.initial_data.get("contents"):
+                raise VideoUnavailable("Unable to find the initial video contents")
+            else:
+                error_runs = complex_walk(
+                    chat_info.initial_data,
+                    "contents.twoColumnWatchNextResults.conversationBar.conversationBarRenderer.availabilityMessage.messageRenderer.text",  # noqa
+                )
+                error_message = (
+                    YoutubeChatParser.parse_runs(error_runs, False).message
+                    if error_runs
+                    else "Video does not have a chat replay."
+                )
+
+                if "disabled" in error_message:
+                    raise ChatDisabled(error_message)
+                else:
+                    raise NoChatReplay(error_message)
+
+    async def start(self, writer: JSONWriter):
         if self.session is None:
             await self.create()
-        chat_info = await self._get_yt_initial_data(self.video.id)
+        chat_info = await self._get_yt_initial_data(self.video_id)
         if chat_info is None:
             return
-        await self._initialize_chat(chat_info)
+        await self._validate_result(chat_info)
+
+        async for event, chat in self._iterate_chat(chat_info):
+            if event == ChatEvent.data:
+                await writer.write(chat)
+            elif event == ChatEvent.wait:
+                print(f"Sleeping for {chat}ms")
+                await writer.flush()
+
+        await writer.flush()
 
 
 class ChatDownloaderManager(InternalSignalHandler):
@@ -174,9 +634,22 @@ class ChatDownloaderManager(InternalSignalHandler):
             return
         logger.info("Starting chat downloader for %s", video.id)
         chat_downloader = ChatDownloader(video)
+        filename = video.filename + ".chat.json"
+        jwriter = JSONWriter(filename, False)
         cls._actives[video.id] = chat_downloader
+        is_async_cancel = False
         try:
-            await chat_downloader.start()
+            await chat_downloader.start(jwriter)
         except asyncio.CancelledError:
             logger.info("Chat downloader for %s was cancelled, flushing...", video.id)
+            is_async_cancel = True
         cls._actives.pop(video.id, None)
+        await jwriter.close()
+        if not is_async_cancel:
+            logger.info("Chat downloader for %s finished, sending upload signal", video.id)
+            await app.dispatch("internals.chat.uploader", context={"filename": filename, "app": app})
+        else:
+            logger.info("Chat downloader for %s was cancelled, creating temporary job in db", video.id)
+            await VTHellJobChatTemporary.get_or_create(
+                id=video.id, filename=filename, channel_id=video.channel_id
+            )
