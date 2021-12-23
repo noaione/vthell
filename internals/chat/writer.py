@@ -65,7 +65,7 @@ class JSONWriter:
         if await self.file.tell() == 0:
             await self.file.write("[".encode("utf-8"))
         else:
-            await self.file.seek(-len("1") - 1, os.SEEK_END)
+            await self.file.seek(-2, os.SEEK_END)
             await self.file.write(", ".encode("utf-8"))
 
         await self.file.write(to_write.encode("utf-8"))
