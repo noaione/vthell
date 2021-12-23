@@ -42,6 +42,7 @@ if TYPE_CHECKING:
 
 
 logger = logging.getLogger("Tasks.Records")
+__all__ = ("RecordedStreamTasks",)
 
 
 class RCloneListJson(TypedDict):

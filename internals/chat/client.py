@@ -30,11 +30,12 @@ import logging
 import time
 from enum import Enum
 from http.cookies import Morsel
-from typing import TYPE_CHECKING, Any, Dict, Type
+from typing import TYPE_CHECKING, Any, Dict, Optional, Type
 from urllib.parse import quote as url_quote
 
 import aiofiles
 import aiohttp
+import pendulum
 
 from internals.db.models import VTHellJobChatTemporary
 from internals.struct import InternalSignalHandler
@@ -49,7 +50,7 @@ from .parser import (
     parse_netscape_cookie_to_morsel,
     parse_youtube_video_data,
 )
-from .utils import camel_case_split, remove_prefixes, remove_suffixes, try_get_first_key  # noqa
+from .utils import camel_case_split, float_or_none, remove_prefixes, remove_suffixes, try_get_first_key
 from .writer import JSONWriter
 
 if TYPE_CHECKING:
@@ -298,13 +299,24 @@ class ChatDownloader:
                 self.logger.error("Failed to parse JSON response")
                 return
 
-    async def _iterate_chat(self, chat_info: ChatDetails):
+    def _create_offset_ms(self, start_at: int):
+        if not start_at:
+            return None
+        current_time = pendulum.now("UTC").timestamp()
+        delta_time = current_time - (start_at / 1000)
+        if delta_time < 0:
+            return None
+        return delta_time
+
+    async def _iterate_chat(self, chat_info: ChatDetails, start_at: Optional[int] = None):
         if len(chat_info.continuations) < 2:
             raise RuntimeError("Initial continuation information could not be found")
 
         # Get all messages from the chat
         status = chat_info.status
         start_time = end_time = offset = None
+        if start_at:
+            start_time = self._create_offset_ms(start_at)
         offset_milliseconds = (start_time * 1000) if isinstance(start_time, (float, int)) else None
         continuation = chat_info.continuations[1]
         self.logger.debug(f"Getting {continuation.title} chat.")
@@ -334,7 +346,7 @@ class ChatDownloader:
                 yt_info = parse_initial_data(first_run)
             else:
                 if is_replay and offset_milliseconds is not None:
-                    continuation_params["currentPlayerState"] = {"playerOffsetMs": offset_milliseconds}
+                    continuation_params["currentPlayerState"] = {"playerOffsetMs": str(offset_milliseconds)}
                 if click_tracking_params:
                     continuation_params["context"]["clickTracking"] = {
                         "clickTrackingParams": click_tracking_params,
@@ -599,7 +611,7 @@ class ChatDownloader:
                 else:
                     raise NoChatReplay(error_message)
 
-    async def start(self, writer: JSONWriter):
+    async def start(self, writer: JSONWriter, start_at: Optional[int] = None):
         if self.session is None:
             await self.create()
         chat_info = await self._get_yt_initial_data(self.video_id)
@@ -607,7 +619,7 @@ class ChatDownloader:
             return
         await self._validate_result(chat_info)
 
-        async for event, chat in self._iterate_chat(chat_info):
+        async for event, chat in self._iterate_chat(chat_info, start_at):
             if event == ChatEvent.data:
                 await writer.write(chat)
             elif event == ChatEvent.wait:
@@ -635,13 +647,19 @@ class ChatDownloaderManager(InternalSignalHandler):
             logger.error("Chat %s is already being downloaded!", video.id)
             return
         logger.info("Starting chat downloader for %s", video.id)
+        last_timestamp = context.get("last_timestamp")
+        if last_timestamp is not None and not isinstance(last_timestamp, (int, float)):
+            last_timestamp = float_or_none(last_timestamp)
         chat_downloader = ChatDownloader(video)
         filename = video.filename + ".chat.json"
         jwriter = JSONWriter(filename, False)
         cls._actives[video.id] = chat_downloader
         is_async_cancel = False
+        chat_job = await VTHellJobChatTemporary.get_or_create(
+            id=video.id, filename=filename, channel_id=video.channel_id, member_only=video.member_only
+        )
         try:
-            await chat_downloader.start(jwriter)
+            await chat_downloader.start(jwriter, last_timestamp)
         except asyncio.CancelledError:
             logger.info("Chat downloader for %s was cancelled, flushing...", video.id)
             is_async_cancel = True
@@ -649,9 +667,6 @@ class ChatDownloaderManager(InternalSignalHandler):
         await jwriter.close()
         if not is_async_cancel:
             logger.info("Chat downloader for %s finished, sending upload signal", video.id)
-            await app.dispatch("internals.chat.uploader", context={"filename": filename, "app": app})
+            await app.dispatch("internals.chat.uploader", context={"job": chat_job, "app": app})
         else:
-            logger.info("Chat downloader for %s was cancelled, creating temporary job in db", video.id)
-            await VTHellJobChatTemporary.get_or_create(
-                id=video.id, filename=filename, channel_id=video.channel_id
-            )
+            logger.info("Chat downloader for %s was cancelled", video.id)

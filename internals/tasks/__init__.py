@@ -9,4 +9,6 @@ A collection of background tasks for the downloader and more!
 
 from .datasets import *
 from .downloader import *
+from .records import *
 from .scheduler import *
+from .tempchat import *

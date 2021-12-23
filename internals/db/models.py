@@ -77,6 +77,7 @@ class VTHellJobChatTemporary(Model):
     id = fields.CharField(pk=True, unique=True, index=True, max_length=128)
     filename = fields.TextField(null=False)
     channel_id = fields.TextField(null=False)
+    member_only = fields.BooleanField(null=False, default=False)
 
 
 class VTHellAutoType(IntEnum):
