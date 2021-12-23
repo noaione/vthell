@@ -1,3 +1,27 @@
+"""
+MIT License
+
+Copyright (c) 2020-present noaione, xenova
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 import re
 from dataclasses import dataclass, field
 from http.cookies import Morsel
@@ -7,13 +31,15 @@ from urllib.parse import quote as url_quote
 from urllib.parse import urlsplit
 
 import orjson
-import pendulum
 
 from .remapper import Remapper as r
 from .utils import (
     arbg_int_to_rgba,
     camel_case_split,
+    float_or_none,
     int_or_none,
+    parse_expiry_as_date,
+    parse_iso8601,
     rgba_to_hex,
     seconds_to_time,
     time_to_seconds,
@@ -27,6 +53,21 @@ INITIAL_DATA_RE = (
 )
 INITIAL_PLAYER_RESPONSE_RE = r"ytInitialPlayerResponse\s*=\s*({.+?})\s*;" + INITIAL_BOUNDARY_RE
 CFG_RE = r"ytcfg\.set\s*\(\s*({.+?})\s*\)\s*;"
+
+__all__ = (
+    "ChatDetails",
+    "MessageEmoji",
+    "ChatRuns",
+    "Image",
+    "get_indexed",
+    "complex_walk",
+    "parse_initial_data",
+    "parse_yt_config",
+    "parse_player_response",
+    "parse_youtube_video_data",
+    "parse_netscape_cookie_to_morsel",
+    "YoutubeChatParser",
+)
 
 
 @dataclass
@@ -186,25 +227,6 @@ def parse_player_response(html_string: str):
     if player_response_match:
         return orjson.loads(player_response_match.group(1))
     return None
-
-
-def parse_expiry_as_date(expiry: int):
-    date = pendulum.from_timestamp(expiry)
-    return date.format("ddd, DD MMM YYYY HH:mm:ss") + " GMT"
-
-
-def parse_iso8601(date: str):
-    if not date:
-        return None
-    as_pendulum = pendulum.parse(date)
-    return as_pendulum.timestamp()
-
-
-def float_or_none(data: Optional[float], default: Any = None):
-    try:
-        return float(data)
-    except (ValueError, TypeError):
-        return default
 
 
 def parse_netscape_cookie_to_morsel(cookie_content: str):

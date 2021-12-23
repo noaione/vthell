@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+__all__ = ("Remapper",)
+
 
 class Remapper:
     """Class used to control the remapping of one dictionary to another dictionary."""

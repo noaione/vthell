@@ -25,6 +25,25 @@ SOFTWARE.
 import re
 from typing import Any, Optional
 
+import pendulum
+
+__all__ = (
+    "try_get_first_key",
+    "int_or_none",
+    "float_or_none",
+    "camel_case_split",
+    "wrap_as_list",
+    "remove_prefixes",
+    "remove_suffixes",
+    "arbg_int_to_rgba",
+    "rgba_to_hex",
+    "time_to_seconds",
+    "seconds_to_time",
+    "parse_expiry_as_date",
+    "parse_iso8601",
+    "float_or_none",
+)
+
 
 def try_get_first_key(dictionary, default=None):
     try:
@@ -126,3 +145,22 @@ def seconds_to_time(seconds, format="{}:{:02}:{:02}", remove_leading_zeroes=True
     return ("-" if seconds < 0 else "") + (
         re.sub(r"^0:0?", "", time_string) if remove_leading_zeroes else time_string
     )
+
+
+def parse_expiry_as_date(expiry: int):
+    date = pendulum.from_timestamp(expiry)
+    return date.format("ddd, DD MMM YYYY HH:mm:ss") + " GMT"
+
+
+def parse_iso8601(date: str):
+    if not date:
+        return None
+    as_pendulum = pendulum.parse(date)
+    return as_pendulum.timestamp()
+
+
+def float_or_none(data: Optional[float], default: Any = None):
+    try:
+        return float(data)
+    except (ValueError, TypeError):
+        return default

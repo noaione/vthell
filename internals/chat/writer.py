@@ -11,6 +11,8 @@ if TYPE_CHECKING:
 
 SAVE_PATH = Path(__file__).absolute().parent.parent.parent / "chatarchive"
 
+__all__ = ("JSONWriter",)
+
 
 class JSONWriter:
     def __init__(self, file_name: str, overwrite: bool = True) -> None:

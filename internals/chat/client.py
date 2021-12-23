@@ -58,6 +58,8 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger("Internals.ChatManager")
 
+__all__ = ("ChatDownloader", "ChatDownloaderManager")
+
 
 class ChatEvent(Enum):
     data = 0
