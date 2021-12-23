@@ -641,6 +641,13 @@ class YoutubeChatParser:
     def parse_runs_json(info):
         return YoutubeChatParser.parse_runs(info).json()
 
+    @staticmethod
+    def timestamp_micro_to_mili(timestamp_micro):
+        timestamp_micro = int_or_none(timestamp_micro)
+        if timestamp_micro is not None:
+            return timestamp_micro / 1000
+        return None
+
     _REMAPPING = {
         "id": "message_id",
         "authorExternalChannelId": "author_id",
@@ -649,7 +656,7 @@ class YoutubeChatParser:
         "purchaseAmountText": r("money", parse_currency),
         "message": r(None, parse_runs_json, True),
         "timestampText": r("time_text", get_simple_text),
-        "timestampUsec": r("timestamp", int_or_none),
+        "timestampUsec": r("timestamp", timestamp_micro_to_mili),
         "authorPhoto": r("author_images", parse_youtube_thumbnail),
         "tooltip": "tooltip",
         "icon": r("icon", lambda x: x.get("iconType")),
