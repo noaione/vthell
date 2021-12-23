@@ -20,6 +20,11 @@ class JSONWriter:
         self.save_path = SAVE_PATH / file_name
         self.overwrite = overwrite
         self.file: AsyncBufferedReader = None
+        self._is_closed: bool = True
+
+    @property
+    def closed(self):
+        return self._is_closed
 
     async def init(self):
         loop = asyncio.get_event_loop()
@@ -28,6 +33,7 @@ class JSONWriter:
         previous_items = []
         file = await aiofiles.open(str(self.save_path), "rb+")
         self.file = file
+        self._is_closed = False
         if not self.overwrite:
             load_data = await file.read()
             try:
@@ -44,7 +50,7 @@ class JSONWriter:
         return "".join(map(lambda x: padding + x, text.splitlines(True)))
 
     async def close(self):
-        if self.file:
+        if self.file and not self.closed:
             await self.file.close()
 
     async def flush(self):
