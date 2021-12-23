@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import asyncio
 import hashlib
 import logging
 import time
 from http.cookies import Morsel
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING, Any, Dict, Type
 
 import aiofiles
 import aiohttp
@@ -155,17 +157,26 @@ class ChatDownloader:
 
 class ChatDownloaderManager(InternalSignalHandler):
     signal_name = "internals.chat.client.chatdownloader"
+    _actives: Dict[str, ChatDownloader] = {}
 
-    @staticmethod
-    async def main_loop(**context: Dict[str, Any]):
+    @classmethod
+    async def main_loop(cls: Type[ChatDownloaderManager], **context: Dict[str, Any]):
         app: SanicVTHell = context.get("app")
         if app is None:
             logger.error("app context is missing!")
             return
         video: VTHellJob = context.get("video")
+        if video is None:
+            logger.error("video context is missing!")
+            return
+        if video.id in cls._actives:
+            logger.error("Chat %s is already being downloaded!", video.id)
+            return
         logger.info("Starting chat downloader for %s", video.id)
         chat_downloader = ChatDownloader(video)
+        cls._actives[video.id] = chat_downloader
         try:
             await chat_downloader.start()
         except asyncio.CancelledError:
             logger.info("Chat downloader for %s was cancelled, flushing...", video.id)
+        cls._actives.pop(video.id, None)
