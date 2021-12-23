@@ -609,7 +609,7 @@ class ChatDownloader:
             if event == ChatEvent.data:
                 await writer.write(chat)
             elif event == ChatEvent.wait:
-                print(f"Sleeping for {chat}ms")
+                self.logger.debug(f"Sleeping for {chat}ms")
                 await writer.flush()
 
         await writer.flush()

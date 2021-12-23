@@ -51,6 +51,7 @@ class JSONWriter:
 
     async def close(self):
         if self.file and not self.closed:
+            await self.file.flush()
             await self.file.close()
 
     async def flush(self):
