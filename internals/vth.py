@@ -61,7 +61,7 @@ if TYPE_CHECKING:
 
 __all__ = ("SanicVTHellConfig", "SanicVTHell", "VTHellDataset", "VTHellDatasetVTuber")
 
-logger = logging.getLogger("internals.vth")
+logger = logging.getLogger("Internals.VTHell")
 CURRENT_PATH = Path(__file__).absolute().parent.parent
 
 

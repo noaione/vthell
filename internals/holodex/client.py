@@ -41,7 +41,7 @@ if TYPE_CHECKING:
 
 __all__ = ("HolodexAPI",)
 
-logger = logging.getLogger("internals.holodex")
+logger = logging.getLogger("Internals.Holodex")
 
 
 class HolodexAPI:

@@ -52,7 +52,7 @@ __all__ = (
     "remove_acquired_lock",
 )
 
-logger = logging.getLogger("internals.utils")
+logger = logging.getLogger("Internals.Utils")
 BASE_PATH = Path(__file__).absolute().parent.parent
 
 

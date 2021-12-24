@@ -36,7 +36,7 @@ if TYPE_CHECKING:
     from internals.vth import SanicVTHell
 
 
-logger = logging.getLogger("internals.db")
+logger = logging.getLogger("Internals.DB")
 DB_PATH = Path(__file__).absolute().parent.parent.parent / "dbs"
 
 __all__ = ("register_db",)
