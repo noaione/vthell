@@ -629,7 +629,7 @@ class ChatDownloader:
 
 
 class ChatDownloaderManager(InternalSignalHandler):
-    signal_name = "internals.chat.client.chatdownloader"
+    signal_name = "internals.chat.client"
     _actives: Dict[str, ChatDownloader] = {}
 
     @classmethod
