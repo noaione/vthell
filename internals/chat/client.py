@@ -408,11 +408,11 @@ class ChatDownloader:
                             original_message_type = try_get_first_key(original_item)
 
                             header = original_item[original_message_type].get("header")
-                            parsed_header = self._parse_item(header, offset=offset)
+                            parsed_header = YoutubeChatParser.parse_item(header, offset=offset)
                             header_message = parsed_header.get("message")
 
                             contents = original_item[original_message_type].get("contents")
-                            parsed_contents = self._parse_item(contents, offset=offset)
+                            parsed_contents = YoutubeChatParser.parse_item(contents, offset=offset)
 
                             data.update(parsed_header)
                             data.update(parsed_contents)
