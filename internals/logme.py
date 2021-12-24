@@ -76,6 +76,9 @@ def setup_logger(log_path: Path):
     log_file = log_path / "nvthell.log"
 
     file_handler = RollingFileHandler(log_file, maxBytes=5_242_880, backupCount=5, encoding="utf-8")
+    # Reset all logger
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
     logging.basicConfig(
         level=logging.DEBUG,
         handlers=[file_handler],
