@@ -127,7 +127,7 @@ class TemporaryChatTasks(InternalTaskBase):
             temporary_chats = await VTHellJobChatTemporary.all()
             for chat_job in temporary_chats:
                 task_name = f"TempChat-Dispatcher-{chat_job.id}_{ctime}"
-                task = app.loop.create_task(cls.executor(chat_job, task_name))
+                task = app.loop.create_task(cls.executor(chat_job, task_name, app))
                 task.add_done_callback(cls.executor_done)
                 cls._tasks[task_name] = task
         except asyncio.CancelledError:
