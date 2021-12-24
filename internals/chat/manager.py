@@ -78,6 +78,7 @@ class ChatDownloaderManager(InternalSignalHandler):
         chat_downloader = ChatDownloader(video.id)
         filename = video.filename + ".chat.json"
         jwriter = JSONWriter(filename, False)
+        await jwriter.init()
         ChatManager._actives[video.id] = chat_downloader
         is_async_cancel = False
         chat_job = await VTHellJobChatTemporary.get_or_create(
