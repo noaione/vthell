@@ -75,7 +75,7 @@ class ChatDownloaderManager(InternalSignalHandler):
         last_timestamp = context.get("last_timestamp")
         if last_timestamp is not None and not isinstance(last_timestamp, (int, float)):
             last_timestamp = float_or_none(last_timestamp)
-        chat_downloader = ChatDownloader(video)
+        chat_downloader = ChatDownloader(video.id)
         filename = video.filename + ".chat.json"
         jwriter = JSONWriter(filename, False)
         ChatManager._actives[video.id] = chat_downloader
