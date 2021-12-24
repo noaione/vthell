@@ -41,7 +41,6 @@ __all__ = (
     "seconds_to_time",
     "parse_expiry_as_date",
     "parse_iso8601",
-    "float_or_none",
 )
 
 

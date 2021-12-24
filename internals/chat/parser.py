@@ -32,8 +32,8 @@ from urllib.parse import urlsplit
 
 import orjson
 
-from .remapper import Remapper as r
-from .utils import (
+from internals.chat.remapper import Remapper as r
+from internals.chat.utils import (
     arbg_int_to_rgba,
     camel_case_split,
     float_or_none,

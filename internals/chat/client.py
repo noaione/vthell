@@ -37,11 +37,8 @@ import aiofiles
 import aiohttp
 import pendulum
 
-from internals.db.models import VTHellJobChatTemporary
-from internals.struct import InternalSignalHandler
-
-from .errors import ChatDisabled, LoginRequired, NoChatReplay, VideoUnavailable, VideoUnplayable  # noqa
-from .parser import (
+from internals.chat.errors import ChatDisabled, LoginRequired, NoChatReplay, VideoUnavailable, VideoUnplayable  # noqa
+from internals.chat.parser import (
     ChatDetails,
     YoutubeChatParser,
     complex_walk,
@@ -50,8 +47,10 @@ from .parser import (
     parse_netscape_cookie_to_morsel,
     parse_youtube_video_data,
 )
-from .utils import camel_case_split, float_or_none, remove_prefixes, remove_suffixes, try_get_first_key
-from .writer import JSONWriter
+from internals.chat.utils import camel_case_split, float_or_none, remove_prefixes, remove_suffixes, try_get_first_key
+from internals.chat.writer import JSONWriter
+from internals.db.models import VTHellJobChatTemporary
+from internals.struct import InternalSignalHandler
 
 if TYPE_CHECKING:
     from internals.db import VTHellJob
