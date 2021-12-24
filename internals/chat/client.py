@@ -48,6 +48,7 @@ from internals.chat.parser import (
     parse_youtube_video_data,
 )
 from internals.chat.utils import camel_case_split, remove_prefixes, remove_suffixes, try_get_first_key
+from internals.utils import find_cookies_file
 
 if TYPE_CHECKING:
     from internals.chat.writer import JSONWriter
@@ -171,7 +172,7 @@ class ChatDownloader:
     ]
 
     async def create(self):
-        cookie_path = "youtube.com_cookies.txt"
+        cookie_path = await find_cookies_file()
         header = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36",  # noqa
             "Accept-Language": "en-US, en, *",
