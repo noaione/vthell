@@ -28,7 +28,7 @@ import asyncio
 import logging
 import os
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Type
+from typing import TYPE_CHECKING, Any, Dict
 
 from internals.db import VTHellJobChatTemporary
 from internals.struct import InternalSignalHandler
@@ -42,63 +42,63 @@ logger = logging.getLogger("ChatJob.Uploader")
 CHATDUMP_PATH = Path(__file__).absolute().parent.parent.parent / "chatarchive"
 
 
+async def upload_files(data: VTHellJobChatTemporary, app: SanicVTHell):
+    final_output = CHATDUMP_PATH / data.filename
+    if not final_output.exists():
+        logger.warning(f"[{data.id}] chat dump not found, skipping")
+        await data.delete()
+        return
+
+    base_folder = "Chat Archive"
+    if data.member_only:
+        base_folder = "Member-Only Chat Archive"
+
+    joined_target = []
+    joined_target = app.create_rclone_path(data.channel_id, "youtube")
+    target_folder = build_rclone_path(app.config.RCLONE_DRIVE_TARGET, base_folder, *joined_target)
+
+    rclone_args = [app.config.RCLONE_PATH, "-v", "-P", "copy", str(final_output), target_folder]
+    logger.debug(f"[{data.id}] Starting rclone with args: {rclone_args}")
+    rclone_process = await asyncio.create_subprocess_exec(
+        *rclone_args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+    )
+    error_line = ""
+    while True:
+        try:
+            async for line in rclone_process.stdout:
+                line = line.decode("utf-8").rstrip()
+                logger.debug(f"[{data.id}] rclone: {line}")
+                if "error" in line.lower():
+                    error_line = line
+                elif "failed to copy" in line.lower():
+                    error_line = line
+        except Exception:
+            logger.debug(f"[{data.id}] rclone buffer exceeded, silently ignoring...")
+            continue
+        else:
+            break
+
+    await rclone_process.wait()
+    ret_code = rclone_process.returncode
+    if ret_code != 0:
+        logger.error(
+            f"[{data.id}] rclone exited with code {ret_code}, aborting uploading please do manual upload later!"
+        )
+        logger.error(error_line)
+        return
+    await data.delete()
+
+    try:
+        await app.loop.run_in_executor(None, os.remove, str(final_output))
+    except Exception:
+        logger.exception(f"[{data.id}] Failed to remove temporary file")
+
+
 class ChatDownloaderUploaderReceiver(InternalSignalHandler):
     signal_name = "internals.chat.uploader"
 
     @staticmethod
-    async def upload_files(data: VTHellJobChatTemporary, app: SanicVTHell):
-        final_output = CHATDUMP_PATH / data.filename
-        if not final_output.exists():
-            logger.warning(f"[{data.id}] chat dump not found, skipping")
-            await data.delete()
-            return
-
-        base_folder = "Chat Archive"
-        if data.member_only:
-            base_folder = "Member-Only Chat Archive"
-
-        joined_target = []
-        joined_target = app.create_rclone_path(data.channel_id, "youtube")
-        target_folder = build_rclone_path(app.config.RCLONE_DRIVE_TARGET, base_folder, *joined_target)
-
-        rclone_args = [app.config.RCLONE_PATH, "-v", "-P", "copy", str(final_output), target_folder]
-        logger.debug(f"[{data.id}] Starting rclone with args: {rclone_args}")
-        rclone_process = await asyncio.create_subprocess_exec(
-            *rclone_args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
-        )
-        error_line = ""
-        while True:
-            try:
-                async for line in rclone_process.stdout:
-                    line = line.decode("utf-8").rstrip()
-                    logger.debug(f"[{data.id}] rclone: {line}")
-                    if "error" in line.lower():
-                        error_line = line
-                    elif "failed to copy" in line.lower():
-                        error_line = line
-            except Exception:
-                logger.debug(f"[{data.id}] rclone buffer exceeded, silently ignoring...")
-                continue
-            else:
-                break
-
-        await rclone_process.wait()
-        ret_code = rclone_process.returncode
-        if ret_code != 0:
-            logger.error(
-                f"[{data.id}] rclone exited with code {ret_code}, aborting uploading please do manual upload later!"
-            )
-            logger.error(error_line)
-            return
-        await data.delete()
-
-        try:
-            await app.loop.run_in_executor(None, os.remove, str(final_output))
-        except Exception:
-            logger.exception(f"[{data.id}] Failed to remove temporary file")
-
-    @classmethod
-    async def main_loop(cls: Type[ChatDownloaderUploaderReceiver], **context: Dict[str, Any]):
+    async def main_loop(**context: Dict[str, Any]):
         app: SanicVTHell = context.get("app")
         if app is None:
             logger.error("app context is missing!")
@@ -109,7 +109,7 @@ class ChatDownloaderUploaderReceiver(InternalSignalHandler):
             return
 
         try:
-            await cls.upload_files(chat_job, app)
+            await upload_files(chat_job, app)
         except asyncio.CancelledError:
             logger.debug(f"[{chat_job.id}] Cancelled")
         except Exception as e:

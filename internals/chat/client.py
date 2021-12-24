@@ -30,14 +30,14 @@ import logging
 import time
 from enum import Enum
 from http.cookies import Morsel
-from typing import TYPE_CHECKING, Any, Dict, Optional, Type
+from typing import TYPE_CHECKING, Any, Dict, Optional
 from urllib.parse import quote as url_quote
 
 import aiofiles
 import aiohttp
 import pendulum
 
-from internals.chat.errors import ChatDisabled, LoginRequired, NoChatReplay, VideoUnavailable, VideoUnplayable  # noqa
+from internals.chat.errors import ChatDisabled, LoginRequired, NoChatReplay, VideoUnavailable, VideoUnplayable
 from internals.chat.parser import (
     ChatDetails,
     YoutubeChatParser,
@@ -47,18 +47,12 @@ from internals.chat.parser import (
     parse_netscape_cookie_to_morsel,
     parse_youtube_video_data,
 )
-from internals.chat.utils import camel_case_split, float_or_none, remove_prefixes, remove_suffixes, try_get_first_key
-from internals.chat.writer import JSONWriter
-from internals.db.models import VTHellJobChatTemporary
-from internals.struct import InternalSignalHandler
+from internals.chat.utils import camel_case_split, remove_prefixes, remove_suffixes, try_get_first_key
 
 if TYPE_CHECKING:
-    from internals.db import VTHellJob
-    from internals.vth import SanicVTHell
+    from internals.chat.writer import JSONWriter
 
-logger = logging.getLogger("Internals.ChatManager")
-
-__all__ = ("ChatDownloader", "ChatDownloaderManager")
+__all__ = ("ChatDownloader",)
 
 
 class ChatEvent(Enum):
@@ -626,46 +620,3 @@ class ChatDownloader:
                 await writer.flush()
 
         await writer.flush()
-
-
-class ChatDownloaderManager(InternalSignalHandler):
-    signal_name = "internals.chat.client"
-    _actives: Dict[str, ChatDownloader] = {}
-
-    @classmethod
-    async def main_loop(cls: Type[ChatDownloaderManager], **context: Dict[str, Any]):
-        app: SanicVTHell = context.get("app")
-        if app is None:
-            logger.error("app context is missing!")
-            return
-        video: VTHellJob = context.get("video")
-        if video is None:
-            logger.error("video context is missing!")
-            return
-        if video.id in cls._actives:
-            logger.error("Chat %s is already being downloaded!", video.id)
-            return
-        logger.info("Starting chat downloader for %s", video.id)
-        last_timestamp = context.get("last_timestamp")
-        if last_timestamp is not None and not isinstance(last_timestamp, (int, float)):
-            last_timestamp = float_or_none(last_timestamp)
-        chat_downloader = ChatDownloader(video)
-        filename = video.filename + ".chat.json"
-        jwriter = JSONWriter(filename, False)
-        cls._actives[video.id] = chat_downloader
-        is_async_cancel = False
-        chat_job = await VTHellJobChatTemporary.get_or_create(
-            id=video.id, filename=filename, channel_id=video.channel_id, member_only=video.member_only
-        )
-        try:
-            await chat_downloader.start(jwriter, last_timestamp)
-        except asyncio.CancelledError:
-            logger.info("Chat downloader for %s was cancelled, flushing...", video.id)
-            is_async_cancel = True
-        cls._actives.pop(video.id, None)
-        await jwriter.close()
-        if not is_async_cancel:
-            logger.info("Chat downloader for %s finished, sending upload signal", video.id)
-            await app.dispatch("internals.chat.uploader", context={"job": chat_job, "app": app})
-        else:
-            logger.info("Chat downloader for %s was cancelled", video.id)

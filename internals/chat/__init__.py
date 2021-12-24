@@ -10,6 +10,7 @@ but support asyncio.
 
 from .client import *
 from .errors import *
+from .manager import *
 from .parser import *
 from .uploader import *
 from .writer import *
