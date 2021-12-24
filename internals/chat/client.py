@@ -605,19 +605,57 @@ class ChatDownloader:
                 else:
                     raise NoChatReplay(error_message)
 
+    async def _actually_start(
+        self, chat_info: ChatDetails, writer: JSONWriter, start_at: Optional[int] = None
+    ):
+        try:
+            async for event, chat in self._iterate_chat(chat_info, start_at):
+                if event == ChatEvent.data:
+                    await writer.write(chat)
+                elif event == ChatEvent.wait:
+                    self.logger.debug(f"Sleeping for {chat}ms")
+                    await writer.flush()
+            return True, False
+        except (VideoUnplayable, VideoUnavailable) as e:
+            self.logger.error("Unable to get the video, might be unavailable?", exc_info=e)
+            return False, False
+        except ChatDisabled:
+            self.logger.error("Chat is disabled, checking if we should retry again...")
+            if chat_info.status == "upcoming":
+                return False, True
+            return False, False
+        except LoginRequired:
+            self.logger.error("Login required, unable to get the video. (Provide cookies!)")
+            return False, False
+        except NoChatReplay:
+            self.logger.error("No chat replay available.")
+            return False, False
+        except asyncio.CancelledError:
+            self.logger.debug("Cancelled")
+            return False, False
+
     async def start(self, writer: JSONWriter, start_at: Optional[int] = None):
         if self.session is None:
             await self.create()
         chat_info = await self._get_yt_initial_data(self.video_id)
         if chat_info is None:
+            self.logger.debug("Unable to get the initial data.")
             return
         await self._validate_result(chat_info)
 
-        async for event, chat in self._iterate_chat(chat_info, start_at):
-            if event == ChatEvent.data:
-                await writer.write(chat)
-            elif event == ChatEvent.wait:
-                self.logger.debug(f"Sleeping for {chat}ms")
-                await writer.flush()
+        retry_count = 0
+        max_retries = 5
+        while retry_count < max_retries:
+            success, retry = await self._actually_start(chat_info, writer, start_at)
+            if success or not retry:
+                self.logger.debug(f"Breaking the loop, success: {success}, retry: {retry}")
+                break
+            self.logger.debug("Retrying chat downloader in 60s...")
+            await asyncio.sleep(60.0)
+            chat_info = await self._get_yt_initial_data(self.video_id)
+            if chat_info is None:
+                self.logger.debug("Unable to get the initial data while retrying...")
+                return
+            retry_count += 1
 
         await writer.flush()

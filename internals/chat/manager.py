@@ -33,6 +33,7 @@ from internals.chat.utils import float_or_none
 from internals.chat.writer import JSONWriter
 from internals.db.models import VTHellJobChatTemporary
 from internals.struct import InternalSignalHandler
+from internals.utils import map_to_boolean
 
 if TYPE_CHECKING:
     from internals.db import VTHellJob
@@ -75,9 +76,10 @@ class ChatDownloaderManager(InternalSignalHandler):
         last_timestamp = context.get("last_timestamp")
         if last_timestamp is not None and not isinstance(last_timestamp, (int, float)):
             last_timestamp = float_or_none(last_timestamp)
+        force_rewrite = map_to_boolean(context.get("force", False))
         chat_downloader = ChatDownloader(video.id)
         filename = video.filename + ".chat.json"
-        jwriter = JSONWriter(filename, False)
+        jwriter = JSONWriter(filename, force_rewrite)
         await jwriter.init()
         ChatManager._actives[video.id] = chat_downloader
         is_async_cancel = False

@@ -34,7 +34,7 @@ import orjson
 import pendulum
 
 from internals.chat.parser import complex_walk
-from internals.db import VTHellJob, VTHellJobChatTemporary
+from internals.db import VTHellJob, VTHellJobChatTemporary, VTHellJobStatus
 from internals.struct import InternalTaskBase
 
 if TYPE_CHECKING:
@@ -88,6 +88,18 @@ class TemporaryChatTasks(InternalTaskBase):
             await app.dispatch("internals.chat.uploader", context={"job": chat_job, "app": app})
             return
 
+        if video_data.status not in [
+            VTHellJobStatus.waiting,
+            VTHellJobStatus.preparing,
+            VTHellJobStatus.downloading,
+            VTHellJobStatus.error,
+        ]:
+            logger.warning(f"{task_name}: Job <{chat_job.id}> is finished, dispatching with force rewrite...")
+            await app.dispatch(
+                "internals.chat.manager", context={"app": app, "video": video_data, "force": True}
+            )
+            return
+
         # Video exist, time to read it temporarily to check the last timestamp of the message
         # Loading this to memory might be a really bad idea lmao.
         last_content = await backtrack_read_json(video_data.filename)
@@ -96,7 +108,7 @@ class TemporaryChatTasks(InternalTaskBase):
             last_timestamp = complex_walk(last_content, "timestamp")
         logger.info(f"Dispatching downloader for <{video_data.id}> with last timestamp at {last_timestamp}")
         await app.dispatch(
-            "internals.chat.client.chatdownloader",
+            "internals.chat.manager",
             context={
                 "app": app,
                 "video": video_data,
