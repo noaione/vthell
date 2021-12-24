@@ -114,5 +114,8 @@ def autodiscover(app: SanicVTHell, *module_names: Union[str, ModuleType], recurs
         eio_v.attach(app)
     for sig_n, sig_val in signals.items():
         logger.info("Registering signal handler: %s", sig_n)
-        setattr(sig_val.main_loop, "__requirements__", None)
+        try:
+            setattr(sig_val.main_loop, "__requirements__", None)
+        except AttributeError:
+            pass
         app.add_signal(sig_val.main_loop, sig_val.signal_name)

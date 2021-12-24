@@ -7,10 +7,12 @@ All of VTHell internals module being used.
 :license: MIT, see LICENSE for more details.
 """
 
-from . import db, holodex, notifier, routes, tasks
+from . import chat, db, holodex, notifier, routes, struct, tasks, ws
 from .constants import *
 from .decorator import *
 from .discover import *
 from .logme import *
+from .monke import *
+from .runner import *
 from .utils import *
 from .vth import *

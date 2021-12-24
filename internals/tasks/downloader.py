@@ -258,6 +258,7 @@ class DownloaderTasks(InternalTaskBase):
                 logger.info(f"Job {data.id} skipped since it's being processed")
             return
 
+        notify_chat_dl = map_to_boolean(getenv("VTHELL_CHAT_DOWNLOADER", "false"))
         logger.info(f"Trying to start job {data.id}")
         await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.preparing)
         temp_output_file = STREAMDUMP_PATH / f"{data.filename} [temp]"
@@ -320,8 +321,14 @@ class DownloaderTasks(InternalTaskBase):
                     elif "starting download" in lower_line and not already_announced:
                         already_announced = True
                         await DownloaderTasks.update_state(
-                            data, app, models.VTHellJobStatus.downloading, True
+                            data,
+                            app,
+                            models.VTHellJobStatus.downloading,
+                            True,
+                            {"resolution": data.resolution},
                         )
+                        if notify_chat_dl:
+                            await app.dispatch("internals.chat.manager", context={"app": app, "video": data})
                     elif "livestream" in lower_line and "process" in lower_line:
                         is_error = True
                         logger.error(f"[{data.id}] {line}")
@@ -341,6 +348,11 @@ class DownloaderTasks(InternalTaskBase):
                                     "resolution": data.resolution,
                                 },
                             )
+                            if notify_chat_dl:
+                                await app.dispatch(
+                                    "internals.chat.manager",
+                                    context={"app": app, "video": data},
+                                )
                     else:
                         logger.info(f"[{data.id}] {line}")
             except ValueError:

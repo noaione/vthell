@@ -202,7 +202,7 @@ def load_config():
 def setup_app():
     logger.info("Initializing Sanic app...")
     init_dataset()
-    DISCOVERY_MODULES = ["internals.routes", "internals.tasks", "internals.notifier"]
+    DISCOVERY_MODULES = ["internals.routes", "internals.tasks", "internals.notifier", "internals.chat"]
     config = SanicVTHellConfig(defaults=DEFAULT_CONFIG, load_env=False)
     config.update_config(load_config())
     db_modules = {"models": ["internals.db.models", "aerich.models"]}
