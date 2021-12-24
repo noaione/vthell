@@ -94,10 +94,14 @@ class TemporaryChatTasks(InternalTaskBase):
             VTHellJobStatus.downloading,
             VTHellJobStatus.error,
         ]:
-            logger.warning(f"{task_name}: Job <{chat_job.id}> is finished, dispatching with force rewrite...")
-            await app.dispatch(
-                "internals.chat.manager", context={"app": app, "video": video_data, "force": True}
-            )
+            if chat_job.is_done:
+                logger.info(f"{task_name}: Job <{chat_job.id}> is done, dispatching upload...")
+                await app.dispatch("internals.chat.uploader", context={"job": chat_job, "app": app})
+            else:
+                logger.warning(f"{task_name}: Job <{chat_job.id}> is finished, dispatching with force rewrite...")
+                await app.dispatch(
+                    "internals.chat.manager", context={"app": app, "video": video_data, "force": True}
+                )
             return
 
         # Video exist, time to read it temporarily to check the last timestamp of the message

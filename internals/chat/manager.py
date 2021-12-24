@@ -83,11 +83,13 @@ class ChatDownloaderManager(InternalSignalHandler):
         await jwriter.init()
         ChatManager._actives[video.id] = chat_downloader
         is_async_cancel = False
-        chat_job = await VTHellJobChatTemporary.get_or_create(
+        chat_job, _ = await VTHellJobChatTemporary.get_or_create(
             id=video.id, filename=filename, channel_id=video.channel_id, member_only=video.member_only
         )
         try:
             await chat_downloader.start(jwriter, last_timestamp)
+            chat_job.is_done = True
+            await chat_job.save()
         except asyncio.CancelledError:
             logger.info("Chat downloader for %s was cancelled, flushing...", video.id)
             is_async_cancel = True
