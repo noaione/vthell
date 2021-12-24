@@ -328,9 +328,7 @@ class DownloaderTasks(InternalTaskBase):
                             {"resolution": data.resolution},
                         )
                         if notify_chat_dl:
-                            await app.dispatch(
-                                "internals.chat.client.chatdownloader", context={"app": app, "video": data}
-                            )
+                            await app.dispatch("internals.chat.manager", context={"app": app, "video": data})
                     elif "livestream" in lower_line and "process" in lower_line:
                         is_error = True
                         logger.error(f"[{data.id}] {line}")
@@ -352,7 +350,7 @@ class DownloaderTasks(InternalTaskBase):
                             )
                             if notify_chat_dl:
                                 await app.dispatch(
-                                    "internals.chat.client.chatdownloader",
+                                    "internals.chat.manager",
                                     context={"app": app, "video": data},
                                 )
                     else:
