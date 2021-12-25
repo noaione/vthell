@@ -29,10 +29,13 @@ import random
 import re
 import string as pystring
 import subprocess
+from http.cookies import Morsel
 from pathlib import Path
-from typing import IO, Any, NoReturn
+from typing import IO, Any, Dict, NoReturn
+from urllib.parse import quote as url_quote
 
 import aiofiles.ospath
+import pendulum
 
 __all__ = (
     "secure_filename",
@@ -50,6 +53,8 @@ __all__ = (
     "rng_string",
     "acquire_file_lock",
     "remove_acquired_lock",
+    "parse_expiry_as_date",
+    "parse_netscape_cookie_to_morsel",
 )
 
 logger = logging.getLogger("Internals.Utils")
@@ -358,3 +363,40 @@ async def remove_acquired_lock(loop: asyncio.AbstractEventLoop = None) -> NoRetu
         await loop.run_in_executor(None, db_path.unlink)
     except Exception:
         return
+
+
+def parse_expiry_as_date(expiry: int):
+    date = pendulum.from_timestamp(expiry)
+    return date.format("ddd, DD MMM YYYY HH:mm:ss") + " GMT"
+
+
+def parse_netscape_cookie_to_morsel(cookie_content: str):
+    split_lines = cookie_content.splitlines()
+    valid_header = split_lines[0].lower().startswith("# netscape")
+    if not valid_header:
+        raise ValueError("Invalid Netscape Cookie File")
+
+    netscape_cookies: Dict[str, Morsel] = {}
+    for line in split_lines[1:]:
+        if not line:
+            continue
+        if line.startswith("#"):
+            continue
+        try:
+            domain, flag, path, secure, expiration, name, value = line.split("\t")
+        except Exception:
+            raise ValueError("Invalid Netscape Cookie File")
+
+        flag = flag.lower() == "true"
+        secure = secure.lower() == "true"
+        expiration = int(expiration)
+        cookie = Morsel()
+        cookie.set(name, value, url_quote(value))
+        cookie["domain"] = domain
+        cookie["path"] = path
+        cookie["secure"] = secure
+        cookie["expires"] = parse_expiry_as_date(expiration)
+        cookie["httponly"] = True
+        netscape_cookies[name] = cookie
+
+    return netscape_cookies

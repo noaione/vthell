@@ -24,11 +24,8 @@ SOFTWARE.
 
 import re
 from dataclasses import dataclass, field
-from http.cookies import Morsel
 from typing import Any, Dict, List, Literal, Optional, Union
-from urllib.parse import parse_qsl
-from urllib.parse import quote as url_quote
-from urllib.parse import urlsplit
+from urllib.parse import parse_qsl, urlsplit
 
 import orjson
 
@@ -38,7 +35,6 @@ from internals.chat.utils import (
     camel_case_split,
     float_or_none,
     int_or_none,
-    parse_expiry_as_date,
     parse_iso8601,
     rgba_to_hex,
     seconds_to_time,
@@ -65,7 +61,6 @@ __all__ = (
     "parse_yt_config",
     "parse_player_response",
     "parse_youtube_video_data",
-    "parse_netscape_cookie_to_morsel",
     "YoutubeChatParser",
 )
 
@@ -227,38 +222,6 @@ def parse_player_response(html_string: str):
     if player_response_match:
         return orjson.loads(player_response_match.group(1))
     return None
-
-
-def parse_netscape_cookie_to_morsel(cookie_content: str):
-    split_lines = cookie_content.splitlines()
-    valid_header = split_lines[0].lower().startswith("# netscape")
-    if not valid_header:
-        raise ValueError("Invalid Netscape Cookie File")
-
-    netscape_cookies: Dict[str, Morsel] = {}
-    for line in split_lines[1:]:
-        if not line:
-            continue
-        if line.startswith("#"):
-            continue
-        try:
-            domain, flag, path, secure, expiration, name, value = line.split("\t")
-        except Exception:
-            raise ValueError("Invalid Netscape Cookie File")
-
-        flag = flag.lower() == "true"
-        secure = secure.lower() == "true"
-        expiration = int(expiration)
-        cookie = Morsel()
-        cookie.set(name, value, url_quote(value))
-        cookie["domain"] = domain
-        cookie["path"] = path
-        cookie["secure"] = secure
-        cookie["expires"] = parse_expiry_as_date(expiration)
-        cookie["httponly"] = True
-        netscape_cookies[name] = cookie
-
-    return netscape_cookies
 
 
 def parse_youtube_video_data(html_string: str):
