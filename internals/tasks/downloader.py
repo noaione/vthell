@@ -28,15 +28,21 @@ import asyncio
 import logging
 from os import getenv
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Type
+from typing import TYPE_CHECKING, Any, Dict, Optional, Type
 
+import aiofiles
 import aiofiles.os
 import pendulum
 import yt_dlp
 
 from internals.db import models
 from internals.struct import InternalTaskBase
-from internals.utils import build_rclone_path, find_cookies_file, map_to_boolean
+from internals.utils import (
+    build_rclone_path,
+    find_cookies_file,
+    map_to_boolean,
+    parse_netscape_cookie_to_morsel,
+)
 
 if TYPE_CHECKING:
     from internals.vth import SanicVTHell
@@ -75,6 +81,30 @@ def ydl_format_selector(ctx):
         # Must be + separated list of protocols
         "protocol": f'{best_video["protocol"]}+{best_audio["protocol"]}',
     }
+
+
+async def read_and_parse_cookie(cookie_file: Optional[Path]):
+    if cookie_file is None:
+        return None
+
+    try:
+        async with aiofiles.open(cookie_file, "r") as f:
+            cookie_data = await f.read()
+    except OSError as exc:
+        logger.error(f"Could not read cookie file {cookie_file}", exc_info=exc)
+        return None
+
+    try:
+        cookie_jar = parse_netscape_cookie_to_morsel(cookie_data)
+    except ValueError:
+        logger.error(f"Failed to parse cookie file {cookie_file}")
+        return None
+
+    base_cookies = []
+    for cookie in cookie_jar.values():
+        base_cookies.append(cookie.OutputString())
+
+    return "; ".join(base_cookies)
 
 
 class DownloaderTasks(InternalTaskBase):
@@ -174,7 +204,7 @@ class DownloaderTasks(InternalTaskBase):
                                     context={"app": app, "video": data},
                                 )
                     else:
-                        logger.info(f"[{data.id}] {line}")
+                        logger.debug(f"[{data.id}] {line}")
             except ValueError:
                 logger.debug(f"[{data.id}] ytarchive buffer exceeded, silently ignoring...")
                 continue
@@ -200,15 +230,20 @@ class DownloaderTasks(InternalTaskBase):
 
     @staticmethod
     async def download_video_with_ytdl(data: models.VTHellJob, app: SanicVTHell):
-        # notify_chat_dl = map_to_boolean(getenv("VTHELL_CHAT_DOWNLOADER", "false"))
+        notify_chat_dl = map_to_boolean(getenv("VTHELL_CHAT_DOWNLOADER", "false"))
+        cookie_file = await find_cookies_file()
+        cookie_header = await read_and_parse_cookie(cookie_file)
         ydl_opts = {
             "format": ydl_format_selector,
             "wait_for_video": True,
             "live_from_start": True,
             "quiet": True,
         }
+        if cookie_file is not None:
+            ydl_opts["cookiefile"] = str(cookie_file)
         ydl = await app.loop.run_in_executor(None, yt_dlp.YoutubeDL, ydl_opts)
         try:
+            logger.debug(f"[{data.id}] Fetching video info...")
             info = await app.loop.run_in_executor(
                 None,
                 ydl.extract_info,
@@ -246,40 +281,82 @@ class DownloaderTasks(InternalTaskBase):
             return True
 
         temp_file = STREAMDUMP_PATH / f"{data.filename} [temp].ts"
+        resolution = video_format.get("resolution", "Unknown")
+        logger.debug(f"[{data.id}] Downloading with resolution {resolution} format")
+        data.resolution = resolution
+        await data.save()
 
-        # TODO: Implement cookies
         ffmpeg_args = [
+            "ffmpeg",
+            "-hide_banner",
+            "-v",
+            "verbose",
             "-i",
             video_format["url"],
             "-i",
             audio_format["url"],
-            "-c:v",
+            "-c",
             "copy",
-            "-c:a",
-            "copy",
-            "-map",
-            "0:v",
-            "-map",
-            "1:a",
             temp_file,
+            "-y",
         ]
-        logger.debug(f"[{data.id}] Starting ffmpeg with args: {ffmpeg_args}")
-        ffmpeg_process = await asyncio.create_subprocess_exec(
-            *ffmpeg_args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        http_header = video_format.get("http_headers", {})
+        if cookie_header is not None:
+            http_header["Cookie"] = cookie_header
+        ffmpeg_args.extend(
+            [
+                "-headers",
+                "".join(f"{k}: {v}\r\n" for k, v in http_header.items()),
+            ]
         )
+        logger.debug(f"[{data.id}] Starting ffmpeg with args: {ffmpeg_args}")
+        # Only pipe stderr since stdout is the actual data.
+        ffmpeg_process = await asyncio.create_subprocess_exec(
+            *ffmpeg_args, stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.PIPE
+        )
+        is_error = False
+        already_announced = False
+        error_line = None
+        while True:
+            try:
+                async for line in ffmpeg_process.stderr:
+                    line = line.decode("utf-8").rstrip()
+                    lower_line = line.lower()
+                    if "press [q] to stop" in lower_line or ("press" in lower_line and "stop" in lower_line):
+                        if not already_announced:
+                            already_announced = True
+                            await DownloaderTasks.update_state(
+                                data,
+                                app,
+                                models.VTHellJobStatus.downloading,
+                                True,
+                                {"resolution": resolution},
+                            )
+                            if notify_chat_dl:
+                                await app.dispatch(
+                                    "internals.chat.manager",
+                                    context={"app": app, "video": data, "force": True},
+                                )
+                    elif "io error" in lower_line:
+                        logger.error(f"[{data.id}] ffmpeg IO error, cancelling...")
+                        is_error = True
+                        error_line = lower_line
+                        break
+                    logger.debug(f"[{data.id}] ffmpeg: {line}")
+            except ValueError:
+                logger.debug(f"[{data.id}] ffmpeg buffer exceeded, silently ignoring...")
+                continue
+            else:
+                break
+
         await ffmpeg_process.wait()
         ret_code = ffmpeg_process.returncode
-        if ret_code != 0:
+        if ret_code != 0 or is_error:
             logger.error(f"[{data.id}] ffmpeg exited with code {ret_code}")
-            stderr = await ffmpeg_process.stderr.read()
-            stdout = await ffmpeg_process.stdout.read()
-            if not stderr:
-                stderr = stdout
-            stderr = stderr.decode("utf-8").rstrip()
             data.status = models.VTHellJobStatus.error
             data.last_status = models.VTHellJobStatus.muxing
-            data.error = f"ffmpeg exited with code {ret_code}:\n{stderr}"
-            data_update = {"id": data.id, "status": "ERROR", "error": "FFMPEG_DL_FAIL"}
+            data.error = f"ffmpeg exited with code {ret_code}: {error_line}"
+            data_update = {"id": data.id, "status": "ERROR", "error": "FFMPEG+YTDL_DL_FAIL"}
             await app.wshandler.emit("job_update", data_update)
             if app.first_process and app.ipc:
                 await app.ipc.emit("ws_job_update", data_update)
@@ -307,9 +384,12 @@ class DownloaderTasks(InternalTaskBase):
     async def mux_files(data: models.VTHellJob, app: SanicVTHell):
         # Spawn mkvmerge
         temp_output = STREAMDUMP_PATH / f"{data.filename} [temp].mp4"
-        if not temp_output.exists():
-            logger.warning(f"[{data.id}] downloaded file not found, skipping.")
-            return True
+        if not await app.loop.run_in_executor(None, temp_output.exists):
+            temp_output = STREAMDUMP_PATH / f"{data.filename} [temp].ts"
+            if not await app.loop.run_in_executor(None, temp_output.exists):
+                logger.warning(f"[{data.id}] downloaded file not found, skipping.")
+                return True
+        logger.debug(f"[{data.id}] Will mux the following output: {temp_output}")
         mux_output = STREAMDUMP_PATH / f"{data.filename} [{data.resolution} AAC].mkv"
         mkvmerge_args = [app.config.MKVMERGE_PATH, "-o", str(mux_output), str(temp_output)]
 
@@ -404,12 +484,18 @@ class DownloaderTasks(InternalTaskBase):
     @staticmethod
     async def cleanup_files(data: models.VTHellJob, app: SanicVTHell):
         mux_output = STREAMDUMP_PATH / f"{data.filename} [{data.resolution} AAC].mkv"
-        temp_output = STREAMDUMP_PATH / f"{data.filename} [temp].mp4"
+        temp_output_mp4 = STREAMDUMP_PATH / f"{data.filename} [temp].mp4"
+        temp_output_ts = STREAMDUMP_PATH / f"{data.filename} [temp].ts"
         try:
             logger.info(f"[{data.id}] Trying to delete temporary mp4 files...")
-            await aiofiles.os.remove(str(temp_output))
+            await aiofiles.os.remove(str(temp_output_mp4))
         except Exception:
-            logger.exception(f"[{data.id}] Failed to delete temporary mp4 files, silently skipping")
+            logger.error(f"[{data.id}] Failed to delete temporary mp4 files, silently skipping")
+        try:
+            logger.info(f"[{data.id}] Trying to delete temporary ts files...")
+            await aiofiles.os.remove(str(temp_output_ts))
+        except Exception:
+            logger.error(f"[{data.id}] Failed to delete temporary ts files, silently skipping")
 
         if app.config.RCLONE_DISABLE:
             logger.info(f"[{data.id}] Rclone is disabled, skipping muxed mkv deletion...")
@@ -418,13 +504,15 @@ class DownloaderTasks(InternalTaskBase):
             logger.info(f"[{data.id}] Trying to delete muxed mkv files...")
             await aiofiles.os.remove(str(mux_output))
         except Exception:
-            logger.exception(f"[{data.id}] Failed to delete muxed mkv files, silently skipping")
+            logger.error(f"[{data.id}] Failed to delete muxed mkv files, silently skipping")
 
     @staticmethod
     async def propagate_error(data: models.VTHellJob, app: SanicVTHell):
         logger.info(f"[{data.id}] Trying to process error job.")
         if data.last_status == models.VTHellJobStatus.downloading:
-            logger.info(f"[{data.id}][d] Last status was mux job, trying to redo from download point.")
+            logger.info(f"[{data.id}][d] Last status was download job, trying to redo from download point.")
+            # Reset to preparing
+            await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.preparing)
             is_error = await DownloaderTasks.download_stream(data, app)
             if is_error:
                 logger.error(f"[{data.id}][d] Failed to redo stream download, aborting job.")
