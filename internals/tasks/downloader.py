@@ -32,6 +32,7 @@ from typing import TYPE_CHECKING, Any, Dict, Type
 
 import aiofiles.os
 import pendulum
+import yt_dlp
 
 from internals.db import models
 from internals.struct import InternalTaskBase
@@ -47,7 +48,244 @@ STREAMDUMP_PATH.mkdir(exist_ok=True, parents=True)
 __all__ = ("DownloaderTasks",)
 
 
+def ydl_format_selector(ctx):
+    """Select the best video and the best audio that won't result in an mkv.
+    This is just an example and does not handle all cases"""
+
+    # formats are already sorted worst to best
+    formats = ctx.get("formats")[::-1]
+
+    # acodec='none' means there is no audio
+    best_video = next(
+        f for f in formats if f["vcodec"] != "none" and f["acodec"] == "none" and f["ext"] == "mp4"
+    )
+
+    # find compatible audio extension
+    audio_ext = {"mp4": "m4a", "webm": "webm"}[best_video["ext"]]
+    # vcodec='none' means there is no video
+    best_audio = next(
+        f for f in formats if (f["acodec"] != "none" and f["vcodec"] == "none" and f["ext"] == audio_ext)
+    )
+
+    yield {
+        # These are the minimum required fields for a merged format
+        "format_id": f'{best_video["format_id"]}+{best_audio["format_id"]}',
+        "ext": best_video["ext"],
+        "requested_formats": [best_video, best_audio],
+        # Must be + separated list of protocols
+        "protocol": f'{best_video["protocol"]}+{best_audio["protocol"]}',
+    }
+
+
 class DownloaderTasks(InternalTaskBase):
+    @staticmethod
+    async def download_video_with_ytarchive(data: models.VTHellJob, app: SanicVTHell):
+        notify_chat_dl = map_to_boolean(getenv("VTHELL_CHAT_DOWNLOADER", "false"))
+        temp_output_file = STREAMDUMP_PATH / f"{data.filename} [temp]"
+        cookies_file = await find_cookies_file()
+
+        # Spawn ytarchive
+        ytarchive_args = [
+            app.config.YTARCHIVE_PATH,
+            "-4",
+            "--wait",
+            "-r",
+            "30",
+            "-v",
+            "--newline",
+            "-o",
+            str(temp_output_file),
+        ]
+        if cookies_file is not None:
+            ytarchive_args.extend(["-c", cookies_file])
+        ytarchive_args.append(f"https://youtube.com/watch?v={data.id}")
+        ytarchive_args.append("best")
+        logger.debug(f"[{data.id}] Starting ytarchive with args: {ytarchive_args}")
+        ytarchive_process = await asyncio.create_subprocess_exec(
+            *ytarchive_args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        )
+        is_error = False
+        already_announced = False
+        should_cancel = False
+        error_line = None
+        while True:
+            try:
+                async for line in ytarchive_process.stdout:
+                    line = line.decode("utf-8").rstrip()
+                    lower_line = line.lower()
+                    if "selected quality" in lower_line:
+                        actual_quality = line.split(": ")[1].split()[0]
+                        data.resolution = actual_quality
+                        await data.save()
+                        logger.info(f"Selected quality: {actual_quality}")
+                    elif "error" in lower_line:
+                        is_error = True
+                        error_line = line
+                        logger.error(f"[{data.id}] {line}")
+                        break
+                    elif "unable to retrieve" in lower_line:
+                        is_error = True
+                        logger.error(f"[{data.id}] {line}")
+                        error_line = line
+                        break
+                    elif "could not find" in lower_line:
+                        is_error = True
+                        logger.error(f"[{data.id}] {line}")
+                        error_line = line
+                        break
+                    elif "unable to download" in lower_line:
+                        is_error = True
+                        logger.error(f"[{data.id}] {line}")
+                        error_line = line
+                        break
+                    elif "starting download" in lower_line and not already_announced:
+                        already_announced = True
+                        await DownloaderTasks.update_state(
+                            data,
+                            app,
+                            models.VTHellJobStatus.downloading,
+                            True,
+                            {"resolution": data.resolution},
+                        )
+                        if notify_chat_dl:
+                            await app.dispatch("internals.chat.manager", context={"app": app, "video": data})
+                    elif "livestream" in lower_line and "process" in lower_line:
+                        is_error = True
+                        logger.error(f"[{data.id}] {line}")
+                        error_line = line
+                        should_cancel = True
+                    if "total downloaded" in lower_line:
+                        logger.debug(f"[{data.id}] {line}")
+                        if not already_announced:
+                            logger.info(f"[{data.id}] Download started for both video and audio")
+                            already_announced = True
+                            await DownloaderTasks.update_state(
+                                data,
+                                app,
+                                models.VTHellJobStatus.downloading,
+                                True,
+                                {
+                                    "resolution": data.resolution,
+                                },
+                            )
+                            if notify_chat_dl:
+                                await app.dispatch(
+                                    "internals.chat.manager",
+                                    context={"app": app, "video": data},
+                                )
+                    else:
+                        logger.info(f"[{data.id}] {line}")
+            except ValueError:
+                logger.debug(f"[{data.id}] ytarchive buffer exceeded, silently ignoring...")
+                continue
+            else:
+                break
+
+        await ytarchive_process.wait()
+        ret_code = ytarchive_process.returncode
+        if is_error or ret_code != 0:
+            logger.error(f"[{data.id}] ytarchive exited with code {ret_code}")
+            data.last_status = models.VTHellJobStatus.downloading
+            data.status = models.VTHellJobStatus.error
+            if should_cancel:
+                data.status = models.VTHellJobStatus.done
+            data.error = f"ytarchive exited with code {ret_code} ({error_line})"
+            await data.save()
+            emit_data = {"id": data.id, "status": "ERROR", "error": data.error}
+            await app.wshandler.emit("job_update", emit_data)
+            if app.first_process and app.ipc:
+                await app.ipc.emit("ws_job_update", emit_data)
+            return True, error_line
+        return False, None
+
+    @staticmethod
+    async def download_video_with_ytdl(data: models.VTHellJob, app: SanicVTHell):
+        # notify_chat_dl = map_to_boolean(getenv("VTHELL_CHAT_DOWNLOADER", "false"))
+        ydl_opts = {
+            "format": ydl_format_selector,
+            "wait_for_video": True,
+            "live_from_start": True,
+            "quiet": True,
+        }
+        ydl = await app.loop.run_in_executor(None, yt_dlp.YoutubeDL, ydl_opts)
+        try:
+            info = await app.loop.run_in_executor(
+                None,
+                ydl.extract_info,
+                f"https://youtube.com/watch?v={data.id}",
+                False,
+                None,
+                None,
+                False,
+            )
+        except yt_dlp.utils.ExtractorError as exc:
+            logger.error("Failed to extract info from ID %s with yt-dlp", data.id, exc_info=exc)
+            data.error = models.VTHellJobStatus.error
+            data.last_status = models.VTHellJobStatus.downloading
+            data.error = f"Failed to extract info from ID {data.id} with yt-dlp"
+            data_update = {"id": data.id, "status": "ERROR", "error": "YTDL failed to extract info"}
+            await app.wshandler.emit("job_update", data_update)
+            if app.first_process and app.ipc:
+                await app.ipc.emit("ws_job_update", data_update)
+            return True
+
+        sanitized_json = ydl.sanitize_info(info)
+        formats_request = sanitized_json.get("requested_formats", [])
+        try:
+            video_format = formats_request[0]
+            audio_format = formats_request[1]
+        except IndexError:
+            logger.error("Failed to get requested formats from ID %s with yt-dlp", data.id)
+            data.error = models.VTHellJobStatus.error
+            data.last_status = models.VTHellJobStatus.downloading
+            data.error = f"Failed to get requested formats for {data.id} with yt-dlp"
+            data_update = {"id": data.id, "status": "ERROR", "error": "YTDL failed to get formats"}
+            await app.wshandler.emit("job_update", data_update)
+            if app.first_process and app.ipc:
+                await app.ipc.emit("ws_job_update", data_update)
+            return True
+
+        temp_file = STREAMDUMP_PATH / f"{data.filename} [temp].ts"
+
+        # TODO: Implement cookies
+        ffmpeg_args = [
+            "-i",
+            video_format["url"],
+            "-i",
+            audio_format["url"],
+            "-c:v",
+            "copy",
+            "-c:a",
+            "copy",
+            "-map",
+            "0:v",
+            "-map",
+            "1:a",
+            temp_file,
+        ]
+        logger.debug(f"[{data.id}] Starting ffmpeg with args: {ffmpeg_args}")
+        ffmpeg_process = await asyncio.create_subprocess_exec(
+            *ffmpeg_args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        )
+        await ffmpeg_process.wait()
+        ret_code = ffmpeg_process.returncode
+        if ret_code != 0:
+            logger.error(f"[{data.id}] ffmpeg exited with code {ret_code}")
+            stderr = await ffmpeg_process.stderr.read()
+            stdout = await ffmpeg_process.stdout.read()
+            if not stderr:
+                stderr = stdout
+            stderr = stderr.decode("utf-8").rstrip()
+            data.status = models.VTHellJobStatus.error
+            data.last_status = models.VTHellJobStatus.muxing
+            data.error = f"ffmpeg exited with code {ret_code}:\n{stderr}"
+            data_update = {"id": data.id, "status": "ERROR", "error": "FFMPEG_DL_FAIL"}
+            await app.wshandler.emit("job_update", data_update)
+            if app.first_process and app.ipc:
+                await app.ipc.emit("ws_job_update", data_update)
+            return True
+        return False
+
     @staticmethod
     async def mux_files(data: models.VTHellJob, app: SanicVTHell):
         # Spawn mkvmerge
@@ -168,7 +406,42 @@ class DownloaderTasks(InternalTaskBase):
     @staticmethod
     async def propagate_error(data: models.VTHellJob, app: SanicVTHell):
         logger.info(f"[{data.id}] Trying to process error job.")
-        if data.last_status == models.VTHellJobStatus.muxing:
+        if data.last_status == models.VTHellJobStatus.downloading:
+            logger.info(f"[{data.id}][d] Last status was mux job, trying to redo from download point.")
+            is_error, error_line = await DownloaderTasks.download_video_with_ytarchive(data, app)
+            if is_error:
+                lower_line = error_line.lower() if isinstance(error_line, str) else None
+                if isinstance(lower_line, str) and "livestream" in lower_line and "process" in lower_line:
+                    logger.info(f"Job {data.id} failed with ytarchive, trying with YTDL instead")
+                    is_error = await DownloaderTasks.download_video_with_ytdl(data, app)
+                    if is_error:
+                        logger.error(f"[{data.id}][d] Failed to download video with ytdl, aborting.")
+                        return
+                else:
+                    logger.error(f"[{data.id}][d] Failed to download video with ytarchive, aborting.")
+                    return
+            logger.info(f"[{data.id}][m] download job redone, continuing with muxing files...")
+            is_error = await DownloaderTasks.mux_files(data, app)
+            if is_error:
+                logger.error(f"[{data.id}][m] Failed to redo mux job, aborting.")
+                return
+            logger.info(f"[{data.id}][m] Mux job done, continuing with upload files...")
+            if not app.config.RCLONE_DISABLE:
+                is_error = await DownloaderTasks.upload_files(data, app)
+                if is_error:
+                    logger.error(f"[{data.id}][m] Failed to do upload job, aborting.")
+                    return
+                logger.info(f"[{data.id}][m] Upload job done, cleaning files...")
+            else:
+                logger.info(f"[{data.id}][m] Upload step skipped since Rclone is disabled...")
+            await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.cleaning, True)
+            await DownloaderTasks.cleanup_files(data, app)
+            logger.info(f"[{data.id}] Cleanup job done, marking job as finished!")
+            data.status = models.VTHellJobStatus.done
+            data.error = None
+            data.last_status = None
+            await data.save()
+        elif data.last_status == models.VTHellJobStatus.muxing:
             logger.info(f"[{data.id}][m] Last status was mux job, trying to redo from mux point.")
             is_error = await DownloaderTasks.mux_files(data, app)
             if is_error:
@@ -191,7 +464,7 @@ class DownloaderTasks(InternalTaskBase):
             data.last_status = None
             await data.save()
         elif data.last_status == models.VTHellJobStatus.uploading:
-            logger.info(f"[{data.id}] Last status was upload job, trying to redo from upload point.")
+            logger.info(f"[{data.id}][u] Last status was upload job, trying to redo from upload point.")
             if not app.config.RCLONE_DISABLE:
                 is_error = await DownloaderTasks.upload_files(data, app)
                 if is_error:
@@ -258,124 +531,20 @@ class DownloaderTasks(InternalTaskBase):
                 logger.info(f"Job {data.id} skipped since it's being processed")
             return
 
-        notify_chat_dl = map_to_boolean(getenv("VTHELL_CHAT_DOWNLOADER", "false"))
         logger.info(f"Trying to start job {data.id}")
         await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.preparing)
-        temp_output_file = STREAMDUMP_PATH / f"{data.filename} [temp]"
-        cookies_file = await find_cookies_file()
-
-        # Spawn ytarchive
-        ytarchive_args = [
-            app.config.YTARCHIVE_PATH,
-            "-4",
-            "--wait",
-            "-r",
-            "30",
-            "-v",
-            "--newline",
-            "-o",
-            str(temp_output_file),
-        ]
-        if cookies_file is not None:
-            ytarchive_args.extend(["-c", cookies_file])
-        ytarchive_args.append(f"https://youtube.com/watch?v={data.id}")
-        ytarchive_args.append("best")
-        logger.debug(f"[{data.id}] Starting ytarchive with args: {ytarchive_args}")
-        ytarchive_process = await asyncio.create_subprocess_exec(
-            *ytarchive_args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
-        )
-        is_error = False
-        already_announced = False
-        should_cancel = False
-        error_line = None
-        while True:
-            try:
-                async for line in ytarchive_process.stdout:
-                    line = line.decode("utf-8").rstrip()
-                    lower_line = line.lower()
-                    if "selected quality" in lower_line:
-                        actual_quality = line.split(": ")[1].split()[0]
-                        data.resolution = actual_quality
-                        await data.save()
-                        logger.info(f"Selected quality: {actual_quality}")
-                    elif "error" in lower_line:
-                        is_error = True
-                        error_line = line
-                        logger.error(f"[{data.id}] {line}")
-                        break
-                    elif "unable to retrieve" in lower_line:
-                        is_error = True
-                        logger.error(f"[{data.id}] {line}")
-                        error_line = line
-                        break
-                    elif "could not find" in lower_line:
-                        is_error = True
-                        logger.error(f"[{data.id}] {line}")
-                        error_line = line
-                        break
-                    elif "unable to download" in lower_line:
-                        is_error = True
-                        logger.error(f"[{data.id}] {line}")
-                        error_line = line
-                        break
-                    elif "starting download" in lower_line and not already_announced:
-                        already_announced = True
-                        await DownloaderTasks.update_state(
-                            data,
-                            app,
-                            models.VTHellJobStatus.downloading,
-                            True,
-                            {"resolution": data.resolution},
-                        )
-                        if notify_chat_dl:
-                            await app.dispatch("internals.chat.manager", context={"app": app, "video": data})
-                    elif "livestream" in lower_line and "process" in lower_line:
-                        is_error = True
-                        logger.error(f"[{data.id}] {line}")
-                        error_line = line
-                        should_cancel = True
-                    if "total downloaded" in lower_line:
-                        logger.debug(f"[{data.id}] {line}")
-                        if not already_announced:
-                            logger.info(f"[{data.id}] Download started for both video and audio")
-                            already_announced = True
-                            await DownloaderTasks.update_state(
-                                data,
-                                app,
-                                models.VTHellJobStatus.downloading,
-                                True,
-                                {
-                                    "resolution": data.resolution,
-                                },
-                            )
-                            if notify_chat_dl:
-                                await app.dispatch(
-                                    "internals.chat.manager",
-                                    context={"app": app, "video": data},
-                                )
-                    else:
-                        logger.info(f"[{data.id}] {line}")
-            except ValueError:
-                logger.debug(f"[{data.id}] ytarchive buffer exceeded, silently ignoring...")
-                continue
+        is_error, error_line = await DownloaderTasks.download_video_with_ytarchive(data, app)
+        if is_error:
+            lower_line = error_line.lower() if isinstance(error_line, str) else None
+            if isinstance(lower_line, str) and "livestream" in lower_line and "process" in lower_line:
+                logger.info(f"Job {data.id} failed with ytarchive, trying with YTDL instead")
+                is_error = await DownloaderTasks.download_video_with_ytdl(data, app)
+                if is_error:
+                    logger.error(f"[{data.id}] Failed to download video with ytdl, aborting.")
+                    return
             else:
-                break
-
-        await ytarchive_process.wait()
-        ret_code = ytarchive_process.returncode
-        if is_error or ret_code != 0:
-            logger.error(f"[{data.id}] ytarchive exited with code {ret_code}")
-            data.last_status = models.VTHellJobStatus.downloading
-            data.status = models.VTHellJobStatus.error
-            if should_cancel:
-                data.status = models.VTHellJobStatus.done
-            data.error = f"ytarchive exited with code {ret_code} ({error_line})"
-            await data.save()
-            emit_data = {"id": data.id, "status": "ERROR", "error": data.error}
-            await app.wshandler.emit("job_update", emit_data)
-            if app.first_process and app.ipc:
-                await app.ipc.emit("ws_job_update", emit_data)
-            return
+                logger.error(f"[{data.id}] Failed to download video with ytarchive, aborting.")
+                return
 
         await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.muxing, True)
         logger.info(f"Job {data.id} finished downloading, muxing into mkv files...")
