@@ -54,7 +54,7 @@ __all__ = (
     "acquire_file_lock",
     "remove_acquired_lock",
     "parse_expiry_as_date",
-    "parse_netscape_cookie_to_morsel",
+    "parse_cookie_to_morsel",
 )
 
 logger = logging.getLogger("Internals.Utils")
@@ -370,7 +370,7 @@ def parse_expiry_as_date(expiry: int):
     return date.format("ddd, DD MMM YYYY HH:mm:ss") + " GMT"
 
 
-def parse_netscape_cookie_to_morsel(cookie_content: str):
+def parse_cookie_to_morsel(cookie_content: str):
     split_lines = cookie_content.splitlines()
     valid_header = split_lines[0].lower().startswith("# netscape")
     if not valid_header:

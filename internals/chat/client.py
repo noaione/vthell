@@ -46,7 +46,7 @@ from internals.chat.parser import (
     parse_youtube_video_data,
 )
 from internals.chat.utils import camel_case_split, remove_prefixes, remove_suffixes, try_get_first_key
-from internals.utils import find_cookies_file, parse_expiry_as_date, parse_netscape_cookie_to_morsel
+from internals.utils import find_cookies_file, parse_cookie_to_morsel, parse_expiry_as_date
 
 if TYPE_CHECKING:
     from internals.chat.writer import JSONWriter
@@ -181,7 +181,7 @@ class ChatDownloader:
             async with aiofiles.open(cookie_path, "r") as fp:
                 cookies_str = await fp.read()
             try:
-                cookie_jar = parse_netscape_cookie_to_morsel(cookies_str)
+                cookie_jar = parse_cookie_to_morsel(cookies_str)
             except ValueError:
                 self.logger.error("Invalid Netscape Cookie File, ignoring cookies!")
 

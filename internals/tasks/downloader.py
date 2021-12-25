@@ -37,12 +37,7 @@ import yt_dlp
 
 from internals.db import models
 from internals.struct import InternalTaskBase
-from internals.utils import (
-    build_rclone_path,
-    find_cookies_file,
-    map_to_boolean,
-    parse_netscape_cookie_to_morsel,
-)
+from internals.utils import build_rclone_path, find_cookies_file, map_to_boolean, parse_cookie_to_morsel
 
 if TYPE_CHECKING:
     from internals.vth import SanicVTHell
@@ -95,7 +90,7 @@ async def read_and_parse_cookie(cookie_file: Optional[Path]):
         return None
 
     try:
-        cookie_jar = parse_netscape_cookie_to_morsel(cookie_data)
+        cookie_jar = parse_cookie_to_morsel(cookie_data)
     except ValueError:
         logger.error(f"Failed to parse cookie file {cookie_file}")
         return None
