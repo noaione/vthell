@@ -287,6 +287,23 @@ class DownloaderTasks(InternalTaskBase):
         return False
 
     @staticmethod
+    async def download_stream(data: models.VTHellJob, app: SanicVTHell):
+        is_error, error_line = await DownloaderTasks.download_video_with_ytarchive(data, app)
+        if is_error:
+            lower_line = error_line.lower() if isinstance(error_line, str) else None
+            if isinstance(lower_line, str) and "livestream" in lower_line and "process" in lower_line:
+                logger.info(f"[{data.id}] Job download failed with ytarchive, trying with YTDL instead")
+                is_error = await DownloaderTasks.download_video_with_ytdl(data, app)
+                if is_error:
+                    logger.error(f"[{data.id}] Failed to download video with ytdl, aborting.")
+                    return True
+                return False
+            else:
+                logger.error(f"[{data.id}] Failed to download video with ytarchive, aborting.")
+                return True
+        return False
+
+    @staticmethod
     async def mux_files(data: models.VTHellJob, app: SanicVTHell):
         # Spawn mkvmerge
         temp_output = STREAMDUMP_PATH / f"{data.filename} [temp].mp4"
@@ -408,18 +425,10 @@ class DownloaderTasks(InternalTaskBase):
         logger.info(f"[{data.id}] Trying to process error job.")
         if data.last_status == models.VTHellJobStatus.downloading:
             logger.info(f"[{data.id}][d] Last status was mux job, trying to redo from download point.")
-            is_error, error_line = await DownloaderTasks.download_video_with_ytarchive(data, app)
+            is_error = await DownloaderTasks.download_stream(data, app)
             if is_error:
-                lower_line = error_line.lower() if isinstance(error_line, str) else None
-                if isinstance(lower_line, str) and "livestream" in lower_line and "process" in lower_line:
-                    logger.info(f"Job {data.id} failed with ytarchive, trying with YTDL instead")
-                    is_error = await DownloaderTasks.download_video_with_ytdl(data, app)
-                    if is_error:
-                        logger.error(f"[{data.id}][d] Failed to download video with ytdl, aborting.")
-                        return
-                else:
-                    logger.error(f"[{data.id}][d] Failed to download video with ytarchive, aborting.")
-                    return
+                logger.error(f"[{data.id}][d] Failed to redo stream download, aborting job.")
+                return
             logger.info(f"[{data.id}][m] download job redone, continuing with muxing files...")
             is_error = await DownloaderTasks.mux_files(data, app)
             if is_error:
@@ -533,18 +542,9 @@ class DownloaderTasks(InternalTaskBase):
 
         logger.info(f"Trying to start job {data.id}")
         await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.preparing)
-        is_error, error_line = await DownloaderTasks.download_video_with_ytarchive(data, app)
+        is_error = await DownloaderTasks.download_stream(data, app)
         if is_error:
-            lower_line = error_line.lower() if isinstance(error_line, str) else None
-            if isinstance(lower_line, str) and "livestream" in lower_line and "process" in lower_line:
-                logger.info(f"Job {data.id} failed with ytarchive, trying with YTDL instead")
-                is_error = await DownloaderTasks.download_video_with_ytdl(data, app)
-                if is_error:
-                    logger.error(f"[{data.id}] Failed to download video with ytdl, aborting.")
-                    return
-            else:
-                logger.error(f"[{data.id}] Failed to download video with ytarchive, aborting.")
-                return
+            return
 
         await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.muxing, True)
         logger.info(f"Job {data.id} finished downloading, muxing into mkv files...")
