@@ -7,8 +7,9 @@ from typing import TYPE_CHECKING, List, Optional, Type
 import aiohttp
 
 from internals.utils import complex_walk, map_to_boolean
-from .models import ihaAPIVideo
+
 from ._types import ihaAPIVTuberVideo
+from .models import ihaAPIVideo
 
 if TYPE_CHECKING:
     from internals.vth import SanicVTHell

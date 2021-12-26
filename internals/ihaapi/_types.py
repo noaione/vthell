@@ -1,6 +1,5 @@
 from typing import Literal, Optional, TypedDict
 
-
 ihaAPIVideoStatus = Literal["live", "upcoming", "past", "video"]
 ihaAPIVideoPlatform = Literal["youtube", "twitch", "twitter", "twitcasting", "mildom"]
 
