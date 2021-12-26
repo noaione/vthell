@@ -291,6 +291,7 @@ class DownloaderTasks(InternalTaskBase):
             return True
 
         sanitized_json = ydl.sanitize_info(info)
+        logger.debug("Sanitized json data: %s", sanitized_json)
         formats_request = sanitized_json.get("requested_formats", [])
         try:
             video_format = formats_request[0]
