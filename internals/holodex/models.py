@@ -59,4 +59,5 @@ class HolodexVideo:
             "status": self.status,
             "url": self.url,
             "is_member": self.is_member,
+            "platform": "youtube",
         }
