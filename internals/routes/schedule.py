@@ -115,6 +115,7 @@ async def add_new_jobs(request: Request):
             "is_member": job_request.member_only,
             "status": job_request.status.value,
             "resolution": job_request.resolution,
+            "platform": job_request.platform.value,
             "error": job_request.error,
         }
         await app.wshandler.emit("job_scheduled", job_data_update)
@@ -159,7 +160,8 @@ async def delete_job(request: Request, video_id: str):
             "start_time": job.start_time,
             "channel_id": job.channel_id,
             "is_member": job.member_only,
-            "status": job.status,
+            "status": job.status.value,
+            "platform": job.platform.value,
             "error": job.error,
         }
     )

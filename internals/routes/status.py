@@ -67,6 +67,7 @@ async def existing_jobs(request: Request):
                 "channel_id": job.channel_id,
                 "is_member": job.member_only,
                 "status": job.status.value,
+                "platform": job.platform.value,
                 "error": job.error,
             }
         )
@@ -90,6 +91,7 @@ async def existing_single_job(request: Request, id: str):
             "channel_id": job.channel_id,
             "is_member": job.member_only,
             "status": job.status.value,
+            "platform": job.platform.value,
             "error": job.error,
         }
     )

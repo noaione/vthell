@@ -260,6 +260,7 @@ def setup_app():
                     "is_member": job.member_only,
                     "status": job.status.value,
                     "resolution": job.resolution,
+                    "platform": job.platform.value,
                     "error": job.error,
                 }
             )
