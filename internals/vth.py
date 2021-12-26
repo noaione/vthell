@@ -186,6 +186,7 @@ class SanicVTHellConfig(Config):
     RCLONE_DRIVE_TARGET: str
     YTARCHIVE_PATH: str
     MKVMERGE_PATH: str
+    FFMPEG_PATH: str
 
     WEBSERVER_REVERSE_PROXY: bool
     WEBSERVER_REVERSE_PROXY_SECRET: str

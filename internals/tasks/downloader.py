@@ -282,7 +282,7 @@ class DownloaderTasks(InternalTaskBase):
         await data.save()
 
         ffmpeg_args = [
-            "ffmpeg",
+            app.config.FFMPEG_PATH,
             "-hide_banner",
             "-v",
             "verbose",

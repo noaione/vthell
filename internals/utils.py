@@ -43,9 +43,11 @@ __all__ = (
     "find_ytarchive_binary",
     "find_rclone_binary",
     "find_mkvmerge_binary",
+    "find_ffmpeg_binary",
     "test_rclone_binary",
     "test_ytarchive_binary",
     "test_mkvmerge_binary",
+    "test_ffmpeg_binary",
     "build_rclone_path",
     "find_cookies_file",
     "find_cookies_file_sync",
@@ -117,6 +119,10 @@ def find_mkvmerge_binary():
     return find_binary("mkvmerge") or find_binary("mkvmerge.exe")
 
 
+def find_ffmpeg_binary():
+    return find_binary("ffmpeg") or find_binary("ffmpeg.exe")
+
+
 def test_rclone_binary(path: str, drive_target: str):
     if not drive_target:
         return False
@@ -149,6 +155,17 @@ def test_mkvmerge_binary(path: str):
 
     try:
         cmd = subprocess.Popen(mkvmerge_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except FileNotFoundError:
+        return False
+    ret_code = cmd.wait()
+    return ret_code == 0
+
+
+def test_ffmpeg_binary(path: str):
+    ffmpeg_cmd = [path, "-version"]
+
+    try:
+        cmd = subprocess.Popen(ffmpeg_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except FileNotFoundError:
         return False
     ret_code = cmd.wait()
