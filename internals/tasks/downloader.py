@@ -286,14 +286,6 @@ class DownloaderTasks(InternalTaskBase):
             "-hide_banner",
             "-v",
             "verbose",
-            "-i",
-            video_format["url"],
-            "-i",
-            audio_format["url"],
-            "-c",
-            "copy",
-            temp_file,
-            "-y",
         ]
         http_header = video_format.get("http_headers", {})
         if cookie_header is not None:
@@ -303,6 +295,9 @@ class DownloaderTasks(InternalTaskBase):
                 "-headers",
                 "".join(f"{k}: {v}\r\n" for k, v in http_header.items()),
             ]
+        )
+        ffmpeg_args.extend(
+            ["-i", video_format["url"], "-i", audio_format["url"], "-c", "copy", temp_file, "-y"]
         )
         logger.debug(f"[{data.id}] Starting ffmpeg with args: {ffmpeg_args}")
         # Only pipe stderr since stdout is the actual data.
