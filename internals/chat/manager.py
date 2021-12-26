@@ -94,6 +94,7 @@ class ChatDownloaderManager(InternalSignalHandler):
             logger.info("Chat downloader for %s was cancelled, flushing...", video.id)
             is_async_cancel = True
         ChatManager._actives.pop(video.id, None)
+        await chat_downloader.close()
         await jwriter.close()
         if not is_async_cancel:
             logger.info("Chat downloader for %s finished, sending upload signal", video.id)

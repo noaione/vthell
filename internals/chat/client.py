@@ -190,7 +190,8 @@ class ChatDownloader:
             self.logger.info("Loaded %d cookies", len(cookie_jar))
 
     async def close(self):
-        await self.session.close()
+        if self.session and not self.session.closed:
+            await self.session.close()
 
     async def _session_get(self, url: str, **kwargs):
         async with self.session.get(url, **kwargs) as resp:
@@ -639,7 +640,23 @@ class ChatDownloader:
         if chat_info is None:
             self.logger.debug("Unable to get the initial data.")
             return
-        await self._validate_result(chat_info)
+        try:
+            await self._validate_result(chat_info)
+        except VideoUnplayable as exc:
+            self.logger.error(f"Video unplayable: {exc}")
+            return
+        except LoginRequired:
+            self.logger.error("You need to be logged in to access this chat/video!")
+            return
+        except VideoUnavailable as exc:
+            self.logger.error(f"Video unavailable: {exc}")
+            return
+        except ChatDisabled as exc:
+            self.logger.error(f"Chat disabled: {exc}")
+            return
+        except NoChatReplay as exc:
+            self.logger.error(f"No chat replay available: {exc}")
+            return
 
         retry_count = 0
         max_retries = 5
