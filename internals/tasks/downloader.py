@@ -328,7 +328,7 @@ class DownloaderTasks(InternalTaskBase):
                 return True
 
         temp_file = STREAMDUMP_PATH / f"{data.filename} [temp].ts"
-        resolution = video_format.get("resolution", "Unknown")
+        resolution = video_format.get("resolution", video_format.get("format_note", "Unknown"))
         logger.debug(f"[{data.id}] Downloading with resolution {resolution} format")
         data.resolution = resolution
         await data.save()
