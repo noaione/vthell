@@ -28,7 +28,7 @@ import asyncio
 import logging
 from os import getenv
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Optional, Type
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type
 
 import aiofiles
 import aiofiles.os
@@ -76,6 +76,24 @@ def ydl_format_selector(ctx):
         # Must be + separated list of protocols
         "protocol": f'{best_video["protocol"]}+{best_audio["protocol"]}',
     }
+
+
+def ydl_format_selector_fallback(formats: List[dict]):
+    if not formats:
+        return None, None
+    all_video = [f for f in formats if f["vcodec"].startswith("avc") and f["acodec"] == "none"]
+    all_audio = [f for f in formats if f["acodec"].startswith("mp4") and f["vcodec"] == "none"]
+
+    try:
+        all_audio.sort(key=lambda f: f["quality"], reverse=True)
+        all_video.sort(key=lambda f: f["quality"], reverse=True)
+    except KeyError:
+        return None, None
+
+    try:
+        return all_video[0], all_audio[0]
+    except IndexError:
+        return None, None
 
 
 async def read_and_parse_cookie(cookie_file: Optional[Path]):
@@ -297,15 +315,17 @@ class DownloaderTasks(InternalTaskBase):
             video_format = formats_request[0]
             audio_format = formats_request[1]
         except IndexError:
-            logger.error("Failed to get requested formats from ID %s with yt-dlp", data.id)
-            data.error = models.VTHellJobStatus.error
-            data.last_status = models.VTHellJobStatus.downloading
-            data.error = f"Failed to get requested formats for {data.id} with yt-dlp"
-            data_update = {"id": data.id, "status": "ERROR", "error": "YTDL failed to get formats"}
-            await app.wshandler.emit("job_update", data_update)
-            if app.first_process and app.ipc:
-                await app.ipc.emit("ws_job_update", data_update)
-            return True
+            video_format, audio_format = ydl_format_selector_fallback(sanitized_json.get("formats", []))
+            if video_format is None or audio_format is None:
+                logger.error("Failed to get requested formats from ID %s with yt-dlp", data.id)
+                data.error = models.VTHellJobStatus.error
+                data.last_status = models.VTHellJobStatus.downloading
+                data.error = f"Failed to get requested formats for {data.id} with yt-dlp"
+                data_update = {"id": data.id, "status": "ERROR", "error": "YTDL failed to get formats"}
+                await app.wshandler.emit("job_update", data_update)
+                if app.first_process and app.ipc:
+                    await app.ipc.emit("ws_job_update", data_update)
+                return True
 
         temp_file = STREAMDUMP_PATH / f"{data.filename} [temp].ts"
         resolution = video_format.get("resolution", "Unknown")
