@@ -131,7 +131,6 @@ class DownloaderTasks(InternalTaskBase):
         )
         is_error = False
         already_announced = False
-        should_cancel = False
         error_line = None
         while True:
             try:
@@ -174,11 +173,10 @@ class DownloaderTasks(InternalTaskBase):
                         )
                         if notify_chat_dl:
                             await app.dispatch("internals.chat.manager", context={"app": app, "video": data})
-                    elif "livestream" in lower_line and "youtube-dl" in lower_line:
+                    elif "livestream" in lower_line and "process" in lower_line:
                         is_error = True
                         logger.error(f"[{data.id}] {line}")
                         error_line = line
-                        should_cancel = True
                     if "total downloaded" in lower_line:
                         logger.debug(f"[{data.id}] {line}")
                         if not already_announced:
@@ -210,10 +208,11 @@ class DownloaderTasks(InternalTaskBase):
         ret_code = ytarchive_process.returncode
         if is_error or ret_code != 0:
             logger.error(f"[{data.id}] ytarchive exited with code {ret_code}")
+            if error_line is None:
+                error_line = await ytarchive_process.stderr.read()
+                error_line = error_line.decode("utf-8").rstrip()
             data.last_status = models.VTHellJobStatus.downloading
             data.status = models.VTHellJobStatus.error
-            if should_cancel:
-                data.status = models.VTHellJobStatus.done
             data.error = f"ytarchive exited with code {ret_code} ({error_line})"
             await data.save()
             emit_data = {"id": data.id, "status": "ERROR", "error": data.error}
