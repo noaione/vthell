@@ -47,10 +47,12 @@ from internals.holodex import HolodexAPI
 from internals.logme import setup_logger
 from internals.monke import monkeypatch_sanic_runner
 from internals.utils import (
+    find_ffmpeg_binary,
     find_mkvmerge_binary,
     find_rclone_binary,
     find_ytarchive_binary,
     map_to_boolean,
+    test_ffmpeg_binary,
     test_mkvmerge_binary,
     test_rclone_binary,
     test_ytarchive_binary,
@@ -193,6 +195,21 @@ def load_config():
         logger.error("MKVMerge binary not found, please install mkvtoolnix (windows) or mkvmerge first!")
         raise FileNotFoundError("MKVMerge binary not found")
     config["MKVMERGE_PATH"] = mkvmerge_path
+    ffmpeg_path = os.getenv("FFMPEG_BINARY", "")
+    if not test_ffmpeg_binary(ffmpeg_path):
+        ffmpeg_path = find_ffmpeg_binary()
+        if ffmpeg_path is not None:
+            if not test_ffmpeg_binary(ffmpeg_path):
+                logger.error("FFMpeg binary not found, please install ffmpeg first!")
+                raise FileNotFoundError("FFMpeg binary not found")
+            else:
+                ffmpeg_path = Path(ffmpeg_path)
+                PATH = os.environ.get("PATH", "")
+                os.environ["PATH"] = str(ffmpeg_path.absolute().parent) + os.pathsep + PATH
+        else:
+            logger.error("FFMpeg binary not found, please install ffmpeg first!")
+            raise FileNotFoundError("FFMpeg binary not found")
+    config["FFMPEG_PATH"] = ffmpeg_path
 
     # Notification
     config["NOTIFICATION_DISCORD_WEBHOOK"] = os.getenv("NOTIFICATION_DISCORD_WEBHOOK")

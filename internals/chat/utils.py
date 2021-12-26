@@ -39,7 +39,6 @@ __all__ = (
     "rgba_to_hex",
     "time_to_seconds",
     "seconds_to_time",
-    "parse_expiry_as_date",
     "parse_iso8601",
 )
 
@@ -144,11 +143,6 @@ def seconds_to_time(seconds, format="{}:{:02}:{:02}", remove_leading_zeroes=True
     return ("-" if seconds < 0 else "") + (
         re.sub(r"^0:0?", "", time_string) if remove_leading_zeroes else time_string
     )
-
-
-def parse_expiry_as_date(expiry: int):
-    date = pendulum.from_timestamp(expiry)
-    return date.format("ddd, DD MMM YYYY HH:mm:ss") + " GMT"
 
 
 def parse_iso8601(date: str):

@@ -29,10 +29,13 @@ import random
 import re
 import string as pystring
 import subprocess
+from http.cookies import Morsel
 from pathlib import Path
-from typing import IO, Any, NoReturn
+from typing import IO, Any, Dict, NoReturn
+from urllib.parse import quote as url_quote
 
 import aiofiles.ospath
+import pendulum
 
 __all__ = (
     "secure_filename",
@@ -40,9 +43,11 @@ __all__ = (
     "find_ytarchive_binary",
     "find_rclone_binary",
     "find_mkvmerge_binary",
+    "find_ffmpeg_binary",
     "test_rclone_binary",
     "test_ytarchive_binary",
     "test_mkvmerge_binary",
+    "test_ffmpeg_binary",
     "build_rclone_path",
     "find_cookies_file",
     "find_cookies_file_sync",
@@ -50,6 +55,8 @@ __all__ = (
     "rng_string",
     "acquire_file_lock",
     "remove_acquired_lock",
+    "parse_expiry_as_date",
+    "parse_cookie_to_morsel",
 )
 
 logger = logging.getLogger("Internals.Utils")
@@ -112,6 +119,10 @@ def find_mkvmerge_binary():
     return find_binary("mkvmerge") or find_binary("mkvmerge.exe")
 
 
+def find_ffmpeg_binary():
+    return find_binary("ffmpeg") or find_binary("ffmpeg.exe")
+
+
 def test_rclone_binary(path: str, drive_target: str):
     if not drive_target:
         return False
@@ -144,6 +155,17 @@ def test_mkvmerge_binary(path: str):
 
     try:
         cmd = subprocess.Popen(mkvmerge_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except FileNotFoundError:
+        return False
+    ret_code = cmd.wait()
+    return ret_code == 0
+
+
+def test_ffmpeg_binary(path: str):
+    ffmpeg_cmd = [path, "-version"]
+
+    try:
+        cmd = subprocess.Popen(ffmpeg_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except FileNotFoundError:
         return False
     ret_code = cmd.wait()
@@ -358,3 +380,40 @@ async def remove_acquired_lock(loop: asyncio.AbstractEventLoop = None) -> NoRetu
         await loop.run_in_executor(None, db_path.unlink)
     except Exception:
         return
+
+
+def parse_expiry_as_date(expiry: int):
+    date = pendulum.from_timestamp(expiry)
+    return date.format("ddd, DD MMM YYYY HH:mm:ss") + " GMT"
+
+
+def parse_cookie_to_morsel(cookie_content: str):
+    split_lines = cookie_content.splitlines()
+    valid_header = split_lines[0].lower().startswith("# netscape")
+    if not valid_header:
+        raise ValueError("Invalid Netscape Cookie File")
+
+    netscape_cookies: Dict[str, Morsel] = {}
+    for line in split_lines[1:]:
+        if not line:
+            continue
+        if line.startswith("#"):
+            continue
+        try:
+            domain, flag, path, secure, expiration, name, value = line.split("\t")
+        except Exception:
+            raise ValueError("Invalid Netscape Cookie File")
+
+        flag = flag.lower() == "true"
+        secure = secure.lower() == "true"
+        expiration = int(expiration)
+        cookie = Morsel()
+        cookie.set(name, value, url_quote(value))
+        cookie["domain"] = domain
+        cookie["path"] = path
+        cookie["secure"] = secure
+        cookie["expires"] = parse_expiry_as_date(expiration)
+        cookie["httponly"] = True
+        netscape_cookies[name] = cookie
+
+    return netscape_cookies
