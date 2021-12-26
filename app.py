@@ -44,6 +44,7 @@ from internals.db import models, register_db
 from internals.db.ipc import IPCServerClientBridge
 from internals.discover import autodiscover
 from internals.holodex import HolodexAPI
+from internals.ihaapi import ihateanimeAPI
 from internals.logme import setup_logger
 from internals.monke import monkeypatch_sanic_runner
 from internals.utils import (
@@ -231,6 +232,8 @@ def setup_app():
     register_db(app, modules=db_modules, generate_schemas=True)
     logger.info("Attaching Holodex to Sanic")
     HolodexAPI.attach(app)
+    logger.info("Attaching ihateani.me API to Sanic")
+    ihateanimeAPI.attach(app)
     logger.info("Registering Sanic middlewares and extra routes")
     app.after_server_start(after_server_starting)
     app.after_server_stop(after_server_closing)

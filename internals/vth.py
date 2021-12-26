@@ -57,6 +57,7 @@ if TYPE_CHECKING:
     from tortoise.backends.sqlite.client import SqliteClient
 
     from .holodex import HolodexAPI
+    from .ihaapi import ihateanimeAPI
 
 
 __all__ = ("SanicVTHellConfig", "SanicVTHell", "VTHellDataset", "VTHellDatasetVTuber")
@@ -199,6 +200,7 @@ class SanicVTHell(Sanic):
     db: SqliteClient
     config: SanicVTHellConfig
     holodex: HolodexAPI
+    ihaapi: ihateanimeAPI
     vtdataset: Dict[str, VTHellDataset]
     vtrecords: VTHellRecordedData
     wshandler: WebsocketServer
@@ -240,6 +242,7 @@ class SanicVTHell(Sanic):
         )
 
         self.holodex: HolodexAPI = None
+        self.ihaapi: ihateanimeAPI = None
         self.db: SqliteClient = None
         self.vtrecords = VTHellRecordedData()
 
@@ -324,8 +327,11 @@ class SanicVTHell(Sanic):
             self._holodex_ready = asyncio.Event()
         if not hasattr(self, "_wshandler_ready"):
             self._wshandler_ready = asyncio.Event()
+        if not hasattr(self, "_ihaapi_ready"):
+            self._ihaapi_ready = asyncio.Event()
         await self._db_ready.wait()
         await self._holodex_ready.wait()
+        await self._ihaapi_ready.wait()
         await self._wshandler_ready.wait()
 
     def mark_db_ready(self):
@@ -337,6 +343,11 @@ class SanicVTHell(Sanic):
         if not hasattr(self, "_holodex_ready"):
             self._holodex_ready = asyncio.Event()
         self._holodex_ready.set()
+
+    def mark_ihaapi_ready(self):
+        if not hasattr(self, "_ihaapi_ready"):
+            self._ihaapi_ready = asyncio.Event()
+        self._ihaapi_ready.set()
 
     def mark_wshandler_ready(self):
         if not hasattr(self, "_wshandler_ready"):
