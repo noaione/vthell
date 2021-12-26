@@ -188,3 +188,7 @@ chatarchive/*
 dl_temp/*
 
 *.sock
+*.m4a
+*.mp4
+*.ts
+*.mp3
