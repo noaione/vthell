@@ -31,7 +31,7 @@ import string as pystring
 import subprocess
 from http.cookies import Morsel
 from pathlib import Path
-from typing import IO, Any, Dict, NoReturn
+from typing import IO, Any, Dict, NoReturn, Union
 from urllib.parse import quote as url_quote
 
 import aiofiles.ospath
@@ -57,6 +57,8 @@ __all__ = (
     "remove_acquired_lock",
     "parse_expiry_as_date",
     "parse_cookie_to_morsel",
+    "get_indexed",
+    "complex_walk",
 )
 
 logger = logging.getLogger("Internals.Utils")
@@ -417,3 +419,45 @@ def parse_cookie_to_morsel(cookie_content: str):
         netscape_cookies[name] = cookie
 
     return netscape_cookies
+
+
+def get_indexed(data: list, n: int):
+    if not data:
+        return None
+    try:
+        return data[n]
+    except (ValueError, IndexError):
+        return None
+
+
+def complex_walk(dictionary: Union[dict, list], paths: str):
+    if not dictionary:
+        return None
+    expanded_paths = paths.split(".")
+    skip_it = False
+    for n, path in enumerate(expanded_paths):
+        if skip_it:
+            skip_it = False
+            continue
+        if path.isdigit():
+            path = int(path)  # type: ignore
+        if path == "*" and isinstance(dictionary, list):
+            new_concat = []
+            next_path = get_indexed(expanded_paths, n + 1)
+            if next_path is None:
+                return None
+            skip_it = True
+            for content in dictionary:
+                try:
+                    new_concat.append(content[next_path])
+                except (TypeError, ValueError, IndexError, KeyError, AttributeError):
+                    pass
+            if len(new_concat) < 1:
+                return new_concat
+            dictionary = new_concat
+            continue
+        try:
+            dictionary = dictionary[path]  # type: ignore
+        except (TypeError, ValueError, IndexError, KeyError, AttributeError):
+            return None
+    return dictionary

@@ -41,6 +41,7 @@ from internals.chat.utils import (
     time_to_seconds,
     try_get_first_key,
 )
+from internals.utils import complex_walk
 
 INITIAL_BOUNDARY_RE = r"\s*(?:var\s+meta|</script|\n)"
 
@@ -55,8 +56,6 @@ __all__ = (
     "MessageEmoji",
     "ChatRuns",
     "Image",
-    "get_indexed",
-    "complex_walk",
     "parse_initial_data",
     "parse_yt_config",
     "parse_player_response",
@@ -144,48 +143,6 @@ class Image:
             "height": self.height,
             "id": self.image_id,
         }
-
-
-def get_indexed(data: list, n: int):
-    if not data:
-        return None
-    try:
-        return data[n]
-    except (ValueError, IndexError):
-        return None
-
-
-def complex_walk(dictionary: Union[dict, list], paths: str):
-    if not dictionary:
-        return None
-    expanded_paths = paths.split(".")
-    skip_it = False
-    for n, path in enumerate(expanded_paths):
-        if skip_it:
-            skip_it = False
-            continue
-        if path.isdigit():
-            path = int(path)  # type: ignore
-        if path == "*" and isinstance(dictionary, list):
-            new_concat = []
-            next_path = get_indexed(expanded_paths, n + 1)
-            if next_path is None:
-                return None
-            skip_it = True
-            for content in dictionary:
-                try:
-                    new_concat.append(content[next_path])
-                except (TypeError, ValueError, IndexError, KeyError, AttributeError):
-                    pass
-            if len(new_concat) < 1:
-                return new_concat
-            dictionary = new_concat
-            continue
-        try:
-            dictionary = dictionary[path]  # type: ignore
-        except (TypeError, ValueError, IndexError, KeyError, AttributeError):
-            return None
-    return dictionary
 
 
 def parse_initial_data(html_string: str):
