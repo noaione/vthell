@@ -60,6 +60,17 @@ class VTHellJobStatus(str, Enum):
     error = "ERROR"
 
 
+class VTHellJobPlatform(str, Enum):
+    # Youtube
+    YouTube = "youtube"
+    # Twitch
+    Twitch = "twitch"
+    # Twitter (Spaces)
+    Twitter = "twitter"
+    # Twitcasting
+    Twitcasting = "twitcasting"
+
+
 class VTHellJob(Model):
     id = fields.CharField(pk=True, unique=True, index=True, max_length=128)
     title = fields.TextField(null=False)
@@ -71,6 +82,9 @@ class VTHellJob(Model):
     status = fields.CharEnumField(VTHellJobStatus, null=False, default=VTHellJobStatus.waiting, max_length=24)
     last_status = fields.CharEnumField(VTHellJobStatus, null=True, max_length=24)
     error = fields.TextField(null=True)
+    platform = fields.CharEnumField(
+        VTHellJobPlatform, null=False, max_length=24, default=VTHellJobPlatform.YouTube
+    )
 
 
 class VTHellJobChatTemporary(Model):
