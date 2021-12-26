@@ -122,7 +122,7 @@ class DownloaderTasks(InternalTaskBase):
             str(temp_output_file),
         ]
         if cookies_file is not None:
-            ytarchive_args.extend(["-c", cookies_file])
+            ytarchive_args.extend(["-c", str(cookies_file)])
         ytarchive_args.append(f"https://youtube.com/watch?v={data.id}")
         ytarchive_args.append("best")
         logger.debug(f"[{data.id}] Starting ytarchive with args: {ytarchive_args}")
@@ -174,7 +174,7 @@ class DownloaderTasks(InternalTaskBase):
                         )
                         if notify_chat_dl:
                             await app.dispatch("internals.chat.manager", context={"app": app, "video": data})
-                    elif "livestream" in lower_line and "process" in lower_line:
+                    elif "livestream" in lower_line and "youtube-dl" in lower_line:
                         is_error = True
                         logger.error(f"[{data.id}] {line}")
                         error_line = line
@@ -230,7 +230,6 @@ class DownloaderTasks(InternalTaskBase):
         cookie_header = await read_and_parse_cookie(cookie_file)
         ydl_opts = {
             "format": ydl_format_selector,
-            "wait_for_video": True,
             "live_from_start": True,
             "quiet": True,
         }
@@ -248,12 +247,45 @@ class DownloaderTasks(InternalTaskBase):
                 None,
                 False,
             )
+        except yt_dlp.utils.GeoRestrictedError as exc:
+            logger.error("Failed to extract info from ID %s with yt-dlp", data.id, exc_info=exc)
+            data.last_status = models.VTHellJobStatus.downloading
+            data.status = models.VTHellJobStatus.done
+            data.error = str(exc)
+            await data.save()
+            emit_data = {"id": data.id, "status": "DONE", "error": data.error}
+            await app.wshandler.emit("job_update", emit_data)
+            if app.first_process and app.ipc:
+                await app.ipc.emit("ws_job_update", emit_data)
+            return
         except yt_dlp.utils.ExtractorError as exc:
             logger.error("Failed to extract info from ID %s with yt-dlp", data.id, exc_info=exc)
-            data.error = models.VTHellJobStatus.error
+            data.status = models.VTHellJobStatus.error
             data.last_status = models.VTHellJobStatus.downloading
             data.error = f"Failed to extract info from ID {data.id} with yt-dlp"
             data_update = {"id": data.id, "status": "ERROR", "error": "YTDL failed to extract info"}
+            await app.wshandler.emit("job_update", data_update)
+            if app.first_process and app.ipc:
+                await app.ipc.emit("ws_job_update", data_update)
+            return True
+        except yt_dlp.utils.DownloadError as exc:
+            logger.error("Failed to extract info from ID %s with yt-dlp", data.id, exc_info=exc)
+            error_msg = f"Failed to extract info from ID {data.id} with yt-dlp"
+            data.status = models.VTHellJobStatus.error
+            data.last_status = models.VTHellJobStatus.downloading
+            data_update = {"id": data.id, "status": "ERROR", "error": "YTDL failed to extract info"}
+            try:
+                original = exc.exc_info[1]
+            except IndexError:
+                original = None
+            if original is not None:
+                error_msg += "\n" + str(original)
+            data.error = error_msg
+            if isinstance(original, yt_dlp.utils.ExtractorError):
+                reason = original.msg.lower()
+                if "captcha" in reason or "private video" in reason:
+                    data.status = models.VTHellJobStatus.done
+                    data_update["status"] = "DONE"
             await app.wshandler.emit("job_update", data_update)
             if app.first_process and app.ipc:
                 await app.ipc.emit("ws_job_update", data_update)
@@ -358,7 +390,7 @@ class DownloaderTasks(InternalTaskBase):
         is_error, error_line = await DownloaderTasks.download_video_with_ytarchive(data, app)
         if is_error:
             lower_line = error_line.lower() if isinstance(error_line, str) else None
-            if isinstance(lower_line, str) and "livestream" in lower_line and "process" in lower_line:
+            if isinstance(lower_line, str) and "livestream" in lower_line and "youtube-dl" in lower_line:
                 logger.info(f"[{data.id}] Job download failed with ytarchive, trying with YTDL instead")
                 is_error = await DownloaderTasks.download_video_with_ytdl(data, app)
                 if is_error:
