@@ -72,7 +72,7 @@ query VTuberLive($cursor:String,$platforms:[PlatformName]) {
     }
 }
 
-query VTuberVideo($id:String,$platforms:[PlatformName],$statuses:[LiveStatus]) {
+query VTuberVideo($id:ID,$platforms:[PlatformName],$statuses:[LiveStatus]) {
     vtuber {
         videos(id:[$id],limit:10,platforms:$platforms,statuses:$statuses) {
             items {

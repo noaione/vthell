@@ -36,8 +36,8 @@ from .base import BaseExtractor
 from .errors import ExtractorError
 from .models import ExtractorResult, ExtractorURLResult
 
-logger = logging.getLogger("Internals.Extractor.YoutubeDL")
-__all__ = ("YoutubeDLExtractor",)
+logger = logging.getLogger("Internals.Extractor.YouTube")
+__all__ = ("YouTubeExtractor",)
 
 
 def ydl_format_selector(ctx):
@@ -87,7 +87,7 @@ def ydl_format_selector_fallback(formats: List[dict]):
         return None, None
 
 
-class YoutubeDLExtractor(BaseExtractor):
+class YouTubeExtractor(BaseExtractor):
     def __init__(self, *, loop: asyncio.AbstractEventLoop = None):
         super().__init__(loop=loop)
         self.ydl: yt_dlp.YoutubeDL = None
@@ -109,7 +109,7 @@ class YoutubeDLExtractor(BaseExtractor):
 
     @classmethod
     async def process(
-        cls: Type[YoutubeDLExtractor],
+        cls: Type[YouTubeExtractor],
         video_url: str,
         *,
         loop: Optional[asyncio.AbstractEventLoop] = None,

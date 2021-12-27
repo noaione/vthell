@@ -37,8 +37,7 @@ import yt_dlp
 
 from internals.db import models
 from internals.downloader import download_via_ffmpeg, download_via_ytarchive
-from internals.extractor import ExtractorError, YoutubeDLExtractor
-from internals.extractor.twitter import TwitterSpaceExtractor
+from internals.extractor import ExtractorError, TwitcastingExtractor, TwitterSpaceExtractor, YouTubeExtractor
 from internals.struct import InternalTaskBase
 from internals.utils import build_rclone_path, find_cookies_file, map_to_boolean, parse_cookie_to_morsel
 
@@ -127,7 +126,7 @@ class DownloaderTasks(InternalTaskBase):
         cookie_file = await find_cookies_file()
         cookie_header = await read_and_parse_cookie(cookie_file)
         try:
-            ytdl_result = await YoutubeDLExtractor.process(
+            ytdl_result = await YouTubeExtractor.process(
                 f"https://youtube.com/watch?v={data.id}", loop=app.loop
             )
         except ExtractorError as exc:
@@ -234,6 +233,92 @@ class DownloaderTasks(InternalTaskBase):
         return False, temp_output
 
     @staticmethod
+    async def download_twitcasting_stream(data: models.VTHellJob, app: SanicVTHell):
+        if data.platform != "twitcasting":
+            return True, None
+
+        cookie_file = await find_cookies_file()
+        cookie_header = await read_and_parse_cookie(cookie_file)
+        if cookie_header is None and data.member_only:
+            logger.error(f"[{data.id}] Member-only stream, but no cookies found. Cancelling")
+            data.status = models.VTHellJobStatus.cancelled
+            data.last_status = models.VTHellJobStatus.downloading
+            data.error = "Members-only stream but there is no cookies file"
+            await data.save()
+            emit_data = {
+                "id": data.id,
+                "status": "CANCELLED",
+                "error": "Members-only stream but there is no cookies file",
+            }
+            await app.wshandler.emit("job_update", emit_data)
+            if app.first_process and app.ipc:
+                await app.ipc.emit("ws_job_update", emit_data)
+            return True, None
+
+        try:
+            twcast_info = await TwitcastingExtractor.process(
+                f"https://twitcasting.tv/{data.channel_id}/movie/{data.id}", loop=app.loop
+            )
+        except ExtractorError as exc:
+            logger.error(f"[{data.id}] {exc}", exc_info=exc)
+            data.last_status = models.VTHellJobStatus.downloading
+            message = exc.msg.lower()
+            error_msg = f"Unable to extract information with yt-dlp ({exc.msg})"
+            emit_data = {
+                "id": data.id,
+                "status": "ERROR",
+                "error": error_msg,
+            }
+            if "private" in message or "captcha" or "geo restrict":
+                data.status = models.VTHellJobStatus.cancelled
+                emit_data["status"] = "CANCELLED"
+            elif isinstance(exc.exc_info, yt_dlp.utils.ExtractorError):
+                cause = exc.exc_info.msg.lower()
+                if "members-only" in cause or "member-only" in cause:
+                    data.status = models.VTHellJobStatus.cancelled
+                    emit_data["status"] = "CANCELLED"
+            else:
+                data.status = models.VTHellJobStatus.error
+            data.error = error_msg
+            await data.save()
+            await app.wshandler.emit("job_update", emit_data)
+            if app.first_process and app.ipc:
+                await app.ipc.emit("ws_job_update", emit_data)
+            return True, None
+
+        if twcast_info is None:
+            return True, None
+
+        temp_file = STREAMDUMP_PATH / f"{data.filename} [temp].mp4"
+        resolution = twcast_info.urls[0].resolution
+        logger.debug(f"[{data.id}] Downloading with resolution {resolution} format")
+        data.resolution = resolution
+        await data.save()
+
+        http_headers = {}
+        if cookie_header is not None:
+            http_headers["Cookie"] = cookie_header
+        ret_code, is_error, error_line = await download_via_ffmpeg(
+            app,
+            data,
+            twcast_info.urls[0].url,
+            temp_file,
+            http_headers,
+            {"metadata": f"title={data.title}"},
+        )
+        if ret_code != 0 or is_error:
+            logger.error(f"[{data.id}] ffmpeg exited with code {ret_code}")
+            data.status = models.VTHellJobStatus.error
+            data.last_status = models.VTHellJobStatus.downloading
+            data.error = f"ffmpeg exited with code {ret_code}: {error_line}"
+            data_update = {"id": data.id, "status": "ERROR", "error": data.error}
+            await app.wshandler.emit("job_update", data_update)
+            if app.first_process and app.ipc:
+                await app.ipc.emit("ws_job_update", data_update)
+            return True
+        return False
+
+    @staticmethod
     async def download_stream(data: models.VTHellJob, app: SanicVTHell):
         if data.platform == "youtube":
             logger.info(f"[{data.id}] Downloading youtube stream/video...")
@@ -241,6 +326,9 @@ class DownloaderTasks(InternalTaskBase):
         elif data.platform == "twitter":
             logger.info(f"[{data.id}] Downloading twitter spaces...")
             return await DownloaderTasks.download_stream_twitter_spaces(data, app)
+        elif data.platform == "twitcasting":
+            logger.info(f"[{data.id}] Downloading twitcasting stream...")
+            return await DownloaderTasks.download_twitcasting_stream(data, app)
         logger.error(f"[{data.id}] Unsupported platform: {data.platform}")
         data.error = f"Unsupported platform: {data.platform}"
         data.last_status = models.VTHellJobStatus.downloading
@@ -270,7 +358,7 @@ class DownloaderTasks(InternalTaskBase):
         if not await app.loop.run_in_executor(None, temp_output.exists):
             logger.warning(f"[{data.id}] downloaded file not found, skipping.")
             return True
-        if data.platform not in ["youtube", "twitch"]:
+        if data.platform not in ["youtube", "twitch", "twitcasting"]:
             logger.debug(f"[{data.id}] Got audio files, will not mux the file...")
             is_error = await DownloaderTasks.mux_rename_file(data, app, temp_output)
             return is_error
@@ -310,6 +398,8 @@ class DownloaderTasks(InternalTaskBase):
             return STREAMDUMP_PATH / f"{data.filename} [{data.resolution} AAC].mkv"
         elif data.platform == "twitter":
             return STREAMDUMP_PATH / f"{data.filename} [AAC].m4a"
+        elif data.platform == "twitcasting":
+            return STREAMDUMP_PATH / f"{data.filename} [XXXp AAC].mkv"
         return None
 
     @staticmethod
@@ -406,12 +496,12 @@ class DownloaderTasks(InternalTaskBase):
             logger.info(f"[{data.id}][d] Last status was download job, trying to redo from download point.")
             # Reset to preparing
             await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.preparing)
-            is_error = await DownloaderTasks.download_stream(data, app)
+            is_error, temp_output = await DownloaderTasks.download_stream(data, app)
             if is_error:
                 logger.error(f"[{data.id}][d] Failed to redo stream download, aborting job.")
                 return
             logger.info(f"[{data.id}][m] download job redone, continuing with muxing files...")
-            is_error = await DownloaderTasks.mux_files(data, app)
+            is_error = await DownloaderTasks.mux_files(data, app, temp_output)
             if is_error:
                 logger.error(f"[{data.id}][m] Failed to redo mux job, aborting.")
                 return
@@ -425,7 +515,7 @@ class DownloaderTasks(InternalTaskBase):
             else:
                 logger.info(f"[{data.id}][m] Upload step skipped since Rclone is disabled...")
             await DownloaderTasks.update_state(data, app, models.VTHellJobStatus.cleaning, True)
-            await DownloaderTasks.cleanup_files(data, app)
+            await DownloaderTasks.cleanup_files(data, app, temp_output)
             logger.info(f"[{data.id}] Cleanup job done, marking job as finished!")
             data.status = models.VTHellJobStatus.done
             data.error = None
