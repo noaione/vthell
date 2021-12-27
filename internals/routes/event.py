@@ -35,10 +35,10 @@ if TYPE_CHECKING:
     from internals.vth import SanicVTHell
 
 
-bp_status = Blueprint("api_event", url_prefix="/api/event")
+bp_event = Blueprint("api_event", url_prefix="/api/event")
 
 
-@bp_status.websocket("/")
+@bp_event.websocket("/")
 async def websocket_receiver(request: Request, ws: WebSocketConnection):
     app: SanicVTHell = request.app
     await app.wshandler.listen(ws)
