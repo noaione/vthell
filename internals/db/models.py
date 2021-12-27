@@ -31,7 +31,14 @@ import orjson
 from tortoise import fields
 from tortoise.models import Model
 
-__all__ = ("VTHellJob", "VTHellAutoType", "VTHellAutoScheduler", "VTHellJobStatus", "VTHellJobChatTemporary")
+__all__ = (
+    "VTHellJob",
+    "VTHellAutoType",
+    "VTHellAutoScheduler",
+    "VTHellJobStatus",
+    "VTHellJobPlatform",
+    "VTHellJobChatTemporary",
+)
 
 
 def orjson_dumps(obj: object) -> bytes:

@@ -32,6 +32,7 @@ from sanic.response import json
 
 from internals.db import models
 from internals.decorator import secure_access
+from internals.ihaapi import ihaAPIVideo
 from internals.utils import map_to_boolean, secure_filename
 
 if TYPE_CHECKING:
@@ -52,18 +53,29 @@ async def add_new_jobs(request: Request):
         logger.error("Error while parsing request: %s", cep, exc_info=cep)
         return json({"error": "Invalid JSON"}, status=400)
     holodex = app.holodex
+    ihaapi = app.ihaapi
 
+    platform = "youtube"
     if "id" not in json_request:
         return json({"error": "Missing `id` in json request"}, status=400)
+    if "platform" in json_request:
+        if json_request["platform"] in ["youtube", "twitch", "twitcasting", "twitter"]:
+            platform = json_request["platform"]
 
     video_id = json_request["id"]
     logger.info(f"ScheduleRequest: Received request for video {video_id}")
     existing_job = await models.VTHellJob.get_or_none(id=video_id)
 
-    video_res = await holodex.get_video(video_id)
-    if video_res is None:
-        logger.error(f"ScheduleRequest: Video {video_id} not found")
-        return json({"error": "Video not found or invalid"}, status=404)
+    if platform == "youtube":
+        video_res = await holodex.get_video(video_id)
+        if video_res is None:
+            logger.error(f"ScheduleRequest(Holodex): Video {video_id} not found")
+            return json({"error": "Video not found or invalid"}, status=404)
+    else:
+        video_res = await ihaapi.get_video(video_id, platform)
+        if video_res is None:
+            logger.error(f"ScheduleRequest(ihaAPI): Video {video_id} not found")
+            return json({"error": "Video not found or invalid"}, status=404)
 
     title_safe = secure_filename(video_res.title)
     utc_unix = pendulum.from_timestamp(video_res.start_time, tz="UTC")
@@ -107,6 +119,8 @@ async def add_new_jobs(request: Request):
             channel_id=video_res.channel_id,
             member_only=video_res.is_member,
         )
+        if isinstance(video_res, ihaAPIVideo):
+            job_request.platform = models.VTHellJobPlatform(video_res.platform)
         await job_request.save()
         job_data_update = {
             "id": job_request.id,

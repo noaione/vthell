@@ -71,6 +71,28 @@ query VTuberLive($cursor:String,$platforms:[PlatformName]) {
         }
     }
 }
+
+query VTuberVideo($id:String,$platforms:[PlatformName],$statuses:[LiveStatus]) {
+    vtuber {
+        videos(id:[$id],limit:10,platforms:$platforms,statuses:$statuses) {
+            items {
+                id
+                title
+                status
+                channel_id
+                timeData {
+                    startTime
+                    scheduledStartTime
+                    endTime
+                }
+                platform
+                group
+                is_premiere
+                is_member
+            }
+        }
+    }
+}
 """
 
 
@@ -103,7 +125,11 @@ class ihateanimeAPI:
         self.__ready = False
 
     async def get_lives(self, platforms: List[str] = DEFAULT_PLATFORMS):
-        query_send = {"query": QUERY_OBJECT, "variables": {"platforms": platforms, "cursor": None}}
+        query_send = {
+            "query": QUERY_OBJECT,
+            "variables": {"platforms": platforms, "cursor": None},
+            "operationName": "VTuberLive",
+        }
 
         all_data: List[ihaAPIVTuberVideo] = []
         while True:
@@ -136,6 +162,56 @@ class ihateanimeAPI:
             )
             parsed_videos.append(iha_video)
         return parsed_videos
+
+    async def get_video(self, video_id: str, platform: str):
+        query_send = {
+            "query": QUERY_OBJECT,
+            "variables": {
+                "platforms": [platform],
+                "cursor": None,
+                "id": video_id,
+                "statuses": ["live", "upcoming", "past"],
+            },
+            "operationName": "VTuberVideo",
+        }
+        if platform == "twitch":
+            query_send["variables"]["statuses"] = ["live", "upcoming"]
+
+        all_data: List[ihaAPIVTuberVideo] = []
+        async with self.client.post(self.BASE, json=query_send) as response:
+            if response.status != 200:
+                return None
+            response_json = await response.json()
+            vtuber_live = complex_walk(response_json, "data.vtuber.videos")
+            if vtuber_live is None:
+                return None
+            all_data.extend(vtuber_live["items"])
+
+        if len(all_data) < 1:
+            return None
+
+        selected_video: ihaAPIVTuberVideo = None
+        for video in all_data:
+            if video["id"] == video_id:
+                selected_video = video
+                break
+
+        if selected_video is None:
+            return None
+
+        start_time = complex_walk(selected_video, "timeData.startTime") or complex_walk(
+            selected_video, "timeData.scheduledStartTime"
+        )
+        iha_video = ihaAPIVideo(
+            id=selected_video["id"],
+            title=selected_video["title"],
+            start_time=start_time,
+            channel_id=selected_video["channel_id"],
+            status=selected_video["status"],
+            platform=selected_video["platform"],
+            is_member=map_to_boolean(selected_video["is_member"]),
+        )
+        return iha_video
 
     @classmethod
     def attach(cls: Type[ihateanimeAPI], app: SanicVTHell):
