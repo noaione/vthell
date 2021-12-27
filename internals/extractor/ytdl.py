@@ -147,7 +147,9 @@ class YoutubeDLExtractor(BaseExtractor):
 
         await ydl.close()
         sanitized = ydl.ydl.sanitize_info(info)
-        formats_request = sanitized.get("formats", ydl_format_selector_fallback(sanitized.get("formats", [])))
+        formats_request = sanitized.get(
+            "requested_formats", ydl_format_selector_fallback(sanitized.get("formats", []))
+        )
         try:
             video_format = formats_request[0]
             audio_format = formats_request[1]
