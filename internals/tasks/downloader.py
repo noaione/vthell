@@ -299,12 +299,7 @@ class DownloaderTasks(InternalTaskBase):
         if cookie_header is not None:
             http_headers["Cookie"] = cookie_header
         ret_code, is_error, error_line = await download_via_ffmpeg(
-            app,
-            data,
-            twcast_info.urls[0].url,
-            temp_file,
-            http_headers,
-            {"metadata": f"title={data.title}"},
+            app, data, twcast_info.urls[0].url, temp_file, http_headers
         )
         if ret_code != 0 or is_error:
             logger.error(f"[{data.id}] ffmpeg exited with code {ret_code}")
