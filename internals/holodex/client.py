@@ -213,7 +213,7 @@ class HolodexAPI:
             "id": video_id,
         }
 
-        async with self.client.get(f"{self.BASE}live", params=params) as resp:
+        async with self.client.get(f"{self.BASE}videos", params=params) as resp:
             if resp.status != 200:
                 return None
             json_resp: List[HolodexVideoPayload] = await resp.json()
@@ -228,6 +228,14 @@ class HolodexAPI:
 
         video_type = selected_video.get("type")
         if video_type != "stream":
+            # Dont archive clipper stuff because why would you do that?
+            return None
+        stream_status = selected_video.get("status")
+        if stream_status is None:
+            # Somehow it's missing the status? Remove it.
+            return None
+        if stream_status == "missing":
+            # Stream is private, dont add.
             return None
         start_time = self._convert_date_to_unix(selected_video.get("start_actual"))
         if start_time is None:
@@ -245,7 +253,7 @@ class HolodexAPI:
             start_time,
             channel_id,
             org_group,
-            selected_video["status"],
+            stream_status,
             video_url,
             is_member,
         )

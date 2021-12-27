@@ -96,6 +96,15 @@ def ydl_format_selector_fallback(formats: List[dict]):
         return None, None
 
 
+def ytarchive_should_cancel(errors: str):
+    lower_error = errors.lower()
+    if "private" in lower_error:
+        return True
+    if "members only" in lower_error:
+        return True
+    return False
+
+
 async def read_and_parse_cookie(cookie_file: Optional[Path]):
     if cookie_file is None:
         return None
@@ -232,8 +241,12 @@ class DownloaderTasks(InternalTaskBase):
             data.last_status = models.VTHellJobStatus.downloading
             data.status = models.VTHellJobStatus.error
             data.error = f"ytarchive exited with code {ret_code} ({error_line})"
-            await data.save()
+            should_cancel = ytarchive_should_cancel(error_line)
             emit_data = {"id": data.id, "status": "ERROR", "error": data.error}
+            if should_cancel:
+                data.status = models.VTHellJobStatus.cancelled
+                emit_data["status"] = "CANCELLED"
+            await data.save()
             await app.wshandler.emit("job_update", emit_data)
             if app.first_process and app.ipc:
                 await app.ipc.emit("ws_job_update", emit_data)
@@ -267,10 +280,10 @@ class DownloaderTasks(InternalTaskBase):
         except yt_dlp.utils.GeoRestrictedError as exc:
             logger.error("Failed to extract info from ID %s with yt-dlp", data.id, exc_info=exc)
             data.last_status = models.VTHellJobStatus.downloading
-            data.status = models.VTHellJobStatus.done
+            data.status = models.VTHellJobStatus.cancelled
             data.error = str(exc)
             await data.save()
-            emit_data = {"id": data.id, "status": "DONE", "error": data.error}
+            emit_data = {"id": data.id, "status": "CANCELLED", "error": data.error}
             await app.wshandler.emit("job_update", emit_data)
             if app.first_process and app.ipc:
                 await app.ipc.emit("ws_job_update", emit_data)
@@ -301,8 +314,8 @@ class DownloaderTasks(InternalTaskBase):
             if isinstance(original, yt_dlp.utils.ExtractorError):
                 reason = original.msg.lower()
                 if "captcha" in reason or "private video" in reason:
-                    data.status = models.VTHellJobStatus.done
-                    data_update["status"] = "DONE"
+                    data.status = models.VTHellJobStatus.cancelled
+                    data_update["status"] = "CANCELLED"
             await app.wshandler.emit("job_update", data_update)
             if app.first_process and app.ipc:
                 await app.ipc.emit("ws_job_update", data_update)
@@ -715,7 +728,13 @@ class DownloaderTasks(InternalTaskBase):
     async def get_scheduled_job():
         try:
             all_jobs = await models.VTHellJob.all()
-            all_jobs = list(filter(lambda job: job.status != models.VTHellJobStatus.done, all_jobs))
+            all_jobs = list(
+                filter(
+                    lambda job: job.status
+                    not in [models.VTHellJobStatus.done, models.VTHellJobStatus.cancelled],
+                    all_jobs,
+                )
+            )
         except Exception as e:
             logger.error(f"Failed to get scheduled jobs: {e}", exc_info=e)
             return []

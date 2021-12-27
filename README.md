@@ -298,6 +298,7 @@ All the data is self-explanatory, the `status` is one of this enum:
 - `CLEANING` means that upload process is done and now the program is cleaning up downloaded files.
 - `DONE` means that the job is finished
 - `ERROR` means an error occured, see the `error` field to learn more.
+- `CANCELLED` means the job is cancelled because of an unexpected error (members, private, and more)
 
 > **GET `/api/status/:id`**, get the status of a single job
 

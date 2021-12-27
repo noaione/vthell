@@ -58,6 +58,8 @@ class VTHellJobStatus(str, Enum):
     done = "DONE"
     # Error
     error = "ERROR"
+    # Cancelled, member locked stream, geo-locked, private, and more
+    cancelled = "CANCELLED"
 
 
 class VTHellJobPlatform(str, Enum):
