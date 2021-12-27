@@ -93,12 +93,15 @@ class TemporaryChatTasks(InternalTaskBase):
             VTHellJobStatus.preparing,
             VTHellJobStatus.downloading,
             VTHellJobStatus.error,
+            VTHellJobStatus.cancelled,
         ]:
             if chat_job.is_done:
                 logger.info(f"{task_name}: Job <{chat_job.id}> is done, dispatching upload...")
                 await app.dispatch("internals.chat.uploader", context={"job": chat_job, "app": app})
             else:
-                logger.warning(f"{task_name}: Job <{chat_job.id}> is finished, dispatching with force rewrite...")
+                logger.warning(
+                    f"{task_name}: Job <{chat_job.id}> is finished, dispatching with force rewrite..."
+                )
                 await app.dispatch(
                     "internals.chat.manager", context={"app": app, "video": video_data, "force": True}
                 )
