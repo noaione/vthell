@@ -46,7 +46,7 @@ __all__ = ("TemporaryChatTasks",)
 
 
 async def backtrack_read_json(file_path: str, max_size: int = -5000) -> Optional[dict]:
-    print("Opening file:", file_path)
+    logger.debug(f"Backtracking file: {file_path}")
     fp = await aiofiles.open(file_path, "rb")
     await fp.seek(0, os.SEEK_END)
 

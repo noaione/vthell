@@ -146,7 +146,6 @@ async def post_auto_scheduler(request: Request):
                     return json({"error": f"Invalid type for chains.{x}"}, status=400)
                 valid_chains.append({"type": validate_type.name, "data": chain["data"]})
         chains = valid_chains.copy()
-        print(chains, chains_new)
     auto_sched = models.VTHellAutoScheduler(
         type=ctype_enum,
         data=data,
