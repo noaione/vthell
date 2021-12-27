@@ -52,10 +52,6 @@ async def add_new_jobs(request: Request):
         logger.error("Error while parsing request: %s", cep, exc_info=cep)
         return json({"error": "Invalid JSON"}, status=400)
     holodex = app.holodex
-    if holodex is None:
-        return json({"error": "Holodex API is not ready"}, status=500)
-    if not holodex.ready:
-        return json({"error": "Holodex API is not ready"}, status=500)
 
     if "id" not in json_request:
         return json({"error": "Missing `id` in json request"}, status=400)
@@ -83,6 +79,12 @@ async def add_new_jobs(request: Request):
             last_status = existing_job.last_status
             if last_status in [models.VTHellJobStatus.downloading, models.VTHellJobStatus.preparing]:
                 existing_job.status = models.VTHellJobStatus.waiting
+                existing_job.last_status = None
+                existing_job.error = None
+        elif existing_job.status == models.VTHellJobStatus.cancelled:
+            existing_job.last_status = None
+            existing_job.error = None
+            existing_job.status = models.VTHellJobStatus.waiting
         await existing_job.save()
         job_update_data = {
             "id": existing_job.id,
@@ -143,6 +145,7 @@ async def delete_job(request: Request, video_id: str):
             models.VTHellJobStatus.done,
             models.VTHellJobStatus.waiting,
             models.VTHellJobStatus.error,
+            models.VTHellJobStatus.cancelled,
         ]
         and not force_delete
     ):
