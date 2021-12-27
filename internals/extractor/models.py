@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from dataclasses import dataclass
-from typing import Any, Callable, Coroutine, List, Optional
+from dataclasses import dataclass, field
+from typing import Any, Callable, Coroutine, Dict, List, Optional
 
 __all__ = ("ExtractorURLResult", "ExtractorResult")
 
@@ -38,4 +38,5 @@ class ExtractorURLResult:
 class ExtractorResult:
     urls: List[ExtractorURLResult]
     extractor: str
+    http_headers: Dict[str, str] = field(default_factory=dict)
     chat: Optional[Callable[..., Coroutine[Any, Any, None]]] = None

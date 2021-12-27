@@ -92,7 +92,6 @@ class YoutubeDLExtractor(BaseExtractor):
         self.ydl: yt_dlp.YoutubeDL = None
 
     async def create(self):
-        await super().create()
         cookie_file = await find_cookies_file()
 
         ydl_opts = {
@@ -122,12 +121,15 @@ class YoutubeDLExtractor(BaseExtractor):
                 None, ydl.ydl.extract_info, video_url, False, None, None, False
             )
         except yt_dlp.utils.GeoRestrictedError as exc:
+            await ydl.close()
             logger.error(f"Video is geo restricted: {video_url}")
             return ExtractorError(f"Video is geo restricted: {video_url}", "youtube-dl", exc)
         except yt_dlp.utils.ExtractorError as exc:
+            await ydl.close()
             logger.error(f"Failed to extract info: {video_url}", exc_info=exc)
             raise ExtractorError(f"Failed to extract info from url {video_url}", "youtube-dl", exc)
         except yt_dlp.utils.DownloadError as exc:
+            await ydl.close()
             logger.error(f"Failed to download video: {video_url}", exc_info=exc)
             try:
                 original = exc.exc_info[1]
@@ -142,6 +144,7 @@ class YoutubeDLExtractor(BaseExtractor):
                     error_msg += ": Video is private"
             raise ExtractorError(error_msg, "youtube-dl", original)
 
+        await ydl.close()
         sanitized = ydl.ydl.sanitize_info(info)
         formats_request = sanitized.get("formats", ydl_format_selector_fallback(sanitized.get("formats", [])))
         try:
@@ -152,7 +155,10 @@ class YoutubeDLExtractor(BaseExtractor):
             return ExtractorError(f"No valid formats found for {video_url}", "youtube-dl", exc)
 
         resolution = video_format.get("resolution", video_format.get("format_note", "Unknown"))
+        http_headers_video = video_format.get("http_headers", {})
+        http_headers_audio = audio_format.get("http_headers", {})
+        http_headers = {**http_headers_video, **http_headers_audio}
         video_extract = ExtractorURLResult(video_format["url"], resolution)
         audio_extract = ExtractorURLResult(audio_format["url"], resolution)
 
-        return ExtractorResult([video_extract, audio_extract], "youtube-dl")
+        return ExtractorResult([video_extract, audio_extract], "youtube-dl", http_headers=http_headers)

@@ -113,6 +113,11 @@ class TwitterSpaceExtractor(BaseExtractor):
         return ExtractorResult(
             urls=[ExtractorURLResult(url=space_status["source"]["location"])],
             extractor="twitter",
+            http_headers={
+                "x-guest-token": space.session.headers.get("x-guest-token"),
+                "Authorization": space.session.headers.get("Authorization")
+                or space.session.headers.get("authorization"),
+            },
         )
 
 
