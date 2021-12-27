@@ -119,12 +119,3 @@ class TwitterSpaceExtractor(BaseExtractor):
                 or space.session.headers.get("authorization"),
             },
         )
-
-
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    result = loop.run_until_complete(
-        TwitterSpaceExtractor.process("1OdKrBnaEPXKX", "1475040575682330625", loop=loop)
-    )
-    print(result)
-    loop.close()
