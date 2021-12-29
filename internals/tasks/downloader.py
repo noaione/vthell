@@ -316,8 +316,8 @@ class DownloaderTasks(InternalTaskBase):
             await app.wshandler.emit("job_update", data_update)
             if app.first_process and app.ipc:
                 await app.ipc.emit("ws_job_update", data_update)
-            return True
-        return False
+            return True, None
+        return False, temp_file
 
     @staticmethod
     async def download_twitch_stream(data: models.VTHellJob, app: SanicVTHell):
