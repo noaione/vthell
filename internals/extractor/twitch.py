@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from streamlink.plugins.twitch import TwitchHLSStream
 
 logger = logging.getLogger("Internals.Extractor.Twitch")
+__all__ = ("TwitchExtractor",)
 
 
 async def read_and_parse_cookie(cookie_file: Optional[Path]):

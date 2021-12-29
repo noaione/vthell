@@ -37,7 +37,13 @@ import yt_dlp
 
 from internals.db import models
 from internals.downloader import download_via_ffmpeg, download_via_ytarchive
-from internals.extractor import ExtractorError, TwitcastingExtractor, TwitterSpaceExtractor, YouTubeExtractor
+from internals.extractor import (
+    ExtractorError,
+    TwitcastingExtractor,
+    TwitchExtractor,
+    TwitterSpaceExtractor,
+    YouTubeExtractor,
+)
 from internals.struct import InternalTaskBase
 from internals.utils import build_rclone_path, find_cookies_file, map_to_boolean, parse_cookie_to_morsel
 
@@ -314,6 +320,56 @@ class DownloaderTasks(InternalTaskBase):
         return False
 
     @staticmethod
+    async def download_twitch_stream(data: models.VTHellJob, app: SanicVTHell):
+        if data.platform != "twitch":
+            return True, None
+
+        # If all number, assume VODs
+        stream_url = f"https://twitch.tv/{data.id}"
+        has_changed = False
+        if data.id.isdigit():
+            has_changed = True
+            stream_url = f"https://twitch.tv/videos/{data.id}"
+
+        ttv_stream = await TwitchExtractor.process(stream_url, loop=app.loop)
+        if ttv_stream is None and has_changed:
+            ttv_stream = await TwitchExtractor.process(f"https://twitch.tv/{data.id}", loop=app.loop)
+        if ttv_stream is None:
+            return True, None
+
+        temp_file = STREAMDUMP_PATH / f"{data.filename} [temp].ts"
+        logger.debug(f"[{data.id}] Downloading with resolution {ttv_stream.resolution} format")
+
+        save_fd = await aiofiles.open(str(temp_file), "wb+")
+        is_errored = False
+        error_line = None
+        try:
+            try:
+                data = await ttv_stream.read()
+                await save_fd.write(data)
+            except Exception as exc:
+                logger.error(f"[{data.id}] {exc}", exc_info=exc)
+                error_line = str(exc)
+                is_errored = True
+        except asyncio.CancelledError:
+            logger.debug(f"[{data.id}] Download cancelled")
+            error_line = "Download cancelled"
+            is_errored = True
+        await save_fd.close()
+
+        if is_errored:
+            logger.error(f"[{data.id}] streamlink exited because {error_line}")
+            data.status = models.VTHellJobStatus.error
+            data.last_status = models.VTHellJobStatus.downloading
+            data.error = f"streamlink exited because {error_line}"
+            data_update = {"id": data.id, "status": "ERROR", "error": data.error}
+            await app.wshandler.emit("job_update", data_update)
+            if app.first_process and app.ipc:
+                await app.ipc.emit("ws_job_update", data_update)
+            return True, None
+        return False, temp_file
+
+    @staticmethod
     async def download_stream(data: models.VTHellJob, app: SanicVTHell):
         if data.platform == "youtube":
             logger.info(f"[{data.id}] Downloading youtube stream/video...")
@@ -324,6 +380,9 @@ class DownloaderTasks(InternalTaskBase):
         elif data.platform == "twitcasting":
             logger.info(f"[{data.id}] Downloading twitcasting stream...")
             return await DownloaderTasks.download_twitcasting_stream(data, app)
+        elif data.platform == "twitch":
+            logger.info(f"[{data.id}] Downloading twitch stream...")
+            return await DownloaderTasks.download_twitch_stream(data, app)
         logger.error(f"[{data.id}] Unsupported platform: {data.platform}")
         data.error = f"Unsupported platform: {data.platform}"
         data.last_status = models.VTHellJobStatus.downloading
