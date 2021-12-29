@@ -23,6 +23,7 @@ requests = "^2.26.0"
 uvicorn = {extras = ["standard"], version = "^0.16.0"}
 websockets = "^10.1"
 yt-dlp = "^2021.12.25"
+streamlink = "^3.0.3"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.1"

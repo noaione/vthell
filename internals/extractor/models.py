@@ -22,10 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import asyncio
 from dataclasses import dataclass, field
-from typing import Any, Callable, Coroutine, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Callable, Coroutine, Dict, List, Optional
 
-__all__ = ("ExtractorURLResult", "ExtractorResult")
+if TYPE_CHECKING:
+    from streamlink.stream.hls import HLSStream, HLSStreamReader
+
+__all__ = ("ExtractorURLResult", "ExtractorResult", "StreamlinkExtractorResult")
 
 
 @dataclass
@@ -40,3 +44,35 @@ class ExtractorResult:
     extractor: str
     http_headers: Dict[str, str] = field(default_factory=dict)
     chat: Optional[Callable[..., Coroutine[Any, Any, None]]] = None
+
+
+@dataclass
+class StreamlinkExtractorResult:
+    stream: HLSStream
+    extractor: str
+    resolution: str
+    worker: Optional[HLSStreamReader] = None
+    loop: Optional[asyncio.AbstractEventLoop] = None
+
+    def __post_init__(self):
+        self.loop = self.loop or asyncio.get_event_loop()
+
+    async def open(self):
+        if self.worker is None:
+            self.worker = await self.loop.run_in_executor(None, self.stream.open)
+
+    async def read(self, bita: int = 4096):
+        if self.worker is None:
+            await self.open()
+
+        data = await self.loop.run_in_executor(
+            None,
+            self.worker.read,
+            bita,
+        )
+        return data
+
+    async def close(self):
+        if self.worker is not None:
+            await self.loop.run_in_executor(None, self.worker.close)
+            self.worker = None
