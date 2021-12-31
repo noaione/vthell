@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     from internals.vth import SanicVTHell
 
 
-DEFAULT_PLATFORMS = ["twitter", "twitcasting"]
+DEFAULT_PLATFORMS = ["twitter", "twitcasting", "twitch"]
 logger = logging.getLogger("Internals.ihaAPI")
 __all__ = ("ihateanimeAPI",)
 
@@ -124,6 +124,16 @@ class ihateanimeAPI:
         self.client = None
         self.__ready = False
 
+    @staticmethod
+    def _create_url(result: ihaAPIVTuberVideo):
+        if result["platform"] == "twitch":
+            return f"https://twitch.tv/{result['channel_id']}"
+        elif result["platform"] == "twitcasting":
+            return f"https://twitcasting.tv/{result['channel_id']}/movie/{result['id']}"
+        elif result["platform"] == "twitter":
+            return f"https://twitter.com/i/spaces/{result['id']}"
+        return result["id"]
+
     async def get_lives(self, platforms: List[str] = DEFAULT_PLATFORMS):
         query_send = {
             "query": QUERY_OBJECT,
@@ -156,7 +166,9 @@ class ihateanimeAPI:
                 title=video["title"],
                 start_time=start_time,
                 channel_id=video["channel_id"],
+                org=video["group"],
                 status=video["status"],
+                url=self._create_url(video),
                 platform=video["platform"],
                 is_member=map_to_boolean(video["is_member"]),
             )
@@ -208,6 +220,8 @@ class ihateanimeAPI:
             start_time=start_time,
             channel_id=selected_video["channel_id"],
             status=selected_video["status"],
+            org=video["group"],
+            url=self._create_url(selected_video),
             platform=selected_video["platform"],
             is_member=map_to_boolean(selected_video["is_member"]),
         )

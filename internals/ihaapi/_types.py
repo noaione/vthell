@@ -41,5 +41,6 @@ class ihaAPIVTuberVideo(TypedDict):
     channel_id: str
     timeData: _ihaAPIVTuberTimeData
     platform: ihaAPIVideoPlatform
+    group: str
     is_premiere: bool
     is_member: bool
