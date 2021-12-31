@@ -32,8 +32,8 @@ from typing import Optional, Type
 import orjson
 
 from .base import BaseExtractor
-from .models import ExtractorResult, ExtractorURLResult
 from .errors import ExtractorError
+from .models import ExtractorResult, ExtractorURLResult
 
 __all__ = ("TwitterSpaceExtractor",)
 logger = logging.getLogger("Internals.Extractor.Twitter")
