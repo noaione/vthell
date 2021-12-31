@@ -25,6 +25,7 @@ SOFTWARE.
 from __future__ import annotations
 
 import asyncio
+import logging
 import re
 from typing import Optional, Type
 
@@ -32,8 +33,17 @@ import orjson
 
 from .base import BaseExtractor
 from .models import ExtractorResult, ExtractorURLResult
+from .errors import ExtractorError
 
 __all__ = ("TwitterSpaceExtractor",)
+logger = logging.getLogger("Internals.Extractor.Twitter")
+
+
+def backoff_retries(retry_number: int, multiplier: int):
+    base_number = 2
+    if retry_number == 0:
+        return base_number
+    return base_number * multiplier ** retry_number
 
 
 class TwitterSpaceExtractor(BaseExtractor):
@@ -43,6 +53,18 @@ class TwitterSpaceExtractor(BaseExtractor):
             guest_token = re.search(r"(?<=gt=)\d{19}", data).group(0)
             return guest_token
 
+    async def _persistent_get_token(self):
+        max_retries = 3
+        for i in range(max_retries):
+            try:
+                logger.debug(f"Trying to get token (attempt {i + 1}/{max_retries})")
+                return await self._get_token()
+            except Exception:
+                retry_in = backoff_retries(i + 1, 2)
+                logger.debug(f"Failed to gain token, retrying in {retry_in} seconds")
+                await asyncio.sleep(retry_in)
+        raise ExtractorError("Failed to get twitter token", "twitter")
+
     async def close(self):
         if self.session and not self.session.closed:
             await self.session.close()
@@ -50,7 +72,7 @@ class TwitterSpaceExtractor(BaseExtractor):
     async def create(self, token: Optional[str] = None):
         await super().create()
         if token is None:
-            token = await self._get_token()
+            token = await self._persistent_get_token()
         self.session.headers.update(
             {
                 "Authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs=1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA",  # noqa

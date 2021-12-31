@@ -24,12 +24,14 @@ SOFTWARE.
 
 from __future__ import annotations
 
+from typing import Optional
+
 __all__ = ("ExtractorError",)
 
 
 class ExtractorError(Exception):
-    def __init__(self, msg: str, extractor: str, exc_info: Exception):
-        self.exc_info: Exception = exc_info
+    def __init__(self, msg: str, extractor: str, exc_info: Optional[Exception]):
+        self.exc_info: Optional[Exception] = exc_info
         self.msg: str = str(msg)
         self.extractor: str = extractor
 
