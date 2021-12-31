@@ -22,8 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from __future__ import annotations
+
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 import pendulum
 from sanic import Blueprint
@@ -32,14 +34,26 @@ from sanic.response import json
 
 from internals.db import models
 from internals.decorator import secure_access
-from internals.ihaapi import ihaAPIVideo
 from internals.utils import map_to_boolean, secure_filename
 
 if TYPE_CHECKING:
+    from internals.holodex import HolodexVideo
+    from internals.ihaapi import ihaAPIVideo
     from internals.vth import SanicVTHell
 
 bp_sched = Blueprint("api_scheduler", url_prefix="/api")
 logger = logging.getLogger("Routes.API.Schedule")
+
+
+def prefix_id_platform(data: Union[HolodexVideo, ihaAPIVideo]):
+    video_id = data.id
+    if data.platform == "twitch":
+        return f"ttv-stream-{video_id}"
+    elif data.platform == "twitcasting":
+        return f"twcast-{video_id}"
+    elif data.platform == "twitter":
+        return f"twtsp-{video_id}"
+    return video_id
 
 
 @bp_sched.post("/schedule")
@@ -64,8 +78,6 @@ async def add_new_jobs(request: Request):
 
     video_id = json_request["id"]
     logger.info(f"ScheduleRequest: Received request for video {video_id}")
-    existing_job = await models.VTHellJob.get_or_none(id=video_id)
-
     if platform == "youtube":
         video_res = await holodex.get_video(video_id)
         if video_res is None:
@@ -80,9 +92,14 @@ async def add_new_jobs(request: Request):
     title_safe = secure_filename(video_res.title)
     utc_unix = pendulum.from_timestamp(video_res.start_time, tz="UTC")
     as_jst = utc_unix.in_timezone("Asia/Tokyo")
-    filename = f"[{as_jst.year}.{as_jst.month}.{as_jst.day}.{video_res.id}] {title_safe}"
+    bideo_id = video_res.id
+    if video_res.platform == "twitch":
+        bideo_id = video_res.channel_id
+    video_id_actual = prefix_id_platform(video_res)
+    existing_job = await models.VTHellJob.get_or_none(id=video_id_actual)
+    filename = f"[{as_jst.year}.{as_jst.month}.{as_jst.day}.{bideo_id}] {title_safe}"
     if existing_job is not None:
-        logger.info(f"ScheduleRequest: Video {video_id} already exists, merging data...")
+        logger.info(f"ScheduleRequest: Video {video_id_actual} already exists, merging data...")
         existing_job.title = video_res.title
         existing_job.filename = filename
         existing_job.start_time = video_res.start_time
@@ -110,17 +127,16 @@ async def add_new_jobs(request: Request):
         if app.first_process and app.ipc:
             await app.ipc.emit("ws_job_update", job_update_data)
     else:
-        logger.info(f"ScheduleRequest: Video {video_id} not found, creating new job...")
+        logger.info(f"ScheduleRequest: Video {video_id_actual} not found, creating new job...")
         job_request = models.VTHellJob(
-            id=video_res.id,
+            id=video_id_actual,
             title=video_res.title,
             filename=filename,
             start_time=video_res.start_time,
             channel_id=video_res.channel_id,
             member_only=video_res.is_member,
+            platform=video_res.platform,
         )
-        if isinstance(video_res, ihaAPIVideo):
-            job_request.platform = models.VTHellJobPlatform(video_res.platform)
         await job_request.save()
         job_data_update = {
             "id": job_request.id,
