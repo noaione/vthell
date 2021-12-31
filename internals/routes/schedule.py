@@ -82,12 +82,12 @@ async def add_new_jobs(request: Request):
         video_res = await holodex.get_video(video_id)
         if video_res is None:
             logger.error(f"ScheduleRequest(Holodex): Video {video_id} not found")
-            return json({"error": "Video not found or invalid"}, status=404)
+            return json({"error": "Video not found or invalid (via Holodex)"}, status=404)
     else:
         video_res = await ihaapi.get_video(video_id, platform)
         if video_res is None:
             logger.error(f"ScheduleRequest(ihaAPI): Video {video_id} not found")
-            return json({"error": "Video not found or invalid"}, status=404)
+            return json({"error": "Video not found or invalid (via ihateani.me API)"}, status=404)
 
     title_safe = secure_filename(video_res.title)
     utc_unix = pendulum.from_timestamp(video_res.start_time, tz="UTC")
