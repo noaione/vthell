@@ -211,7 +211,8 @@ class DownloaderTasks(InternalTaskBase):
         if data.platform != "twitter":
             return True, None
 
-        spaces_info = await TwitterSpaceExtractor.process(data.id, loop=app.loop)
+        space_id = data.id.replace("twtsp-", "")
+        spaces_info = await TwitterSpaceExtractor.process(space_id, loop=app.loop)
         if spaces_info is None:
             return True, None
 
@@ -261,9 +262,10 @@ class DownloaderTasks(InternalTaskBase):
                 await app.ipc.emit("ws_job_update", emit_data)
             return True, None
 
+        twcast_id = data.id.replace("twcast-", "")
         try:
             twcast_info = await TwitcastingExtractor.process(
-                f"https://twitcasting.tv/{data.channel_id}/movie/{data.id}", loop=app.loop
+                f"https://twitcasting.tv/{data.channel_id}/movie/{twcast_id}", loop=app.loop
             )
         except ExtractorError as exc:
             logger.error(f"[{data.id}] {exc}", exc_info=exc)
@@ -325,15 +327,12 @@ class DownloaderTasks(InternalTaskBase):
             return True, None
 
         # If all number, assume VODs
-        stream_url = f"https://twitch.tv/{data.id}"
-        has_changed = False
-        if data.id.isdigit():
-            has_changed = True
-            stream_url = f"https://twitch.tv/videos/{data.id}"
+        stream_url = f"https://twitch.tv/{data.channel_id}"
+        if data.id.startswith("ttv-vod-"):
+            vod_id = data.id.replace("ttv-vod-", "")
+            stream_url = f"https://twitch.tv/videos/{vod_id}"
 
         ttv_stream = await TwitchExtractor.process(stream_url, loop=app.loop)
-        if ttv_stream is None and has_changed:
-            ttv_stream = await TwitchExtractor.process(f"https://twitch.tv/{data.id}", loop=app.loop)
         if ttv_stream is None:
             return True, None
 

@@ -42,6 +42,7 @@ class HolodexVideo:
     status: HolodexVideoStatus
     url: str
     is_member: bool
+    platform: str = "youtube"
 
     def __eq__(self, other: Union[str, HolodexVideo]) -> bool:
         if isinstance(other, str):

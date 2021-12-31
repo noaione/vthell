@@ -28,12 +28,13 @@ import asyncio
 import logging
 import re
 from os import getenv
-from typing import TYPE_CHECKING, Dict, List, Type
+from typing import TYPE_CHECKING, Dict, List, Type, Union
 
 import pendulum
 
 from internals.db import models
 from internals.holodex import HolodexVideo
+from internals.ihaapi import ihaAPIVideo
 from internals.struct import InternalTaskBase
 from internals.utils import map_to_boolean, secure_filename
 
@@ -45,7 +46,7 @@ logger = logging.getLogger("Tasks.AutoScheduler")
 __all__ = ("AutoSchedulerTasks",)
 
 
-def determine_chains(chains: List[Dict[str, str]], data: HolodexVideo):
+def determine_chains(chains: List[Dict[str, str]], data: Union[HolodexVideo, ihaAPIVideo]):
     if not chains:
         return True
     chains_results = []
@@ -53,23 +54,24 @@ def determine_chains(chains: List[Dict[str, str]], data: HolodexVideo):
         if chain["type"] == "word":
             if chain["data"].casefold() in data.title.casefold():
                 chains_results.append(True)
-            else:
-                chains_results.append(False)
+                continue
         elif chain["type"] == "regex_word":
             if re.search(chain["data"], data.title, re.IGNORECASE):
                 chains_results.append(True)
-            else:
-                chains_results.append(False)
+                continue
         elif chain["type"] == "group":
             if data.org and chain["data"].casefold() == data.org.casefold():
                 chains_results.append(True)
-            else:
-                chains_results.append(False)
+                continue
         elif chain["type"] == "channel":
             if chain["data"] == data.channel_id:
                 chains_results.append(True)
-            else:
-                chains_results.append(False)
+                continue
+        elif chain["type"] == "platform":
+            if chain["data"] == data.platform:
+                chains_results.append(True)
+                continue
+        chains_results.append(False)
     return all(chains_results)
 
 
@@ -207,6 +209,7 @@ class AutoSchedulerTasks(InternalTaskBase):
                 start_time=video.start_time,
                 channel_id=video.channel_id,
                 member_only=video.is_member,
+                platform=video.platform,
             )
             logger.info(f"Scheduling <{video.id}> from Autoscheduler run {time}")
             await job.save()
@@ -224,6 +227,7 @@ class AutoSchedulerTasks(InternalTaskBase):
                 "status": job.status.value,
                 "resolution": job.resolution,
                 "error": job.error,
+                "platform": job.platform,
             }
             await app.wshandler.emit("job_scheduled", data_update)
             if app.first_process and app.ipc:
