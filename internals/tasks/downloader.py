@@ -344,13 +344,18 @@ class DownloaderTasks(InternalTaskBase):
         is_errored = False
         error_line = None
         try:
-            try:
-                data = await ttv_stream.read()
-                await save_fd.write(data)
-            except Exception as exc:
-                logger.error(f"[{data.id}] {exc}", exc_info=exc)
-                error_line = str(exc)
-                is_errored = True
+            while True:
+                try:
+                    data = await ttv_stream.read()
+                    if data == b"":
+                        logger.debug(f"[{data.id}] Stream ended or connection got severed!")
+                        break
+                    await save_fd.write(data)
+                except Exception as exc:
+                    logger.error(f"[{data.id}] {exc}", exc_info=exc)
+                    error_line = str(exc)
+                    is_errored = True
+                    break
         except asyncio.CancelledError:
             logger.debug(f"[{data.id}] Download cancelled")
             error_line = "Download cancelled"
