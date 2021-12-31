@@ -75,6 +75,17 @@ def determine_chains(chains: List[Dict[str, str]], data: Union[HolodexVideo, iha
     return all(chains_results)
 
 
+def prefix_id_platform(data: Union[HolodexVideo, ihaAPIVideo]):
+    video_id = data.id
+    if data.platform == "twitch":
+        return f"ttv-stream-{video_id}"
+    elif data.platform == "twitcasting":
+        return f"twcast-{video_id}"
+    elif data.platform == "twitter":
+        return f"twtsp-{video_id}"
+    return video_id
+
+
 class AutoSchedulerTasks(InternalTaskBase):
     @staticmethod
     async def executor(
@@ -95,11 +106,16 @@ class AutoSchedulerTasks(InternalTaskBase):
         existing_jobs_ids = [job.id for job in existing_jobs]
 
         logger.info("Checking Holodex for live and scheduled stream...")
-        results = await app.holodex.get_lives()
+        holodex_results = await app.holodex.get_lives()
+        logger.info("Checking ihateani.me for live and scheduled stream...")
+        ihaapi_results = await app.ihaapi.get_lives()
+        results: List[Union[HolodexVideo, ihaAPIVideo]] = holodex_results + ihaapi_results
         if len(results) < 1:
             logger.warning("No lives/upcoming stream found from Holodex")
             return
         logger.info(f"Found {len(results)} live/upcoming stream(s)")
+        logger.debug(f"Holodex result: {len(holodex_results)}")
+        logger.debug(f"ihaAPI result: {len(ihaapi_results)}")
 
         exclude_ids = list(
             map(lambda x: x.data, filter(lambda x: x.type == models.VTHellAutoType.channel, exclude))
@@ -185,7 +201,7 @@ class AutoSchedulerTasks(InternalTaskBase):
             logger.warning("No videos found to be schedule with both include/exclude filters")
             return
 
-        deduplicated_videos: List[HolodexVideo] = []
+        deduplicated_videos: List[Union[HolodexVideo, ihaAPIVideo]] = []
         for video in double_filtered_videos:
             if video.id in existing_jobs_ids:
                 continue
@@ -195,15 +211,19 @@ class AutoSchedulerTasks(InternalTaskBase):
         logger.info(f"Adding {len(double_filtered_videos)} videos to the jobs scheduler")
         executed_videos = []
         for video in double_filtered_videos:
-            if video.id in executed_videos or video.id in existing_jobs_ids:
+            video_id = prefix_id_platform(video)
+            if video_id in executed_videos or video_id in existing_jobs_ids:
                 logger.warning(f"Video <{video.id}> already scheduled, skipping")
                 continue
             title_safe = secure_filename(video.title)
             utc_unix = pendulum.from_timestamp(video.start_time, tz="UTC")
             as_jst = utc_unix.in_timezone("Asia/Tokyo")
-            filename = f"[{as_jst.year}.{as_jst.month}.{as_jst.day}.{video.id}] {title_safe}"
+            bideo_id = video.id
+            if video.platform == "twitch":
+                bideo_id = video.channel_id
+            filename = f"[{as_jst.year}.{as_jst.month}.{as_jst.day}.{bideo_id}] {title_safe}"
             job = models.VTHellJob(
-                id=video.id,
+                id=video_id,
                 title=video.title,
                 filename=filename,
                 start_time=video.start_time,
