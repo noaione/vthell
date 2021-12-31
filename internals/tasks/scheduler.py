@@ -247,7 +247,7 @@ class AutoSchedulerTasks(InternalTaskBase):
                 "status": job.status.value,
                 "resolution": job.resolution,
                 "error": job.error,
-                "platform": job.platform,
+                "platform": job.platform.value,
             }
             await app.wshandler.emit("job_scheduled", data_update)
             if app.first_process and app.ipc:
