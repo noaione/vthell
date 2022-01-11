@@ -642,41 +642,14 @@ test = ["sanic-testing (>=0.7.0)", "pytest (==6.2.5)", "coverage (==5.3)", "guni
 
 [[package]]
 name = "sanic-cors"
-version = "1.0.1"
+version = "2.0.0"
 description = "A Sanic extension adding a decorator for CORS support. Based on flask-cors by Cory Dolphin."
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-sanic = ">=21.3.1,<21.6.0 || >21.6.0,<21.9.0 || >21.9.0,<22"
-sanic-plugin-toolkit = ">=1.2.0,<2"
-
-[[package]]
-name = "sanic-ext"
-version = "21.12.3"
-description = "Extend your Sanic installation with some core functionality."
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-pyyaml = ">=3.0.0"
-
-[package.extras]
-dev = ["black (>=21.4b2)", "flake8 (>=3.7.7)", "isort (>=5.0.0)", "sanic-testing (>=0.8)", "coverage", "pytest", "pytest-cov", "tox"]
-test = ["sanic-testing (>=0.8)", "coverage", "pytest", "pytest-cov", "tox"]
-
-[[package]]
-name = "sanic-plugin-toolkit"
-version = "1.2.0"
-description = "The all-in-one toolkit for creating powerful Sanic Plugins"
-category = "main"
-optional = false
-python-versions = ">=3.7,<4.0"
-
-[package.dependencies]
-sanic = "*"
+sanic = ">=21.9.3"
 
 [[package]]
 name = "sanic-routing"
@@ -899,7 +872,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "9f59626f9d7fa027efb363d173aa53de6b3d629e44833939cf9ecd90f7301d93"
+content-hash = "8c8d0a330788ee40e56199658b6ade7a63a8ee4f5cd54288ea8159d11dbdd7f8"
 
 [metadata.files]
 aerich = [
@@ -1550,16 +1523,8 @@ sanic = [
     {file = "sanic-21.12.1.tar.gz", hash = "sha256:6f15ecfef47d4288aac04d8741833a7701cd94f2d4a28fc5667ce2844363152d"},
 ]
 sanic-cors = [
-    {file = "Sanic-Cors-1.0.1.tar.gz", hash = "sha256:ac5d40bd45022d21296887d2238891d0ad67308ffba55be809df0151d36071b5"},
-    {file = "Sanic_Cors-1.0.1-py2.py3-none-any.whl", hash = "sha256:dc644b0608ebac1bb57586a955c15c53a8bf83e2d0ea248893480c3cd72efdf6"},
-]
-sanic-ext = [
-    {file = "sanic-ext-21.12.3.tar.gz", hash = "sha256:cfd8552c059cced19b93f659a8fb140c916b913e39367003b2412d2ad337741a"},
-    {file = "sanic_ext-21.12.3-py3-none-any.whl", hash = "sha256:ec6791456c43c95f784a959621820bd6583113970c8141752ffe9b9ed2e462c2"},
-]
-sanic-plugin-toolkit = [
-    {file = "sanic-plugin-toolkit-1.2.0.tar.gz", hash = "sha256:5d477e6c1832968d43c7112e1a445afc98153fa05236c4db32b68e2cfff86001"},
-    {file = "sanic_plugin_toolkit-1.2.0-py3-none-any.whl", hash = "sha256:3ab62af7c2d3e73d37d217976ec11f3683bde588d647e883a42763a894058b50"},
+    {file = "Sanic-Cors-2.0.0.tar.gz", hash = "sha256:b1438dd7fdab1fe81e327f88b9defd3fe31dd9e3bdfb83f6815021b1833455bf"},
+    {file = "Sanic_Cors-2.0.0-py2.py3-none-any.whl", hash = "sha256:fc8b7dfb23b868b6677b7a0bfff2559b9ba96428573a6f1afc78770da97a4abe"},
 ]
 sanic-routing = [
     {file = "sanic-routing-0.7.2.tar.gz", hash = "sha256:139ce88b3f054e7aa336e2ecc8459837092b103b275d3a97609a34092c55374d"},

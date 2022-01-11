@@ -38,10 +38,12 @@ import asyncio
 import multiprocessing
 import os
 import socket
+import sys
 from functools import partial
 from signal import SIG_IGN, SIGINT, SIGTERM, Signals
 from signal import signal as signal_func
 
+from sanic.application.ext import setup_ext
 from sanic.compat import OS_IS_WINDOWS, ctrlc_workaround_for_windows
 from sanic.log import error_logger, logger
 from sanic.models.server_types import Signal
@@ -136,6 +138,7 @@ def serve(
         **asyncio_server_kwargs,
     )
 
+    setup_ext(app)
     if run_async:
         return AsyncioServer(
             app=app,
@@ -156,6 +159,7 @@ def serve(
     # Ignore SIGINT when run_multiple
     if run_multiple:
         signal_func(SIGINT, SIG_IGN)
+        os.environ["SANIC_WORKER_PROCESS"] = "true"
 
     # Register signals for graceful termination
     if register_sys_signals:
@@ -195,6 +199,9 @@ def serve(
             loop.run_until_complete(asyncio.sleep(0.1))
             start_shutdown = start_shutdown + 0.1
 
+        if sys.version_info > (3, 7):
+            app.shutdown_tasks(graceful - start_shutdown)
+
         # Force close non-idle connection after waiting for
         # graceful_shutdown_timeout
         for conn in connections:
@@ -203,7 +210,6 @@ def serve(
             else:
                 conn.abort()
         loop.run_until_complete(app._server_event("shutdown", "after"))
-
         remove_unix_socket(unix)
 
 
@@ -270,7 +276,10 @@ def serve_multiple(server_settings, workers):
 
     for w_num in range(workers):
         server_settings["worker_num"] = w_num
-        process = mp.Process(target=serve, kwargs=server_settings)
+        process = mp.Process(
+            target=serve,
+            kwargs=server_settings,
+        )
         process.daemon = True
         process.start()
         processes.append(process)

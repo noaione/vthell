@@ -38,12 +38,14 @@ import pendulum
 import watchgod as wg
 from sanic import Sanic, reloader_helpers
 from sanic.config import SANIC_PREFIX, Config
+from sanic.helpers import _default
 from sanic.server.protocols.http_protocol import HttpProtocol
 from sanic.server.protocols.websocket_protocol import WebSocketProtocol
 
 from internals.db import IPCServerClientBridge
 from internals.runner import serve_multiple, serve_single
 from internals.struct import VTHellRecords
+from internals.utils import try_use_uvloop
 from internals.ws import WebsocketServer
 
 if TYPE_CHECKING:
@@ -207,6 +209,21 @@ class SanicVTHell(Sanic):
     ipc: IPCServerClientBridge
     worker_num: int
 
+    __slots__ = (
+        "db",
+        "holodex",
+        "ihaapi",
+        "vtdataset",
+        "vtrecords",
+        "wshandler",
+        "ipc",
+        "worker_num",
+        "_db_ready",
+        "_holodex_ready",
+        "_wshandler_ready",
+        "_ihaapi_ready",
+    )
+
     def __init__(
         self,
         name: str = None,
@@ -215,7 +232,6 @@ class SanicVTHell(Sanic):
         router: Optional[Router] = None,
         signal_router: Optional[SignalRouter] = None,
         error_handler: Optional[ErrorHandler] = None,
-        load_env: Union[bool, str] = True,
         env_prefix: Optional[str] = SANIC_PREFIX,
         request_class: Optional[Type[Request]] = None,
         strict_slashes: bool = False,
@@ -231,7 +247,6 @@ class SanicVTHell(Sanic):
             router=router,
             signal_router=signal_router,
             error_handler=error_handler,
-            load_env=load_env,
             env_prefix=env_prefix,
             request_class=request_class,
             strict_slashes=strict_slashes,
@@ -399,7 +414,7 @@ class SanicVTHell(Sanic):
         *,
         debug: bool = False,
         auto_reload: Optional[bool] = None,
-        ssl: Union[Dict[str, str], SSLContext, None] = None,
+        ssl: Union[None, SSLContext, dict, str, list, tuple] = None,
         sock: Optional[socket] = None,
         workers: int = 1,
         protocol: Optional[Type[asyncio.Protocol]] = None,
@@ -407,9 +422,22 @@ class SanicVTHell(Sanic):
         register_sys_signals: bool = True,
         access_log: Optional[bool] = None,
         unix: Optional[str] = None,
-        loop: None = None,
+        loop: asyncio.AbstractEventLoop = None,
         reload_dir: Optional[Union[List[str], str]] = None,
+        noisy_exceptions: Optional[bool] = None,
+        motd: bool = True,
+        fast: bool = False,
+        verbosity: int = 0,
+        motd_display: Optional[Dict[str, str]] = None,
     ) -> None:
+        self.state.verbosity = verbosity
+
+        if fast and workers != 1:
+            raise RuntimeError("You cannot use both fast=True and workers=X")
+
+        if motd_display:
+            self.config.MOTD_DISPLAY.update(motd_display)
+
         if reload_dir:
             if isinstance(reload_dir, str):
                 reload_dir = [reload_dir]
@@ -418,7 +446,7 @@ class SanicVTHell(Sanic):
                 direc = Path(directory)
                 if not direc.is_dir():
                     logger.warning(f"Directory {directory} could not be located")
-                self.reload_dirs.add(Path(directory))
+                self.state.reload_dirs.add(Path(directory))
 
         if loop is not None:
             raise TypeError(
@@ -429,7 +457,7 @@ class SanicVTHell(Sanic):
             )
 
         if auto_reload or auto_reload is None and debug:
-            self.auto_reload = True
+            auto_reload = True
             if os.environ.get("SANIC_SERVER_RUNNING") != "true":
                 return reloader_helpers.watchdog(1.0, self)
 
@@ -438,9 +466,23 @@ class SanicVTHell(Sanic):
 
         if protocol is None:
             protocol = WebSocketProtocol if self.websocket_enabled else HttpProtocol
-        # if access_log is passed explicitly change config.ACCESS_LOG
-        if access_log is not None:
-            self.config.ACCESS_LOG = access_log
+
+        # Set explicitly passed configuration values
+        for attribute, value in {
+            "ACCESS_LOG": access_log,
+            "AUTO_RELOAD": auto_reload,
+            "MOTD": motd,
+            "NOISY_EXCEPTIONS": noisy_exceptions,
+        }.items():
+            if value is not None:
+                setattr(self.config, attribute, value)
+
+        if fast:
+            self.state.fast = True
+            try:
+                workers = len(os.sched_getaffinity(0))
+            except AttributeError:
+                workers = os.cpu_count() or 1
 
         server_settings = self._helper(
             host=host,
@@ -453,8 +495,10 @@ class SanicVTHell(Sanic):
             protocol=protocol,
             backlog=backlog,
             register_sys_signals=register_sys_signals,
-            auto_reload=auto_reload,
         )
+
+        if self.config.USE_UVLOOP is True or (self.config.USE_UVLOOP is _default and not os.name == "nt"):
+            try_use_uvloop()
 
         try:
             self.is_running = True
