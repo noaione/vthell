@@ -29,7 +29,6 @@ from typing import TYPE_CHECKING, Union
 
 import pendulum
 from sanic import Blueprint
-from sanic.request import Request
 from sanic.response import json
 
 from internals.db import models
@@ -37,6 +36,8 @@ from internals.decorator import secure_access
 from internals.utils import map_to_boolean, secure_filename
 
 if TYPE_CHECKING:
+    from sanic.request import Request
+
     from internals.holodex import HolodexVideo
     from internals.ihaapi import ihaAPIVideo
     from internals.vth import SanicVTHell
