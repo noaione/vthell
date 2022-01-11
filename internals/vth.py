@@ -390,7 +390,8 @@ class SanicVTHell(Sanic):
                 logger.error("Invalid dataset file %s", dataset, exc_info=exc)
 
         logger.info("Loaded %d dataset", len(self.vtdataset))
-        self.add_task(self.watch_vthell_dataset_folder)
+        ctime = pendulum.now("UTC").int_timestamp
+        self.add_task(self.watch_vthell_dataset_folder, name=f"vtdataset-folder-watch_{ctime}")
 
     def find_id_on_dataset(
         self, id: str, platform: str
@@ -519,6 +520,21 @@ class SanicVTHell(Sanic):
             self.is_running = False
         logger.info("Server Stopped")
 
+    async def _safely_read_dataset(self, file_path: str):
+        try:
+            async with aiofiles.open(file_path, "r") as fp:
+                dataset_str = await fp.read()
+        except OSError:
+            logger.error("[dataset-watch] Could not read dataset file %s", file_path)
+            return
+
+        try:
+            as_json = orjson.loads(dataset_str)
+        except orjson.JSONDecodeError:
+            logger.error("[dataset-watch] Invalid json dataset file %s", file_path)
+            return
+        return as_json
+
     async def watch_vthell_dataset_folder(self, app: SanicVTHell):
         if app.first_process:
             return
@@ -537,10 +553,9 @@ class SanicVTHell(Sanic):
                     logger.info("[dataset-watch] Dataset %s got deleted, removing", path_fn)
                     self.vtdataset.pop(path_fn, None)
                 else:
-                    async with aiofiles.open(path, "r") as f:
-                        dataset_str = await f.read()
-
-                    as_json = orjson.loads(dataset_str)
+                    as_json = await self._safely_read_dataset(path)
+                    if as_json is None:
+                        continue
                     try:
                         data = VTHellDataset.from_dict(as_json)
                         logger.info("[dataset-watch] Reloading dataset %s", path_fn)
