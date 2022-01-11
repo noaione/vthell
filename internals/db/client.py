@@ -66,4 +66,4 @@ def register_db(
             await Tortoise.generate_schemas()
         app.mark_db_ready()
 
-    app.add_task(init_orm, name="sanic-init-tortoise-orm")
+    app.add_task(init_orm)

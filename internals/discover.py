@@ -108,7 +108,7 @@ def autodiscover(app: SanicVTHell, *module_names: Union[str, ModuleType], recurs
         app.blueprint(bp_routes)
     for task_name, task_cls in tasks.items():
         logger.info("Registering task: %s", task_name)
-        app.add_task(task_cls.main_loop, name="register-task-init_" + task_name)
+        app.add_task(task_cls.main_loop)
     for eio_n, eio_v in socket_routes.items():
         logger.info("Registering socket handler: %s", eio_n)
         eio_v.attach(app)

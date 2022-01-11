@@ -319,4 +319,4 @@ class IPCServerClientBridge:
 
             self._extra_tasks[task_name] = task_main
 
-        app.add_task(_attach_listener, name="ipc-server-client-startup-attacher")
+        app.add_task(_attach_listener)

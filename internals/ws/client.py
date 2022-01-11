@@ -397,7 +397,7 @@ class WebsocketServer:
             app.wshandler = self
             logger.info("Websocket server attached and ready")
 
-        self.app.add_task(_internal_attacher, name="websocket-server-init-attacher")
+        self.app.add_task(_internal_attacher)
 
     async def emit(self, event: str, data: Optional[Any] = None, to: Optional[str] = None) -> None:
         """Emit new data to all connected clients, or to specific target"""
