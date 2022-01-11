@@ -227,7 +227,6 @@ def setup_app():
 
     app = SanicVTHell("VTHell", config=config)
     CORS(app, origins=["*"])
-    config._app = app
     logger.info("Registering DB client")
     register_db(app, modules=db_modules, generate_schemas=True)
     logger.info("Attaching Holodex to Sanic")
