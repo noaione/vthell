@@ -237,4 +237,4 @@ class ihateanimeAPI:
             app.mark_ihaapi_ready()
             logger.info("Initialized ihateanime API")
 
-        app.add_task(init_ihateanime_api)
+        app.add_task(init_ihateanime_api, name="ihateanime-api-init-attacher")

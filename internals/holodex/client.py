@@ -268,4 +268,4 @@ class HolodexAPI:
             app.mark_holodex_ready()
             logger.info("Holodex API initialized")
 
-        app.add_task(init_holodex_api)
+        app.add_task(init_holodex_api, name="holodex-api-init-attacher")

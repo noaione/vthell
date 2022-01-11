@@ -317,7 +317,7 @@ class WebsocketServer:
             logger.error("An error occured while trying to process for client %s", sid, exc_info=e)
             await self._client_disconnected(sid)
 
-    async def error_termination(self, sid: str, ws: WebsocketProto):
+    async def error_termination(self, sid: str, ws: WebsocketClient):
         try:
             logger.info(f"Started long polling {sid} for error termination")
             await ws.poll()
@@ -397,7 +397,7 @@ class WebsocketServer:
             app.wshandler = self
             logger.info("Websocket server attached and ready")
 
-        self.app.add_task(_internal_attacher)
+        self.app.add_task(_internal_attacher, name="websocket-server-init-attacher")
 
     async def emit(self, event: str, data: Optional[Any] = None, to: Optional[str] = None) -> None:
         """Emit new data to all connected clients, or to specific target"""
