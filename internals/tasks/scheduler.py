@@ -86,6 +86,16 @@ def prefix_id_platform(data: Union[HolodexVideo, ihaAPIVideo]):
     return video_id
 
 
+def filter_ihaapi_results(results: List[ihaAPIVideo]):
+    filtered_results: List[ihaAPIVideo] = []
+    for result in results:
+        if result.platform == "twitter":
+            filtered_results.append(result)
+        elif result.status == "live":
+            filtered_results.append(result)
+    return filtered_results
+
+
 class AutoSchedulerTasks(InternalTaskBase):
     @staticmethod
     async def executor(
@@ -109,9 +119,11 @@ class AutoSchedulerTasks(InternalTaskBase):
         holodex_results = await app.holodex.get_lives()
         logger.info("Checking ihateani.me for live and scheduled stream...")
         ihaapi_results = await app.ihaapi.get_lives()
-        results: List[Union[HolodexVideo, ihaAPIVideo]] = holodex_results + ihaapi_results
+        results: List[Union[HolodexVideo, ihaAPIVideo]] = holodex_results + filter_ihaapi_results(
+            ihaapi_results
+        )
         if len(results) < 1:
-            logger.warning("No lives/upcoming stream found from Holodex")
+            logger.warning("No lives/upcoming stream found from Holodex/ihaAPI")
             return
         logger.info(f"Found {len(results)} live/upcoming stream(s)")
         logger.debug(f"Holodex result: {len(holodex_results)}")
@@ -213,7 +225,7 @@ class AutoSchedulerTasks(InternalTaskBase):
         for video in double_filtered_videos:
             video_id = prefix_id_platform(video)
             if video_id in executed_videos or video_id in existing_jobs_ids:
-                logger.warning(f"Video <{video.id}> already scheduled, skipping")
+                logger.warning(f"Video <{video.id}/{video.platform}> already scheduled, skipping")
                 continue
             title_safe = secure_filename(video.title)
             utc_unix = pendulum.from_timestamp(video.start_time, tz="UTC")
@@ -231,7 +243,7 @@ class AutoSchedulerTasks(InternalTaskBase):
                 member_only=video.is_member,
                 platform=video.platform,
             )
-            logger.info(f"Scheduling <{video.id}> from Autoscheduler run {time}")
+            logger.info(f"Scheduling <{video.id}/{video.platform}> from Autoscheduler run {time}")
             await job.save()
             executed_videos.append(video.id)
             await app.dispatch(
