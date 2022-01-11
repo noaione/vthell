@@ -22,7 +22,7 @@ discord-webhook = "^0.14.0"
 requests = "^2.27.1"
 uvicorn = {extras = ["standard"], version = "^0.16.0"}
 websockets = "^10.1"
-yt-dlp = "^2021.12.25"
+yt-dlp = "^2021.12.27"
 streamlink = "^3.0.3"
 
 [tool.poetry.dev-dependencies]
