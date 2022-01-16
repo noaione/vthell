@@ -473,7 +473,7 @@ class DownloaderTasks(InternalTaskBase):
         if mux_output is None:
             logger.warning(f"[{data.id}] muxed file not found, skipping.")
             return True
-        if not await app.loop.run_until_complete(None, mux_output.exists):
+        if not await app.loop.run_in_executor(None, mux_output.exists):
             logger.warning(f"[{data.id}] muxed file not found, skipping.")
             return True
 
