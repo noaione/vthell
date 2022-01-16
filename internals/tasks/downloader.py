@@ -179,13 +179,12 @@ class DownloaderTasks(InternalTaskBase):
         )
         if ret_code != 0 or is_error:
             logger.error(f"[{data.id}] ffmpeg exited with code {ret_code}")
-            data.status = models.VTHellJobStatus.error
-            data.last_status = models.VTHellJobStatus.downloading
-            data.error = f"ffmpeg exited with code {ret_code}: {error_line}"
-            data_update = {"id": data.id, "status": "ERROR", "error": "FFMPEG+YTDL_DL_FAIL"}
-            await app.wshandler.emit("job_update", data_update)
-            if app.first_process and app.ipc:
-                await app.ipc.emit("ws_job_update", data_update)
+            await DownloaderTasks.make_error(
+                data,
+                app,
+                f"ffmpeg exited with code {ret_code}: {error_line}",
+                models.VTHellJobStatus.downloading,
+            )
             return True
         return False
 
@@ -229,13 +228,12 @@ class DownloaderTasks(InternalTaskBase):
         )
         if ret_code != 0 or is_error:
             logger.error(f"[{data.id}] ffmpeg exited with code {ret_code}")
-            data.status = models.VTHellJobStatus.error
-            data.last_status = models.VTHellJobStatus.downloading
-            data.error = f"ffmpeg exited with code {ret_code}: {error_line}"
-            data_update = {"id": data.id, "status": "ERROR", "error": data.error}
-            await app.wshandler.emit("job_update", data_update)
-            if app.first_process and app.ipc:
-                await app.ipc.emit("ws_job_update", data_update)
+            await DownloaderTasks.make_error(
+                data,
+                app,
+                f"ffmpeg exited with code {ret_code}: {error_line}",
+                models.VTHellJobStatus.downloading,
+            )
             return True, None
         return False, temp_output
 
@@ -311,13 +309,12 @@ class DownloaderTasks(InternalTaskBase):
         )
         if ret_code != 0 or is_error:
             logger.error(f"[{data.id}] ffmpeg exited with code {ret_code}")
-            data.status = models.VTHellJobStatus.error
-            data.last_status = models.VTHellJobStatus.downloading
-            data.error = f"ffmpeg exited with code {ret_code}: {error_line}"
-            data_update = {"id": data.id, "status": "ERROR", "error": data.error}
-            await app.wshandler.emit("job_update", data_update)
-            if app.first_process and app.ipc:
-                await app.ipc.emit("ws_job_update", data_update)
+            await DownloaderTasks.make_error(
+                data,
+                app,
+                f"ffmpeg exited with code {ret_code}: {error_line}",
+                models.VTHellJobStatus.downloading,
+            )
             return True, None
         return False, temp_file
 
@@ -363,13 +360,12 @@ class DownloaderTasks(InternalTaskBase):
 
         if is_errored:
             logger.error(f"[{data.id}] streamlink exited because {error_line}")
-            data.status = models.VTHellJobStatus.error
-            data.last_status = models.VTHellJobStatus.downloading
-            data.error = f"streamlink exited because {error_line}"
-            data_update = {"id": data.id, "status": "ERROR", "error": data.error}
-            await app.wshandler.emit("job_update", data_update)
-            if app.first_process and app.ipc:
-                await app.ipc.emit("ws_job_update", data_update)
+            await DownloaderTasks.make_error(
+                data,
+                app,
+                f"streamlink exited because {error_line}",
+                models.VTHellJobStatus.downloading,
+            )
             return True, None
         return False, temp_file
 
@@ -388,18 +384,24 @@ class DownloaderTasks(InternalTaskBase):
             logger.info(f"[{data.id}] Downloading twitch stream...")
             return await DownloaderTasks.download_twitch_stream(data, app)
         logger.error(f"[{data.id}] Unsupported platform: {data.platform}")
-        data.error = f"Unsupported platform: {data.platform}"
-        data.last_status = models.VTHellJobStatus.downloading
-        data.status = models.VTHellJobStatus.error
+        await DownloaderTasks.make_error(
+            data,
+            app,
+            f"Unsupported platform: {data.platform}",
+            models.VTHellJobStatus.downloading,
+        )
         return True, None
 
     @staticmethod
     async def mux_rename_file(data: models.VTHellJob, app: SanicVTHell, temp_output: Path):
         if not await app.loop.run_in_executor(None, temp_output.exists):
             logger.error(f"[{data.id}] Temp file not found: {temp_output}")
-            data.error = f"Temp file not found: {temp_output}"
-            data.last_status = models.VTHellJobStatus.muxing
-            data.status = models.VTHellJobStatus.error
+            await DownloaderTasks.make_error(
+                data,
+                app,
+                f"Temporary file not found: {temp_output}",
+                models.VTHellJobStatus.muxing,
+            )
             return True
         if data.platform == "twitter":
             logger.info(f"[{data.id}] Renaming file...")
@@ -412,9 +414,15 @@ class DownloaderTasks(InternalTaskBase):
         temp_output = temp_output or await find_temporary_file(data, app.loop)
         if temp_output is None:
             logger.warning(f"[{data.id}] No temporary file found, aborting.")
+            await DownloaderTasks.make_error(
+                data, app, "No temporary file found", models.VTHellJobStatus.muxing
+            )
             return True
         if not await app.loop.run_in_executor(None, temp_output.exists):
             logger.warning(f"[{data.id}] downloaded file not found, skipping.")
+            await DownloaderTasks.make_error(
+                data, app, "Downloaded file not ofund", models.VTHellJobStatus.muxing
+            )
             return True
         if data.platform not in ["youtube", "twitch", "twitcasting"]:
             logger.debug(f"[{data.id}] Got audio files, will not mux the file...")
@@ -440,13 +448,12 @@ class DownloaderTasks(InternalTaskBase):
             if not stderr:
                 stderr = stdout
             stderr = stderr.decode("utf-8").rstrip()
-            data.status = models.VTHellJobStatus.error
-            data.last_status = models.VTHellJobStatus.muxing
-            data.error = f"mkvmerge exited with code {ret_code}:\n{stderr}"
-            data_update = {"id": data.id, "status": "ERROR", "error": "MKV_MUX_FAIL"}
-            await app.wshandler.emit("job_update", data_update)
-            if app.first_process and app.ipc:
-                await app.ipc.emit("ws_job_update", data_update)
+            await DownloaderTasks.make_error(
+                data,
+                app,
+                f"mkvmerge exited with code {ret_code}:\n{stderr}",
+                models.VTHellJobStatus.muxing,
+            )
             return True
         return False
 
@@ -515,14 +522,12 @@ class DownloaderTasks(InternalTaskBase):
             logger.error(
                 f"[{data.id}] rclone exited with code {ret_code}, aborting uploading please do manual upload later!"
             )
-            data.status = models.VTHellJobStatus.error
-            data.last_status = models.VTHellJobStatus.uploading
-            data.error = f"rclone exited with code {ret_code}:\n{error_line}"
-            await data.save()
-            data_update = {"id": data.id, "status": "ERROR", "error": "RCLONE_UPLOAD_FAIL"}
-            await app.wshandler.emit("job_update", data_update)
-            if app.first_process and app.ipc:
-                await app.ipc.emit("ws_job_update", data_update)
+            await DownloaderTasks.make_error(
+                data,
+                app,
+                f"rclone exited with code {ret_code}:\n{error_line}",
+                models.VTHellJobStatus.uploading,
+            )
             return True
         return False
 
@@ -653,6 +658,19 @@ class DownloaderTasks(InternalTaskBase):
                 "internals.notifier.discord",
                 context={"app": app, "data": data, "emit_type": "update"},
             )
+
+    @staticmethod
+    async def make_error(
+        data: models.VTHellJob, app: SanicVTHell, error: str, last_status: models.VTHellJobStatus
+    ):
+        data.status = models.VTHellJobStatus.error
+        data.last_status = last_status
+        data.error = error
+        data_update = {"id": data.id, "status": "ERROR", "error": error}
+        await data.save()
+        await app.wshandler.emit("job_update", data_update)
+        if app.first_process and app.ipc:
+            await app.ipc.emit("ws_job_update", data_update)
 
     @staticmethod
     async def executor(data: models.VTHellJob, time: int, task_name: str, app: SanicVTHell):
