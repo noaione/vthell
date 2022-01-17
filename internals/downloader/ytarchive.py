@@ -68,9 +68,13 @@ async def download_via_ytarchive(
     ytarchive_args.extend([f"https://www.youtube.com/watch?v={data.id}", "best"])
     logger.debug(f"[{data.id}] Executing ytarchive with args: {ytarchive_args}")
 
-    ytarchive_process = await asyncio.create_subprocess_exec(
-        *ytarchive_args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
-    )
+    try:
+        ytarchive_process = await asyncio.create_subprocess_exec(
+            *ytarchive_args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        )
+    except BlockingIOError as ioe:
+        logger.error(f"[{data.id}] ytarchive is blocking, aborting process now", exc_info=ioe)
+        return -100, True, "ytarchive is blocking, aborting process now"
     is_error = False
     already_announced = False
     error_line = None

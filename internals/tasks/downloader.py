@@ -434,9 +434,19 @@ class DownloaderTasks(InternalTaskBase):
 
         logger.debug(f"[{data.id}] Starting mkvmerge with args: {mkvmerge_args}")
         # Spawn mkvmerge
-        mkvmerge_process = await asyncio.create_subprocess_exec(
-            *mkvmerge_args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
-        )
+        try:
+            mkvmerge_process = await asyncio.create_subprocess_exec(
+                *mkvmerge_args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+            )
+        except BlockingIOError as ioe:
+            logger.error(f"[{data.id}] mkvmerge is blocking, aborting process now", exc_info=ioe)
+            await DownloaderTasks.make_error(
+                data,
+                app,
+                "mkvmerge is blocking, aborting process now",
+                models.VTHellJobStatus.muxing,
+            )
+            return True
         await mkvmerge_process.wait()
         ret_code = mkvmerge_process.returncode
         if ret_code != 0:
@@ -497,9 +507,22 @@ class DownloaderTasks(InternalTaskBase):
         )
         rclone_args = [app.config.RCLONE_PATH, "-v", "-P", "copy", str(mux_output), target_folder]
         logger.debug(f"[{data.id}] Starting rclone with args: {rclone_args}")
-        rclone_process = await asyncio.create_subprocess_exec(
-            *rclone_args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
-        )
+        try:
+            rclone_process = await asyncio.create_subprocess_exec(
+                *rclone_args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+            )
+        except BlockingIOError as ioe:
+            logger.error(
+                f"[{data.id}] rclone is blocking, aborting upload please do manual upload later!",
+                exc_info=ioe,
+            )
+            await DownloaderTasks.make_error(
+                data,
+                app,
+                "rclone is blocking, aborting upload please do manual upload later!",
+                models.VTHellJobStatus.uploading,
+            )
+            return True
         error_line = ""
         while True:
             try:

@@ -65,9 +65,13 @@ async def download_via_ffmpeg(
     ffmpeg_args.extend(["-c", "copy", str(output_file), "-y"])
     logger.debug(f"Executing ffmpeg with args: {ffmpeg_args}")
     # Only pipe stderr since stdout is the actual data.
-    ffmpeg_process = await asyncio.create_subprocess_exec(
-        *ffmpeg_args, stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.PIPE
-    )
+    try:
+        ffmpeg_process = await asyncio.create_subprocess_exec(
+            *ffmpeg_args, stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.PIPE
+        )
+    except BlockingIOError as ioe:
+        logger.error(f"[{data.id}] ffmpeg is blocking, aborting process now", exc_info=ioe)
+        return -100, True, "ffmpeg is blocking, aborting process now"
 
     is_error = False
     already_announced = False
