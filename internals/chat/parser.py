@@ -29,7 +29,7 @@ from urllib.parse import parse_qsl, urlsplit
 
 import orjson
 
-from internals.chat.remapper import Remapper as r
+from internals.chat.remapper import Remapper as R
 from internals.chat.utils import (
     arbg_int_to_rgba,
     camel_case_split,
@@ -456,7 +456,7 @@ class YoutubeChatParser:
             return info
 
         for key in item_info:
-            r.remap(info, YoutubeChatParser._REMAPPING, key, item_info[key])
+            R.remap(info, YoutubeChatParser._REMAPPING, key, item_info[key])
 
         # check for colour information
         for colour_key in YoutubeChatParser._COLOUR_KEYS:
@@ -571,38 +571,38 @@ class YoutubeChatParser:
     _REMAPPING = {
         "id": "message_id",
         "authorExternalChannelId": "author_id",
-        "authorName": r("author_name", get_simple_text),
+        "authorName": R("author_name", get_simple_text),
         # TODO author_display_name
-        "purchaseAmountText": r("money", parse_currency),
-        "message": r(None, parse_runs_json, True),
-        "timestampText": r("time_text", get_simple_text),
-        "timestampUsec": r("timestamp", timestamp_micro_to_mili),
-        "authorPhoto": r("author_images", parse_youtube_thumbnail),
+        "purchaseAmountText": R("money", parse_currency),
+        "message": R(None, parse_runs_json, True),
+        "timestampText": R("time_text", get_simple_text),
+        "timestampUsec": R("timestamp", timestamp_micro_to_mili),
+        "authorPhoto": R("author_images", parse_youtube_thumbnail),
         "tooltip": "tooltip",
-        "icon": r("icon", lambda x: x.get("iconType")),
-        "authorBadges": r("author_badges", parse_badges),
+        "icon": R("icon", lambda x: x.get("iconType")),
+        "authorBadges": R("author_badges", parse_badges),
         # stickers
-        "sticker": r("sticker_images", parse_youtube_thumbnail),
+        "sticker": R("sticker_images", parse_youtube_thumbnail),
         # ticker_paid_message_item
-        "fullDurationSec": r("ticker_duration", int_or_none),
-        "amount": r("money", parse_currency),
+        "fullDurationSec": R("ticker_duration", int_or_none),
+        "amount": R("money", parse_currency),
         # ticker_sponsor_item
-        "detailText": r(None, parse_runs_json, True),
-        "customThumbnail": r("badge_icons", parse_youtube_thumbnail),
+        "detailText": R(None, parse_runs_json, True),
+        "customThumbnail": R("badge_icons", parse_youtube_thumbnail),
         # membership_item
-        "headerPrimaryText": r("header_primary_text", parse_text),
-        "headerSubtext": r("header_secondary_text", parse_text),
-        "sponsorPhoto": r("sponsor_icons", parse_youtube_thumbnail),
+        "headerPrimaryText": R("header_primary_text", parse_text),
+        "headerSubtext": R("header_secondary_text", parse_text),
+        "sponsorPhoto": R("sponsor_icons", parse_youtube_thumbnail),
         # ticker_paid_sticker_item
-        "tickerThumbnails": r("ticker_icons", parse_youtube_thumbnail),
+        "tickerThumbnails": R("ticker_icons", parse_youtube_thumbnail),
         # deleted messages
-        "deletedStateMessage": r(None, parse_runs_json, True),
+        "deletedStateMessage": R(None, parse_runs_json, True),
         "targetItemId": "target_message_id",
         "externalChannelId": "author_id",
         # action buttons
-        "actionButton": r("action", parse_action_button),
+        "actionButton": R("action", parse_action_button),
         # addBannerToLiveChatCommand
-        "text": r(None, parse_runs_json, True),
+        "text": R(None, parse_runs_json, True),
         "viewerIsCreator": "viewer_is_creator",
         "targetId": "target_message_id",
         "isStackable": "is_stackable",
@@ -610,9 +610,9 @@ class YoutubeChatParser:
         # removeBannerForLiveChatCommand
         "targetActionId": "target_message_id",
         # donation_announcement
-        "subtext": r(None, parse_runs_json, True),
+        "subtext": R(None, parse_runs_json, True),
         # tooltip
-        "detailsText": r(None, parse_runs_json, True),
+        "detailsText": R(None, parse_runs_json, True),
     }
 
     _COLOUR_KEYS = [
