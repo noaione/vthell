@@ -56,10 +56,14 @@ class TwitchExtractor(BaseExtractor):
         if cookie_headers is not None:
             sl.set_option("http-cookie", cookie_headers)
 
+        sl.set_plugin_option("twitch", "disable-reruns", True)
         sl.set_plugin_option("twitch", "disable_reruns", True)
+        sl.set_plugin_option("twitch", "disable-hosting", True)
         sl.set_plugin_option("twitch", "disable_hosting", True)
         sl.set_plugin_option("twitch", "disable-ads", True)
+        sl.set_plugin_option("twitch", "disable_ads", True)
         sl.set_plugin_option("twitch", "low-latency", True)
+        sl.set_plugin_option("twitch", "low_latency", True)
         sl.set_option("hls-live-edge", 2)
         sl.set_option("stream-timeout", 30)
 
