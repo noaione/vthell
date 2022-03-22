@@ -190,7 +190,7 @@ class DownloaderTasks(InternalTaskBase):
         return False
 
     @staticmethod
-    async def download_stream_youtube(data: models.VTHellJob, app: SanicVTHell):
+    async def download_youtube_stream(data: models.VTHellJob, app: SanicVTHell):
         is_error, error_line = await DownloaderTasks.download_video_with_ytarchive(data, app)
         if is_error:
             lower_line = error_line.lower() if isinstance(error_line, str) else None
@@ -207,7 +207,7 @@ class DownloaderTasks(InternalTaskBase):
         return False, STREAMDUMP_PATH / f"{data.filename} [temp].mp4"
 
     @staticmethod
-    async def download_stream_twitter_spaces(data: models.VTHellJob, app: SanicVTHell):
+    async def download_twitter_spaces_stream(data: models.VTHellJob, app: SanicVTHell):
         if data.platform != "twitter":
             return True, None
 
@@ -458,10 +458,10 @@ class DownloaderTasks(InternalTaskBase):
     async def download_stream(data: models.VTHellJob, app: SanicVTHell):
         if data.platform == "youtube":
             logger.info(f"[{data.id}] Downloading youtube stream/video...")
-            return await DownloaderTasks.download_stream_youtube(data, app)
+            return await DownloaderTasks.download_youtube_stream(data, app)
         elif data.platform == "twitter":
             logger.info(f"[{data.id}] Downloading twitter spaces...")
-            return await DownloaderTasks.download_stream_twitter_spaces(data, app)
+            return await DownloaderTasks.download_twitter_spaces_stream(data, app)
         elif data.platform == "twitcasting":
             logger.info(f"[{data.id}] Downloading twitcasting stream...")
             return await DownloaderTasks.download_twitcasting_stream(data, app)
