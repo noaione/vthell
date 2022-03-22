@@ -39,6 +39,7 @@ from internals.db import models
 from internals.downloader import download_via_ffmpeg, download_via_ytarchive
 from internals.extractor import (
     ExtractorError,
+    MildomExtractor,
     TwitcastingExtractor,
     TwitchExtractor,
     TwitterSpaceExtractor,
@@ -370,6 +371,90 @@ class DownloaderTasks(InternalTaskBase):
         return False, temp_file
 
     @staticmethod
+    async def download_mildom_stream(data: models.VTHellJob, app: SanicVTHell):
+        if data.platform != "mildom":
+            return True, None
+
+        cookie_file = await find_cookies_file()
+        cookie_header = await read_and_parse_cookie(cookie_file)
+        if cookie_header is None and data.member_only:
+            logger.error(f"[{data.id}] Member-only stream, but no cookies found. Cancelling")
+            data.status = models.VTHellJobStatus.cancelled
+            data.last_status = models.VTHellJobStatus.downloading
+            data.error = "Members-only stream but there is no cookies file"
+            await data.save()
+            emit_data = {
+                "id": data.id,
+                "status": "CANCELLED",
+                "error": "Members-only stream but there is no cookies file",
+            }
+            await app.wshandler.emit("job_update", emit_data)
+            if app.first_process and app.ipc:
+                await app.ipc.emit("ws_job_update", emit_data)
+            return True, None
+
+        stream_url = f"https://www.mildom.com/{data.channel_id}"
+        if data.id.startswith("mildom-vod-"):
+            vod_id = data.id.replace("mildom-vod-", "")
+            stream_url = f"https://www.mildom.com/playback/{data.channel_id}/{vod_id}"
+
+        try:
+            mildom_info = await MildomExtractor.process(stream_url, loop=app.loop)
+        except ExtractorError as exc:
+            logger.error(f"[{data.id}] {exc}", exc_info=exc)
+            data.last_status = models.VTHellJobStatus.downloading
+            message = exc.msg.lower()
+            error_msg = f"Unable to extract information with yt-dlp ({exc.msg})"
+            emit_data = {
+                "id": data.id,
+                "status": "ERROR",
+                "error": error_msg,
+            }
+            if "private" in message or "captcha" or "geo restrict":
+                data.status = models.VTHellJobStatus.cancelled
+                emit_data["status"] = "CANCELLED"
+            elif isinstance(exc.exc_info, yt_dlp.utils.ExtractorError):
+                cause = exc.exc_info.msg.lower()
+                if "members-only" in cause or "member-only" in cause:
+                    data.status = models.VTHellJobStatus.cancelled
+                    emit_data["status"] = "CANCELLED"
+            else:
+                data.status = models.VTHellJobStatus.error
+            data.error = error_msg
+            await data.save()
+            await app.wshandler.emit("job_update", emit_data)
+            if app.first_process and app.ipc:
+                await app.ipc.emit("ws_job_update", emit_data)
+            return True, None
+
+        if mildom_info is None:
+            return True, None
+
+        temp_file = STREAMDUMP_PATH / f"{data.filename} [temp].ts"
+        resolution = mildom_info.urls[0].resolution
+        logger.debug(f"[{data.id}] Downloading with resolution {resolution} format")
+        data.resolution = resolution
+        await data.save()
+
+        http_headers = {}
+        if cookie_header is not None:
+            http_headers["Cookie"] = cookie_header
+
+        ret_code, is_error, error_line = await download_via_ffmpeg(
+            app, data, mildom_info.urls[0].url, temp_file, http_headers
+        )
+        if ret_code != 0 or is_error:
+            logger.error(f"[{data.id}] ffmpeg exited with code {ret_code}")
+            await DownloaderTasks.make_error(
+                data,
+                app,
+                f"ffmpeg exited with code {ret_code}: {error_line}",
+                models.VTHellJobStatus.downloading,
+            )
+            return True, None
+        return False, temp_file
+
+    @staticmethod
     async def download_stream(data: models.VTHellJob, app: SanicVTHell):
         if data.platform == "youtube":
             logger.info(f"[{data.id}] Downloading youtube stream/video...")
@@ -383,6 +468,9 @@ class DownloaderTasks(InternalTaskBase):
         elif data.platform == "twitch":
             logger.info(f"[{data.id}] Downloading twitch stream...")
             return await DownloaderTasks.download_twitch_stream(data, app)
+        elif data.platform == "mildom":
+            logger.info(f"[{data.id}] Downloading mildom stream...")
+            return await DownloaderTasks.download_mildom_stream(data, app)
         logger.error(f"[{data.id}] Unsupported platform: {data.platform}")
         await DownloaderTasks.make_error(
             data,
@@ -469,8 +557,8 @@ class DownloaderTasks(InternalTaskBase):
 
     @staticmethod
     async def determine_muxed_filename(data: models.VTHellJob):
-        if data.platform in ["youtube", "twitch"]:
-            return STREAMDUMP_PATH / f"{data.filename} [{data.resolution} AAC].mkv"
+        if data.platform in ["youtube", "twitch", "mildom"]:
+            return STREAMDUMP_PATH / f"{data.filename} [{data.reso_or_na} AAC].mkv"
         elif data.platform == "twitter":
             return STREAMDUMP_PATH / f"{data.filename} [AAC].m4a"
         elif data.platform == "twitcasting":

@@ -32,6 +32,7 @@ from sanic import Blueprint
 from sanic.response import json
 
 from internals.db import models
+from internals.constants import VALID_PLATFORMS
 from internals.decorator import secure_access
 from internals.utils import map_to_boolean, secure_filename
 
@@ -74,7 +75,7 @@ async def add_new_jobs(request: Request):
     if "id" not in json_request:
         return json({"error": "Missing `id` in json request"}, status=400)
     if "platform" in json_request:
-        if json_request["platform"] in ["youtube", "twitch", "twitcasting", "twitter"]:
+        if json_request["platform"] in VALID_PLATFORMS:
             platform = json_request["platform"]
 
     video_id = json_request["id"]
