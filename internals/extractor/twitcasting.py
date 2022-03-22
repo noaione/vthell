@@ -106,7 +106,7 @@ class TwitcastingExtractor(BaseExtractor):
         except yt_dlp.utils.GeoRestrictedError as exc:
             await ydl.close()
             logger.error(f"Video is geo restricted: {video_url}")
-            return ExtractorError(f"Video is geo restricted: {video_url}", "twitcasting", exc)
+            raise ExtractorError(f"Video is geo restricted: {video_url}", "twitcasting", exc)
         except yt_dlp.utils.ExtractorError as exc:
             await ydl.close()
             logger.error(f"Failed to extract info: {video_url}", exc_info=exc)
@@ -140,7 +140,7 @@ class TwitcastingExtractor(BaseExtractor):
                 video_format = formats_request[0]
             except IndexError as exc:
                 logger.error(f"No valid formats found for {video_url}")
-                return ExtractorError(f"No valid formats found for {video_url}", "youtube-dl", exc)
+                raise ExtractorError(f"No valid formats found for {video_url}", "youtube-dl", exc)
 
         single_extract = ExtractorURLResult(video_format["url"], "XXXp")
 

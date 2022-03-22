@@ -124,7 +124,7 @@ class YouTubeExtractor(BaseExtractor):
         except yt_dlp.utils.GeoRestrictedError as exc:
             await ydl.close()
             logger.error(f"Video is geo restricted: {video_url}")
-            return ExtractorError(f"Video is geo restricted: {video_url}", "youtube-dl", exc)
+            raise ExtractorError(f"Video is geo restricted: {video_url}", "youtube-dl", exc)
         except yt_dlp.utils.ExtractorError as exc:
             await ydl.close()
             logger.error(f"Failed to extract info: {video_url}", exc_info=exc)
@@ -155,7 +155,7 @@ class YouTubeExtractor(BaseExtractor):
             audio_format = formats_request[1]
         except IndexError as exc:
             logger.error(f"No valid formats found for {video_url}")
-            return ExtractorError(f"No valid formats found for {video_url}", "youtube-dl", exc)
+            raise ExtractorError(f"No valid formats found for {video_url}", "youtube-dl", exc)
 
         resolution = video_format.get("resolution", video_format.get("format_note", "Unknown"))
         http_headers_video = video_format.get("http_headers", {})
