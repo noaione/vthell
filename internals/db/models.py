@@ -78,6 +78,8 @@ class VTHellJobPlatform(str, Enum):
     Twitter = "twitter"
     # Twitcasting
     Twitcasting = "twitcasting"
+    # Mildom
+    Mildom = "mildom"
 
 
 class VTHellJob(Model):
@@ -94,6 +96,10 @@ class VTHellJob(Model):
     platform = fields.CharEnumField(
         VTHellJobPlatform, null=False, max_length=24, default=VTHellJobPlatform.YouTube
     )
+
+    @property
+    def reso_or_na(self):
+        return self.resolution or "NA"
 
 
 class VTHellJobChatTemporary(Model):
