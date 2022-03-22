@@ -31,8 +31,8 @@ import pendulum
 from sanic import Blueprint
 from sanic.response import json
 
-from internals.db import models
 from internals.constants import VALID_PLATFORMS
+from internals.db import models
 from internals.decorator import secure_access
 from internals.utils import map_to_boolean, secure_filename
 
