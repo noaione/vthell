@@ -420,7 +420,7 @@ class ChatDownloader:
                     elif original_action_type in self._KNOWN_REMOVE_BANNER_TYPES:
                         original_item = action
                         original_message_type = "removeBanner"
-                        data = self._parse_item(original_item, data, offset)
+                        data = YoutubeChatParser.parse_item(original_item, data, offset)
                     elif original_action_type in self._KNOWN_IGNORE_ACTION_TYPES:
                         continue
                     else:
