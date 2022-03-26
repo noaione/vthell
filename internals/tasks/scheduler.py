@@ -28,12 +28,13 @@ import asyncio
 import logging
 import re
 from os import getenv
-from typing import TYPE_CHECKING, Dict, List, Type
+from typing import TYPE_CHECKING, Dict, List, Type, Union
 
 import pendulum
 
 from internals.db import models
 from internals.holodex import HolodexVideo
+from internals.ihaapi import ihaAPIVideo
 from internals.struct import InternalTaskBase
 from internals.utils import map_to_boolean, secure_filename
 
@@ -45,7 +46,7 @@ logger = logging.getLogger("Tasks.AutoScheduler")
 __all__ = ("AutoSchedulerTasks",)
 
 
-def determine_chains(chains: List[Dict[str, str]], data: HolodexVideo):
+def determine_chains(chains: List[Dict[str, str]], data: Union[HolodexVideo, ihaAPIVideo]):
     if not chains:
         return True
     chains_results = []
@@ -53,24 +54,46 @@ def determine_chains(chains: List[Dict[str, str]], data: HolodexVideo):
         if chain["type"] == "word":
             if chain["data"].casefold() in data.title.casefold():
                 chains_results.append(True)
-            else:
-                chains_results.append(False)
+                continue
         elif chain["type"] == "regex_word":
             if re.search(chain["data"], data.title, re.IGNORECASE):
                 chains_results.append(True)
-            else:
-                chains_results.append(False)
+                continue
         elif chain["type"] == "group":
             if data.org and chain["data"].casefold() == data.org.casefold():
                 chains_results.append(True)
-            else:
-                chains_results.append(False)
+                continue
         elif chain["type"] == "channel":
             if chain["data"] == data.channel_id:
                 chains_results.append(True)
-            else:
-                chains_results.append(False)
+                continue
+        elif chain["type"] == "platform":
+            if chain["data"] == data.platform:
+                chains_results.append(True)
+                continue
+        chains_results.append(False)
     return all(chains_results)
+
+
+def prefix_id_platform(data: Union[HolodexVideo, ihaAPIVideo]):
+    video_id = data.id
+    if data.platform == "twitch":
+        return f"ttv-stream-{video_id}"
+    elif data.platform == "twitcasting":
+        return f"twcast-{video_id}"
+    elif data.platform == "twitter":
+        return f"twtsp-{video_id}"
+    return video_id
+
+
+def filter_ihaapi_results(results: List[ihaAPIVideo]):
+    filtered_results: List[ihaAPIVideo] = []
+    for result in results:
+        if result.platform == "twitter":
+            filtered_results.append(result)
+        elif result.status == "live":
+            filtered_results.append(result)
+    return filtered_results
 
 
 class AutoSchedulerTasks(InternalTaskBase):
@@ -93,11 +116,18 @@ class AutoSchedulerTasks(InternalTaskBase):
         existing_jobs_ids = [job.id for job in existing_jobs]
 
         logger.info("Checking Holodex for live and scheduled stream...")
-        results = await app.holodex.get_lives()
+        holodex_results = await app.holodex.get_lives()
+        logger.info("Checking ihateani.me for live and scheduled stream...")
+        ihaapi_results = await app.ihaapi.get_lives()
+        results: List[Union[HolodexVideo, ihaAPIVideo]] = holodex_results + filter_ihaapi_results(
+            ihaapi_results
+        )
         if len(results) < 1:
-            logger.warning("No lives/upcoming stream found from Holodex")
+            logger.warning("No lives/upcoming stream found from Holodex/ihaAPI")
             return
         logger.info(f"Found {len(results)} live/upcoming stream(s)")
+        logger.debug(f"Holodex result: {len(holodex_results)}")
+        logger.debug(f"ihaAPI result: {len(ihaapi_results)}")
 
         exclude_ids = list(
             map(lambda x: x.data, filter(lambda x: x.type == models.VTHellAutoType.channel, exclude))
@@ -183,7 +213,7 @@ class AutoSchedulerTasks(InternalTaskBase):
             logger.warning("No videos found to be schedule with both include/exclude filters")
             return
 
-        deduplicated_videos: List[HolodexVideo] = []
+        deduplicated_videos: List[Union[HolodexVideo, ihaAPIVideo]] = []
         for video in double_filtered_videos:
             if video.id in existing_jobs_ids:
                 continue
@@ -193,22 +223,27 @@ class AutoSchedulerTasks(InternalTaskBase):
         logger.info(f"Adding {len(double_filtered_videos)} videos to the jobs scheduler")
         executed_videos = []
         for video in double_filtered_videos:
-            if video.id in executed_videos or video.id in existing_jobs_ids:
-                logger.warning(f"Video <{video.id}> already scheduled, skipping")
+            video_id = prefix_id_platform(video)
+            if video_id in executed_videos or video_id in existing_jobs_ids:
+                logger.warning(f"Video <{video.id}/{video.platform}> already scheduled, skipping")
                 continue
             title_safe = secure_filename(video.title)
             utc_unix = pendulum.from_timestamp(video.start_time, tz="UTC")
             as_jst = utc_unix.in_timezone("Asia/Tokyo")
-            filename = f"[{as_jst.year}.{as_jst.month}.{as_jst.day}.{video.id}] {title_safe}"
+            bideo_id = video.id
+            if video.platform == "twitch":
+                bideo_id = video.channel_id
+            filename = f"[{as_jst.year}.{as_jst.month}.{as_jst.day}.{bideo_id}] {title_safe}"
             job = models.VTHellJob(
-                id=video.id,
+                id=video_id,
                 title=video.title,
                 filename=filename,
                 start_time=video.start_time,
                 channel_id=video.channel_id,
                 member_only=video.is_member,
+                platform=video.platform,
             )
-            logger.info(f"Scheduling <{video.id}> from Autoscheduler run {time}")
+            logger.info(f"Scheduling <{video.id}/{video.platform}> from Autoscheduler run {time}")
             await job.save()
             executed_videos.append(video.id)
             await app.dispatch(
@@ -224,6 +259,7 @@ class AutoSchedulerTasks(InternalTaskBase):
                 "status": job.status.value,
                 "resolution": job.resolution,
                 "error": job.error,
+                "platform": job.platform.value,
             }
             await app.wshandler.emit("job_scheduled", data_update)
             if app.first_process and app.ipc:

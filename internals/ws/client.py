@@ -317,7 +317,7 @@ class WebsocketServer:
             logger.error("An error occured while trying to process for client %s", sid, exc_info=e)
             await self._client_disconnected(sid)
 
-    async def error_termination(self, sid: str, ws: WebsocketProto):
+    async def error_termination(self, sid: str, ws: WebsocketClient):
         try:
             logger.info(f"Started long polling {sid} for error termination")
             await ws.poll()

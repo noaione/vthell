@@ -24,21 +24,15 @@ SOFTWARE.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Optional
 
-from sanic import Blueprint
-
-if TYPE_CHECKING:
-    from sanic.request import Request
-    from sanic.server.websockets.connection import WebSocketConnection
-
-    from internals.vth import SanicVTHell
+__all__ = ("ExtractorError",)
 
 
-bp_event = Blueprint("api_event", url_prefix="/api/event")
+class ExtractorError(Exception):
+    def __init__(self, msg: str, extractor: str, exc_info: Optional[Exception]):
+        self.exc_info: Optional[Exception] = exc_info
+        self.msg: str = str(msg)
+        self.extractor: str = extractor
 
-
-@bp_event.websocket("/")
-async def websocket_receiver(request: Request, ws: WebSocketConnection):
-    app: SanicVTHell = request.app
-    await app.wshandler.listen(ws)
+        super().__init__(f"Failed to extract video with {extractor}: {msg}")

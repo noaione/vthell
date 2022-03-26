@@ -22,23 +22,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from __future__ import annotations
+from typing import Literal, Optional, TypedDict
 
-from typing import TYPE_CHECKING
-
-from sanic import Blueprint
-
-if TYPE_CHECKING:
-    from sanic.request import Request
-    from sanic.server.websockets.connection import WebSocketConnection
-
-    from internals.vth import SanicVTHell
+ihaAPIVideoStatus = Literal["live", "upcoming", "past", "video"]
+ihaAPIVideoPlatform = Literal["youtube", "twitch", "twitter", "twitcasting", "mildom"]
 
 
-bp_event = Blueprint("api_event", url_prefix="/api/event")
+class _ihaAPIVTuberTimeData(TypedDict):
+    startTime: Optional[int]
+    scheduledStartTime: Optional[int]
+    endTime: Optional[int]
 
 
-@bp_event.websocket("/")
-async def websocket_receiver(request: Request, ws: WebSocketConnection):
-    app: SanicVTHell = request.app
-    await app.wshandler.listen(ws)
+class ihaAPIVTuberVideo(TypedDict):
+    id: str
+    title: str
+    status: ihaAPIVideoStatus
+    channel_id: str
+    timeData: _ihaAPIVTuberTimeData
+    platform: ihaAPIVideoPlatform
+    group: str
+    is_premiere: bool
+    is_member: bool

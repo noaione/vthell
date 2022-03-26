@@ -40,8 +40,31 @@ logger = logging.getLogger("Notifier.Discord")
 __all__ = ("DiscordNotificationHandler",)
 
 
+def make_url(data: models.VTHellJob):
+    if data.platform == "youtube":
+        return f"https://youtu.be/{data.id}"
+    elif data.platform == "twitch":
+        if data.id.startswith("ttv-vod-"):
+            vod_id = data.id.replace("ttv-vod-", "")
+            return f"https://www.twitch.tv/videos/{vod_id}"
+        return f"https://twitch.tv/{data.channel_id}"
+    elif data.platform == "twitcasting":
+        twcast_id = data.id.replace("twcast-", "")
+        return f"https://twitcasting.tv/{data.channel_id}/movie/{twcast_id}"
+    elif data.platform == "twitter":
+        space_id = data.id.replace("twtsp-", "")
+        return f"https://twitter.com/i/spaces/{space_id}"
+    return "https://github.com/noaione/vthell"
+
+
+def make_thumbnail(data: models.VTHellJob):
+    if data.platform == "youtube":
+        return f"https://i.ytimg.com/vi/{data.id}/maxresdefault.jpg"
+    return None
+
+
 def make_update_discord_embed(data: models.VTHellJob):
-    url = f"https://youtu.be/{data.id}"
+    url = make_url(data)
     if data.status == models.VTHellJobStatus.downloading:
         desc = f"Recording started!\n**{data.filename}**\n\nURL: {url}"
         embed = DiscordEmbed(title="VTHell Start", description=desc, color="a49be6")
@@ -57,7 +80,10 @@ def make_update_discord_embed(data: models.VTHellJob):
     else:
         return None
 
-    embed.set_image(url=f"https://i.ytimg.com/vi/{data.id}/maxresdefault.jpg")
+    embed.add_embed_field(name="Platform", value=data.platform.name)
+    thumbnail = make_thumbnail(data)
+    if thumbnail is not None:
+        embed.set_image(url=thumbnail)
     embed.set_timestamp()
     webhook = DiscordWebhook(url="")
     webhook.add_embed(embed)
@@ -67,9 +93,12 @@ def make_update_discord_embed(data: models.VTHellJob):
 def make_schedule_discord_embed(data: models.VTHellJob):
     embed = DiscordEmbed(title="VTHell Scheduler", color="cfdf69")
     dis_ts = f"<t:{data.start_time}:F> (<t:{data.start_time}:R>)"
-    url = f"https://youtu.be/{data.id}"
+    url = make_url(data)
     embed.set_description(f"**{data.filename}**\n[Link]({url})\nStart: {dis_ts}")
-    embed.set_image(url=f"https://i.ytimg.com/vi/{data.id}/maxresdefault.jpg")
+    embed.add_embed_field(name="Platform", value=data.platform.name)
+    thumbnail = make_thumbnail(data)
+    if thumbnail is not None:
+        embed.set_image(url=thumbnail)
     webhook = DiscordWebhook(url="")
     webhook.add_embed(embed)
     return webhook.get_embeds()[0]

@@ -22,11 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from __future__ import annotations
+
 import logging
 from typing import TYPE_CHECKING
 
 from sanic import Blueprint
-from sanic.request import Request
 from sanic.response import empty, json
 
 from internals.db import models
@@ -34,6 +35,8 @@ from internals.decorator import secure_access
 from internals.utils import map_to_boolean
 
 if TYPE_CHECKING:
+    from sanic.request import Request
+
     from internals.vth import SanicVTHell
 
 bp_autosched = Blueprint("api_autoscheduler", url_prefix="/api")

@@ -24,21 +24,30 @@ SOFTWARE.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+import asyncio
+from typing import Optional, Type
 
-from sanic import Blueprint
+import aiohttp
 
-if TYPE_CHECKING:
-    from sanic.request import Request
-    from sanic.server.websockets.connection import WebSocketConnection
-
-    from internals.vth import SanicVTHell
+from .models import ExtractorResult
 
 
-bp_event = Blueprint("api_event", url_prefix="/api/event")
+class BaseExtractor:
+    def __init__(self, *, loop: asyncio.AbstractEventLoop = None):
+        self.session: aiohttp.ClientSession = None
+        self.loop = loop or asyncio.get_event_loop()
 
+    async def close(self):
+        if self.session and not self.session.closed:
+            await self.session.close()
 
-@bp_event.websocket("/")
-async def websocket_receiver(request: Request, ws: WebSocketConnection):
-    app: SanicVTHell = request.app
-    await app.wshandler.listen(ws)
+    async def create(self):
+        self.session = aiohttp.ClientSession(loop=self.loop)
+
+    @classmethod
+    async def process(cls: Type[BaseExtractor], *args, **kwargs) -> Optional[ExtractorResult]:
+        loop = asyncio.get_event_loop()
+        instance = cls(loop=loop)
+        await instance.create()
+        await instance.close()
+        return None

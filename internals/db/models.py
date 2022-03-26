@@ -31,7 +31,14 @@ import orjson
 from tortoise import fields
 from tortoise.models import Model
 
-__all__ = ("VTHellJob", "VTHellAutoType", "VTHellAutoScheduler", "VTHellJobStatus", "VTHellJobChatTemporary")
+__all__ = (
+    "VTHellJob",
+    "VTHellAutoType",
+    "VTHellAutoScheduler",
+    "VTHellJobStatus",
+    "VTHellJobPlatform",
+    "VTHellJobChatTemporary",
+)
 
 
 def orjson_dumps(obj: object) -> bytes:
@@ -62,6 +69,19 @@ class VTHellJobStatus(str, Enum):
     cancelled = "CANCELLED"
 
 
+class VTHellJobPlatform(str, Enum):
+    # Youtube
+    YouTube = "youtube"
+    # Twitch
+    Twitch = "twitch"
+    # Twitter (Spaces)
+    Twitter = "twitter"
+    # Twitcasting
+    Twitcasting = "twitcasting"
+    # Mildom
+    Mildom = "mildom"
+
+
 class VTHellJob(Model):
     id = fields.CharField(pk=True, unique=True, index=True, max_length=128)
     title = fields.TextField(null=False)
@@ -73,6 +93,13 @@ class VTHellJob(Model):
     status = fields.CharEnumField(VTHellJobStatus, null=False, default=VTHellJobStatus.waiting, max_length=24)
     last_status = fields.CharEnumField(VTHellJobStatus, null=True, max_length=24)
     error = fields.TextField(null=True)
+    platform = fields.CharEnumField(
+        VTHellJobPlatform, null=False, max_length=24, default=VTHellJobPlatform.YouTube
+    )
+
+    @property
+    def reso_or_na(self):
+        return self.resolution or "NA"
 
 
 class VTHellJobChatTemporary(Model):

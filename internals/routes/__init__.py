@@ -8,5 +8,7 @@ A collection of blueprint routes for the API.
 """
 
 from .auto_scheduler import bp_autosched
+from .event import bp_event
+from .records import bp_records
 from .schedule import bp_sched
 from .status import bp_status

@@ -22,14 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from __future__ import annotations
+
 import logging
 from typing import TYPE_CHECKING
 
 from sanic import Blueprint
-from sanic.request import Request
 from sanic.response import json
 
 if TYPE_CHECKING:
+    from sanic.request import Request
+
     from internals.vth import SanicVTHell
 
 bp_records = Blueprint("api_records", url_prefix="/api")

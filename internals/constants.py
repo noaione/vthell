@@ -24,3 +24,4 @@ SOFTWARE.
 
 hash_gh = "https://raw.githubusercontent.com/noaione/vthell-dataset/archive/currentversion"
 archive_gh = "https://raw.githubusercontent.com/noaione/vthell-dataset/archive/archive.zip"
+VALID_PLATFORMS = ["youtube", "twitch", "twitter", "twitcasting", "mildom"]

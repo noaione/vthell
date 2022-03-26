@@ -24,21 +24,41 @@ SOFTWARE.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from dataclasses import dataclass
+from typing import Optional, Union
 
-from sanic import Blueprint
+from ._types import ihaAPIVideoStatus
 
-if TYPE_CHECKING:
-    from sanic.request import Request
-    from sanic.server.websockets.connection import WebSocketConnection
-
-    from internals.vth import SanicVTHell
+__all__ = ("ihaAPIVideo",)
 
 
-bp_event = Blueprint("api_event", url_prefix="/api/event")
+@dataclass
+class ihaAPIVideo:
+    id: str
+    title: str
+    start_time: Optional[int]
+    channel_id: str
+    org: str
+    status: ihaAPIVideoStatus
+    url: str
+    platform: str
+    is_member: bool
 
+    def __eq__(self, other: Union[str, ihaAPIVideo]) -> bool:
+        if isinstance(other, str):
+            return self.id == other
+        elif isinstance(other, ihaAPIVideo):
+            return self.id == other.id
+        return False
 
-@bp_event.websocket("/")
-async def websocket_receiver(request: Request, ws: WebSocketConnection):
-    app: SanicVTHell = request.app
-    await app.wshandler.listen(ws)
+    def to_json(self) -> dict:
+        return {
+            "id": self.id,
+            "title": self.title,
+            "start_time": self.start_time,
+            "channel_id": self.channel_id,
+            "status": self.status,
+            "url": self.url,
+            "is_member": self.is_member,
+            "platform": self.platform,
+        }

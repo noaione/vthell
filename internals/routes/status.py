@@ -22,17 +22,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from __future__ import annotations
+
 import logging
 from typing import TYPE_CHECKING
 
 from sanic import Blueprint
-from sanic.request import Request
 from sanic.response import json
 
 from internals.db import models
 from internals.utils import map_to_boolean
 
 if TYPE_CHECKING:
+    from sanic.request import Request
+
     from internals.vth import SanicVTHell
 
 bp_status = Blueprint("api_status", url_prefix="/api")
@@ -67,6 +70,7 @@ async def existing_jobs(request: Request):
                 "channel_id": job.channel_id,
                 "is_member": job.member_only,
                 "status": job.status.value,
+                "platform": job.platform.value,
                 "error": job.error,
             }
         )
@@ -90,6 +94,7 @@ async def existing_single_job(request: Request, id: str):
             "channel_id": job.channel_id,
             "is_member": job.member_only,
             "status": job.status.value,
+            "platform": job.platform.value,
             "error": job.error,
         }
     )

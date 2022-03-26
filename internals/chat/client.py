@@ -38,15 +38,9 @@ import aiohttp
 import pendulum
 
 from internals.chat.errors import ChatDisabled, LoginRequired, NoChatReplay, VideoUnavailable, VideoUnplayable
-from internals.chat.parser import (
-    ChatDetails,
-    YoutubeChatParser,
-    complex_walk,
-    parse_initial_data,
-    parse_youtube_video_data,
-)
+from internals.chat.parser import ChatDetails, YoutubeChatParser, parse_initial_data, parse_youtube_video_data
 from internals.chat.utils import camel_case_split, remove_prefixes, remove_suffixes, try_get_first_key
-from internals.utils import find_cookies_file, parse_cookie_to_morsel, parse_expiry_as_date
+from internals.utils import complex_walk, find_cookies_file, parse_cookie_to_morsel, parse_expiry_as_date
 
 if TYPE_CHECKING:
     from internals.chat.writer import JSONWriter
@@ -426,7 +420,7 @@ class ChatDownloader:
                     elif original_action_type in self._KNOWN_REMOVE_BANNER_TYPES:
                         original_item = action
                         original_message_type = "removeBanner"
-                        data = self._parse_item(original_item, data, offset)
+                        data = YoutubeChatParser.parse_item(original_item, data, offset)
                     elif original_action_type in self._KNOWN_IGNORE_ACTION_TYPES:
                         continue
                     else:

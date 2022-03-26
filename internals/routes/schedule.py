@@ -22,23 +22,40 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from __future__ import annotations
+
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 import pendulum
 from sanic import Blueprint
-from sanic.request import Request
 from sanic.response import json
 
+from internals.constants import VALID_PLATFORMS
 from internals.db import models
 from internals.decorator import secure_access
 from internals.utils import map_to_boolean, secure_filename
 
 if TYPE_CHECKING:
+    from sanic.request import Request
+
+    from internals.holodex import HolodexVideo
+    from internals.ihaapi import ihaAPIVideo
     from internals.vth import SanicVTHell
 
 bp_sched = Blueprint("api_scheduler", url_prefix="/api")
 logger = logging.getLogger("Routes.API.Schedule")
+
+
+def prefix_id_platform(data: Union[HolodexVideo, ihaAPIVideo]):
+    video_id = data.id
+    if data.platform == "twitch":
+        return f"ttv-stream-{video_id}"
+    elif data.platform == "twitcasting":
+        return f"twcast-{video_id}"
+    elif data.platform == "twitter":
+        return f"twtsp-{video_id}"
+    return video_id
 
 
 @bp_sched.post("/schedule")
@@ -52,25 +69,39 @@ async def add_new_jobs(request: Request):
         logger.error("Error while parsing request: %s", cep, exc_info=cep)
         return json({"error": "Invalid JSON"}, status=400)
     holodex = app.holodex
+    ihaapi = app.ihaapi
 
+    platform = "youtube"
     if "id" not in json_request:
         return json({"error": "Missing `id` in json request"}, status=400)
+    if "platform" in json_request:
+        if json_request["platform"] in VALID_PLATFORMS:
+            platform = json_request["platform"]
 
     video_id = json_request["id"]
     logger.info(f"ScheduleRequest: Received request for video {video_id}")
-    existing_job = await models.VTHellJob.get_or_none(id=video_id)
-
-    video_res = await holodex.get_video(video_id)
-    if video_res is None:
-        logger.error(f"ScheduleRequest: Video {video_id} not found")
-        return json({"error": "Video not found or invalid"}, status=404)
+    if platform == "youtube":
+        video_res = await holodex.get_video(video_id)
+        if video_res is None:
+            logger.error(f"ScheduleRequest(Holodex): Video {video_id} not found")
+            return json({"error": "Video not found or invalid (via Holodex)"}, status=404)
+    else:
+        video_res = await ihaapi.get_video(video_id, platform)
+        if video_res is None:
+            logger.error(f"ScheduleRequest(ihaAPI): Video {video_id} not found")
+            return json({"error": "Video not found or invalid (via ihateani.me API)"}, status=404)
 
     title_safe = secure_filename(video_res.title)
     utc_unix = pendulum.from_timestamp(video_res.start_time, tz="UTC")
     as_jst = utc_unix.in_timezone("Asia/Tokyo")
-    filename = f"[{as_jst.year}.{as_jst.month}.{as_jst.day}.{video_res.id}] {title_safe}"
+    bideo_id = video_res.id
+    if video_res.platform == "twitch":
+        bideo_id = video_res.channel_id
+    video_id_actual = prefix_id_platform(video_res)
+    existing_job = await models.VTHellJob.get_or_none(id=video_id_actual)
+    filename = f"[{as_jst.year}.{as_jst.month}.{as_jst.day}.{bideo_id}] {title_safe}"
     if existing_job is not None:
-        logger.info(f"ScheduleRequest: Video {video_id} already exists, merging data...")
+        logger.info(f"ScheduleRequest: Video {video_id_actual} already exists, merging data...")
         existing_job.title = video_res.title
         existing_job.filename = filename
         existing_job.start_time = video_res.start_time
@@ -98,14 +129,15 @@ async def add_new_jobs(request: Request):
         if app.first_process and app.ipc:
             await app.ipc.emit("ws_job_update", job_update_data)
     else:
-        logger.info(f"ScheduleRequest: Video {video_id} not found, creating new job...")
+        logger.info(f"ScheduleRequest: Video {video_id_actual} not found, creating new job...")
         job_request = models.VTHellJob(
-            id=video_res.id,
+            id=video_id_actual,
             title=video_res.title,
             filename=filename,
             start_time=video_res.start_time,
             channel_id=video_res.channel_id,
             member_only=video_res.is_member,
+            platform=video_res.platform,
         )
         await job_request.save()
         job_data_update = {
@@ -117,6 +149,7 @@ async def add_new_jobs(request: Request):
             "is_member": job_request.member_only,
             "status": job_request.status.value,
             "resolution": job_request.resolution,
+            "platform": job_request.platform.value,
             "error": job_request.error,
         }
         await app.wshandler.emit("job_scheduled", job_data_update)
@@ -163,6 +196,7 @@ async def delete_job(request: Request, video_id: str):
             "channel_id": job.channel_id,
             "is_member": job.member_only,
             "status": job.status.value,
+            "platform": job.platform.value,
             "error": job.error,
         }
     )

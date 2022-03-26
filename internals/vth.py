@@ -38,12 +38,14 @@ import pendulum
 import watchgod as wg
 from sanic import Sanic, reloader_helpers
 from sanic.config import SANIC_PREFIX, Config
+from sanic.helpers import _default
 from sanic.server.protocols.http_protocol import HttpProtocol
 from sanic.server.protocols.websocket_protocol import WebSocketProtocol
 
 from internals.db import IPCServerClientBridge
 from internals.runner import serve_multiple, serve_single
 from internals.struct import VTHellRecords
+from internals.utils import try_use_uvloop
 from internals.ws import WebsocketServer
 
 if TYPE_CHECKING:
@@ -57,6 +59,7 @@ if TYPE_CHECKING:
     from tortoise.backends.sqlite.client import SqliteClient
 
     from .holodex import HolodexAPI
+    from .ihaapi import ihateanimeAPI
 
 
 __all__ = ("SanicVTHellConfig", "SanicVTHell", "VTHellDataset", "VTHellDatasetVTuber")
@@ -199,11 +202,27 @@ class SanicVTHell(Sanic):
     db: SqliteClient
     config: SanicVTHellConfig
     holodex: HolodexAPI
+    ihaapi: ihateanimeAPI
     vtdataset: Dict[str, VTHellDataset]
     vtrecords: VTHellRecordedData
     wshandler: WebsocketServer
     ipc: IPCServerClientBridge
     worker_num: int
+
+    __slots__ = (
+        "db",
+        "holodex",
+        "ihaapi",
+        "vtdataset",
+        "vtrecords",
+        "wshandler",
+        "ipc",
+        "worker_num",
+        "_db_ready",
+        "_holodex_ready",
+        "_wshandler_ready",
+        "_ihaapi_ready",
+    )
 
     def __init__(
         self,
@@ -213,7 +232,6 @@ class SanicVTHell(Sanic):
         router: Optional[Router] = None,
         signal_router: Optional[SignalRouter] = None,
         error_handler: Optional[ErrorHandler] = None,
-        load_env: Union[bool, str] = True,
         env_prefix: Optional[str] = SANIC_PREFIX,
         request_class: Optional[Type[Request]] = None,
         strict_slashes: bool = False,
@@ -229,7 +247,6 @@ class SanicVTHell(Sanic):
             router=router,
             signal_router=signal_router,
             error_handler=error_handler,
-            load_env=load_env,
             env_prefix=env_prefix,
             request_class=request_class,
             strict_slashes=strict_slashes,
@@ -240,6 +257,7 @@ class SanicVTHell(Sanic):
         )
 
         self.holodex: HolodexAPI = None
+        self.ihaapi: ihateanimeAPI = None
         self.db: SqliteClient = None
         self.vtrecords = VTHellRecordedData()
 
@@ -324,8 +342,11 @@ class SanicVTHell(Sanic):
             self._holodex_ready = asyncio.Event()
         if not hasattr(self, "_wshandler_ready"):
             self._wshandler_ready = asyncio.Event()
+        if not hasattr(self, "_ihaapi_ready"):
+            self._ihaapi_ready = asyncio.Event()
         await self._db_ready.wait()
         await self._holodex_ready.wait()
+        await self._ihaapi_ready.wait()
         await self._wshandler_ready.wait()
 
     def mark_db_ready(self):
@@ -337,6 +358,11 @@ class SanicVTHell(Sanic):
         if not hasattr(self, "_holodex_ready"):
             self._holodex_ready = asyncio.Event()
         self._holodex_ready.set()
+
+    def mark_ihaapi_ready(self):
+        if not hasattr(self, "_ihaapi_ready"):
+            self._ihaapi_ready = asyncio.Event()
+        self._ihaapi_ready.set()
 
     def mark_wshandler_ready(self):
         if not hasattr(self, "_wshandler_ready"):
@@ -388,7 +414,7 @@ class SanicVTHell(Sanic):
         *,
         debug: bool = False,
         auto_reload: Optional[bool] = None,
-        ssl: Union[Dict[str, str], SSLContext, None] = None,
+        ssl: Union[None, SSLContext, dict, str, list, tuple] = None,
         sock: Optional[socket] = None,
         workers: int = 1,
         protocol: Optional[Type[asyncio.Protocol]] = None,
@@ -396,9 +422,22 @@ class SanicVTHell(Sanic):
         register_sys_signals: bool = True,
         access_log: Optional[bool] = None,
         unix: Optional[str] = None,
-        loop: None = None,
+        loop: asyncio.AbstractEventLoop = None,
         reload_dir: Optional[Union[List[str], str]] = None,
+        noisy_exceptions: Optional[bool] = None,
+        motd: bool = True,
+        fast: bool = False,
+        verbosity: int = 0,
+        motd_display: Optional[Dict[str, str]] = None,
     ) -> None:
+        self.state.verbosity = verbosity
+
+        if fast and workers != 1:
+            raise RuntimeError("You cannot use both fast=True and workers=X")
+
+        if motd_display:
+            self.config.MOTD_DISPLAY.update(motd_display)
+
         if reload_dir:
             if isinstance(reload_dir, str):
                 reload_dir = [reload_dir]
@@ -407,7 +446,7 @@ class SanicVTHell(Sanic):
                 direc = Path(directory)
                 if not direc.is_dir():
                     logger.warning(f"Directory {directory} could not be located")
-                self.reload_dirs.add(Path(directory))
+                self.state.reload_dirs.add(Path(directory))
 
         if loop is not None:
             raise TypeError(
@@ -418,7 +457,7 @@ class SanicVTHell(Sanic):
             )
 
         if auto_reload or auto_reload is None and debug:
-            self.auto_reload = True
+            auto_reload = True
             if os.environ.get("SANIC_SERVER_RUNNING") != "true":
                 return reloader_helpers.watchdog(1.0, self)
 
@@ -427,9 +466,23 @@ class SanicVTHell(Sanic):
 
         if protocol is None:
             protocol = WebSocketProtocol if self.websocket_enabled else HttpProtocol
-        # if access_log is passed explicitly change config.ACCESS_LOG
-        if access_log is not None:
-            self.config.ACCESS_LOG = access_log
+
+        # Set explicitly passed configuration values
+        for attribute, value in {
+            "ACCESS_LOG": access_log,
+            "AUTO_RELOAD": auto_reload,
+            "MOTD": motd,
+            "NOISY_EXCEPTIONS": noisy_exceptions,
+        }.items():
+            if value is not None:
+                setattr(self.config, attribute, value)
+
+        if fast:
+            self.state.fast = True
+            try:
+                workers = len(os.sched_getaffinity(0))
+            except AttributeError:
+                workers = os.cpu_count() or 1
 
         server_settings = self._helper(
             host=host,
@@ -442,8 +495,10 @@ class SanicVTHell(Sanic):
             protocol=protocol,
             backlog=backlog,
             register_sys_signals=register_sys_signals,
-            auto_reload=auto_reload,
         )
+
+        if self.config.USE_UVLOOP is True or (self.config.USE_UVLOOP is _default and not os.name == "nt"):
+            try_use_uvloop()
 
         try:
             self.is_running = True
@@ -464,6 +519,21 @@ class SanicVTHell(Sanic):
             self.is_running = False
         logger.info("Server Stopped")
 
+    async def _safely_read_dataset(self, file_path: str):
+        try:
+            async with aiofiles.open(file_path, "r") as fp:
+                dataset_str = await fp.read()
+        except OSError:
+            logger.error("[dataset-watch] Could not read dataset file %s", file_path)
+            return
+
+        try:
+            as_json = orjson.loads(dataset_str)
+        except orjson.JSONDecodeError:
+            logger.error("[dataset-watch] Invalid json dataset file %s", file_path)
+            return
+        return as_json
+
     async def watch_vthell_dataset_folder(self, app: SanicVTHell):
         if app.first_process:
             return
@@ -482,10 +552,9 @@ class SanicVTHell(Sanic):
                     logger.info("[dataset-watch] Dataset %s got deleted, removing", path_fn)
                     self.vtdataset.pop(path_fn, None)
                 else:
-                    async with aiofiles.open(path, "r") as f:
-                        dataset_str = await f.read()
-
-                    as_json = orjson.loads(dataset_str)
+                    as_json = await self._safely_read_dataset(path)
+                    if as_json is None:
+                        continue
                     try:
                         data = VTHellDataset.from_dict(as_json)
                         logger.info("[dataset-watch] Reloading dataset %s", path_fn)

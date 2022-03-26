@@ -209,10 +209,7 @@ class HolodexAPI:
         return coerced_data
 
     async def get_video(self, video_id: str) -> Optional[HolodexVideo]:
-        params = {
-            "id": video_id,
-            "include": "live_info",
-        }
+        params = {"id": video_id, "include": "live_info"}
 
         async with self.client.get(f"{self.BASE}videos", params=params) as resp:
             if resp.status != 200:

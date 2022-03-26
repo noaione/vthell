@@ -31,7 +31,7 @@ import string as pystring
 import subprocess
 from http.cookies import Morsel
 from pathlib import Path
-from typing import IO, Any, Dict, NoReturn
+from typing import IO, Any, Dict, NoReturn, Union
 from urllib.parse import quote as url_quote
 
 import aiofiles.ospath
@@ -57,6 +57,8 @@ __all__ = (
     "remove_acquired_lock",
     "parse_expiry_as_date",
     "parse_cookie_to_morsel",
+    "get_indexed",
+    "complex_walk",
 )
 
 logger = logging.getLogger("Internals.Utils")
@@ -417,3 +419,87 @@ def parse_cookie_to_morsel(cookie_content: str):
         netscape_cookies[name] = cookie
 
     return netscape_cookies
+
+
+def get_indexed(data: list, n: int):
+    if not data:
+        return None
+    try:
+        return data[n]
+    except (ValueError, IndexError):
+        return None
+
+
+def complex_walk(dictionary: Union[dict, list], paths: str):
+    if not dictionary:
+        return None
+    expanded_paths = paths.split(".")
+    skip_it = False
+    for n, path in enumerate(expanded_paths):
+        if skip_it:
+            skip_it = False
+            continue
+        if path.isdigit():
+            path = int(path)  # type: ignore
+        if path == "*" and isinstance(dictionary, list):
+            new_concat = []
+            next_path = get_indexed(expanded_paths, n + 1)
+            if next_path is None:
+                return None
+            skip_it = True
+            for content in dictionary:
+                try:
+                    new_concat.append(content[next_path])
+                except (TypeError, ValueError, IndexError, KeyError, AttributeError):
+                    pass
+            if len(new_concat) < 1:
+                return new_concat
+            dictionary = new_concat
+            continue
+        try:
+            dictionary = dictionary[path]  # type: ignore
+        except (TypeError, ValueError, IndexError, KeyError, AttributeError):
+            return None
+    return dictionary
+
+
+def try_use_uvloop() -> None:
+    """
+    Use uvloop instead of the default asyncio loop.
+    """
+    if os.name == "nt":
+        logger.warning(
+            "You are trying to use uvloop, but uvloop is not compatible "
+            "with your system. You can disable uvloop completely by setting "
+            "the 'USE_UVLOOP' configuration value to false, or simply not "
+            "defining it and letting Sanic handle it for you. Sanic will now "
+            "continue to run using the default event loop."
+        )
+        return
+
+    try:
+        import uvloop  # type: ignore
+    except ImportError:
+        logger.warning(
+            "You are trying to use uvloop, but uvloop is not "
+            "installed in your system. In order to use uvloop "
+            "you must first install it. Otherwise, you can disable "
+            "uvloop completely by setting the 'USE_UVLOOP' "
+            "configuration value to false. Sanic will now continue "
+            "to run with the default event loop."
+        )
+        return
+
+    uvloop_install_removed = map_to_boolean(os.getenv("SANIC_NO_UVLOOP", "no"))
+    if uvloop_install_removed:
+        logger.info(
+            "You are requesting to run Sanic using uvloop, but the "
+            "install-time 'SANIC_NO_UVLOOP' environment variable (used to "
+            "opt-out of installing uvloop with Sanic) is set to true. If "
+            "you want to prevent Sanic from overriding the event loop policy "
+            "during runtime, set the 'USE_UVLOOP' configuration value to "
+            "false."
+        )
+
+    if not isinstance(asyncio.get_event_loop_policy(), uvloop.EventLoopPolicy):
+        asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
