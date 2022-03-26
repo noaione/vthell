@@ -180,6 +180,7 @@ class DownloaderTasks(InternalTaskBase):
         )
         if ret_code != 0 or is_error:
             logger.error(f"[{data.id}] ffmpeg exited with code {ret_code}")
+            logger.debug(f"[{data.id}][ffmpeg] {error_line}")
             await DownloaderTasks.make_error(
                 data,
                 app,
@@ -229,6 +230,7 @@ class DownloaderTasks(InternalTaskBase):
         )
         if ret_code != 0 or is_error:
             logger.error(f"[{data.id}] ffmpeg exited with code {ret_code}")
+            logger.debug(f"[{data.id}][ffmpeg] {error_line}")
             await DownloaderTasks.make_error(
                 data,
                 app,
@@ -310,6 +312,7 @@ class DownloaderTasks(InternalTaskBase):
         )
         if ret_code != 0 or is_error:
             logger.error(f"[{data.id}] ffmpeg exited with code {ret_code}")
+            logger.debug(f"[{data.id}][ffmpeg] {error_line}")
             await DownloaderTasks.make_error(
                 data,
                 app,
@@ -445,6 +448,7 @@ class DownloaderTasks(InternalTaskBase):
         )
         if ret_code != 0 or is_error:
             logger.error(f"[{data.id}] ffmpeg exited with code {ret_code}")
+            logger.debug(f"[{data.id}][ffmpeg] {error_line}")
             await DownloaderTasks.make_error(
                 data,
                 app,
